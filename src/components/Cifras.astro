@@ -1,0 +1,71 @@
+---
+// Cifras grandes que cuentan al entrar en pantalla.
+import probs from '../data/probabilidades.json';
+
+const ajiley = probs.distribucion.find((d) => d.puntos === 51)!;
+const cifras = [
+  { valor: probs.totalManos, antes: '', despues: '', texto: 'manos posibles, contadas una a una' },
+  { valor: Math.round(1 / ajiley.p), antes: '1 de cada ', despues: '', texto: 'manos es un ajiley de 51' },
+  { valor: 40, antes: '', despues: '', texto: 'cartas de la baraja española' },
+  { valor: 32, antes: '', despues: '', texto: 'formas de botar en cada mano' },
+];
+---
+<section class="cifras oscuro" aria-label="El ajiley en cifras">
+  <div class="contenedor cifras__fila">
+    {cifras.map((c) => (
+      <div class="cifras__item" data-revelar>
+        <p class="cifras__num">
+          {c.antes && <small>{c.antes}</small>}
+          <span data-contar={c.valor}>{c.valor.toLocaleString('es-VE')}</span>
+        </p>
+        <p class="cifras__texto">{c.texto}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .cifras {
+    padding-block: clamp(70px, 9vw, 120px);
+  }
+  .cifras__fila {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(20px, 3vw, 40px);
+  }
+  .cifras__item {
+    padding-top: 18px;
+    border-top: 1px solid rgb(242 193 78 / 0.35);
+  }
+  .cifras__num {
+    margin: 0 0 6px;
+    font-family: var(--f-titulo);
+    font-weight: 750;
+    font-size: clamp(2.6rem, 1.6rem + 3vw, 4.4rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    color: transparent;
+    background: var(--lamina);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: lamina 7s var(--ease) infinite alternate;
+  }
+  .cifras__num small {
+    display: block;
+    font-size: 0.32em;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.2em;
+  }
+  .cifras__texto {
+    margin: 0;
+    color: #c9d8cf;
+    max-width: 22ch;
+  }
+  @media (max-width: 860px) {
+    .cifras__fila {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

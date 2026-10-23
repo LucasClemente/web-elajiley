@@ -1,0 +1,545 @@
+---
+// "Así se juega una mano": la mesa queda fija mientras los pasos avanzan con el scroll.
+// Cada paso lleva la línea de tiempo a su etiqueta (en ambos sentidos).
+import { svgNaipe, svgDorso, type Numero, type Palo } from '../lib/naipe';
+
+const PASOS = [
+  { titulo: 'Todos ponen la entrada', texto: 'Antes de ver una carta, cada jugador pone su ficha en el pote. Tú eres la mano: estás a la derecha de Carmen, que reparte.' },
+  { titulo: 'Dos cartas para cada uno', texto: 'El pie reparte dos cartas juntas. A ti te llegan el as y la sota de copas: 21 puntos en un mismo palo. Arranque de lujo.' },
+  { titulo: 'Primera ronda de envite', texto: 'Apuestas. María va, José no va y se retira, Carmen sube. Desde la primera apuesta ya nadie puede pasar.' },
+  { titulo: 'Tres cartas más, una a una', texto: 'Llegan el tres de copas (¡vale 10!), el siete de oros y el rey de espadas. Tus copas suman 31; las otras dos no cuentan.' },
+  { titulo: 'A botar', texto: 'Botas el siete y el rey y recibes el cinco de copas y el seis de bastos: 41 puntos. Ojo: María bota una sola carta.' },
+  { titulo: 'Se enseñan las cartas', texto: 'Última ronda y a enseñar. María tiene 40 en espadas; tú, 41 en copas. El pote es tuyo.' },
+];
+
+const mano: { n: Numero; palo: Palo }[] = [
+  { n: 1, palo: 'copas' },
+  { n: 10, palo: 'copas' },
+  { n: 3, palo: 'copas' },
+  { n: 7, palo: 'oros' },
+  { n: 12, palo: 'espadas' },
+  { n: 5, palo: 'copas' },
+  { n: 6, palo: 'bastos' },
+];
+const SLOT = [0, 1, 2, 3, 4, 3, 4];
+---
+<section class="ms oscuro" data-ms aria-labelledby="ms-titulo">
+  <div class="contenedor ms__fila">
+    <div class="ms__pasos">
+      <header class="ms__cabeza">
+        <span class="antetitulo">En sesenta segundos</span>
+        <h2 id="ms-titulo">Así se juega <em>una mano</em></h2>
+        <p class="lead">Baja despacio: la mesa te lo va enseñando.</p>
+      </header>
+      {PASOS.map((p, i) => (
+        <article class="ms__paso" data-paso={i + 1}>
+          <div class="ms__tarjeta">
+            <span class="ms__num">0{i + 1}</span>
+            <h3>{p.titulo}</h3>
+            <p>{p.texto}</p>
+          </div>
+        </article>
+      ))}
+      <a href="/como-jugar/" class="enlace-flecha ms__mas">Ver la mano completa con todos los detalles</a>
+    </div>
+
+    <div class="ms__escenario">
+      <div class="ms__mesa" data-mesa>
+        <div class="ms__asiento" data-asiento="maria" style="--x:16%;--y:13%"><span>María</span><b data-burbuja></b></div>
+        <div class="ms__asiento" data-asiento="jose" style="--x:50%;--y:7%"><span>José</span><b data-burbuja></b></div>
+        <div class="ms__asiento" data-asiento="carmen" style="--x:84%;--y:13%"><span>Carmen <i>pie</i></span><b data-burbuja></b></div>
+        <div class="ms__asiento ms__asiento--tu" data-asiento="tu" style="--x:50%;--y:95%"><span>Tú <i>mano</i></span><b data-burbuja></b></div>
+
+        <div class="ms__mazo" data-mazo set:html={svgDorso()} />
+        <div class="ms__descarte" data-descarte><span>descarte</span></div>
+
+        <div class="ms__pote" data-pote>
+          <span class="ms__pote-num" data-pote-num>0</span>
+          <span>fichas en el pote</span>
+        </div>
+        {Array.from({ length: 10 }, (_, i) => <span class="ms__ficha" data-ficha={i} />)}
+
+        {mano.map((c, i) => (
+          <div class="ms__carta" data-carta={i} style={`--slot:${SLOT[i]}`}>
+            <div class="ms__giro">
+              <div class="ms__cara ms__cara--dorso" set:html={svgDorso()} />
+              <div class="ms__cara" set:html={svgNaipe(c.n, c.palo)} />
+            </div>
+          </div>
+        ))}
+
+        <div class="ms__puntos" data-puntos><span data-puntos-num>0</span> puntos</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap, ScrollTrigger, reducido } from '../scripts/motion';
+
+  const raiz = document.querySelector<HTMLElement>('[data-ms]');
+  if (raiz) montar(raiz);
+
+  function montar(raiz: HTMLElement) {
+    const $ = <T extends HTMLElement = HTMLElement>(s: string) => raiz.querySelector<T>(s)!;
+    const $$ = <T extends HTMLElement = HTMLElement>(s: string) => [...raiz.querySelectorAll<T>(s)];
+    const mesa = $('[data-mesa]');
+    const mazo = $('[data-mazo]');
+    const descarte = $('[data-descarte]');
+    const pote = $('[data-pote]');
+    const cartas = $$('[data-carta]');
+    const giros = cartas.map((c) => c.querySelector<HTMLElement>('.ms__giro')!);
+    const fichas = $$('[data-ficha]');
+    const asiento = (n: string) => $(`[data-asiento="${n}"]`);
+    const burbuja = (n: string) => asiento(n).querySelector<HTMLElement>('[data-burbuja]')!;
+    const puntosNum = $('[data-puntos-num]');
+    const poteNum = $('[data-pote-num]');
+    const pasos = $$('[data-paso]');
+
+    // Vector desde el centro de un elemento hasta otro (para animar "desde" el mazo, etc.)
+    const centro = (el: HTMLElement) => {
+      const r = el.getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    };
+    const delta = (de: HTMLElement, a: HTMLElement) => {
+      const p = centro(de);
+      const q = centro(a);
+      return { x: q.x - p.x, y: q.y - p.y };
+    };
+    const numero = (el: HTMLElement) => {
+      const o = { v: 0 };
+      return (v: number) => gsap.to(o, { v, duration: 0.6, ease: 'power2.out', onUpdate: () => (el.textContent = String(Math.round(o.v))) });
+    };
+
+    let tl: gsap.core.Timeline;
+    const construir = () => {
+      tl?.kill();
+      // Solo transformaciones y opacidad: el atributo style lleva --slot.
+      gsap.set([...cartas, ...fichas, ...giros], { clearProps: 'transform,opacity' });
+      const puntos = numero(puntosNum);
+      const poteN = numero(poteNum);
+      tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out', duration: 0.6 } });
+      tl.addLabel('p0');
+
+      // 1. Entrada: una ficha de cada asiento al pote
+      const asientos = ['tu', 'maria', 'jose', 'carmen'];
+      tl.addLabel('p1');
+      fichas.slice(0, 4).forEach((f, i) => {
+        const d = delta(f, asiento(asientos[i]));
+        tl.fromTo(f, { x: d.x, y: d.y, opacity: 0, scale: 0.6 }, { x: (i - 1.5) * 10, y: -i * 2, opacity: 1, scale: 1 }, i * 0.08);
+      });
+      tl.add(poteN(4), '<');
+
+      // 2. Dos cartas
+      tl.addLabel('p2', '+=0.1');
+      cartas.slice(0, 2).forEach((c, i) => {
+        const d = delta(c, mazo);
+        tl.fromTo(c, { x: d.x, y: d.y, rotation: 20, opacity: 0 }, { x: 0, y: 0, rotation: (i - 2) * 4, opacity: 1 }, `p2+=${i * 0.15}`).fromTo(
+          giros[i],
+          { rotationY: 180 },
+          { rotationY: 0, duration: 0.5 },
+          '<0.2',
+        );
+      });
+      tl.add(puntos(21), 'p2+=0.6').fromTo('[data-puntos]', { opacity: 0, y: 10 }, { opacity: 1, y: 0 }, '<');
+
+      // 3. Envite: burbujas y fichas al pote
+      tl.addLabel('p3', '+=0.1');
+      const canto = (n: string, t: string, en: string) =>
+        tl.set(burbuja(n), { textContent: t }, en).fromTo(burbuja(n), { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: 'back.out(2.5)' }, en);
+      canto('tu', 'Apuesto', 'p3');
+      canto('maria', 'Voy', 'p3+=0.25');
+      canto('jose', 'No voy', 'p3+=0.5');
+      tl.to(asiento('jose'), { opacity: 0.35, duration: 0.4 }, 'p3+=0.6');
+      canto('carmen', 'Subo', 'p3+=0.75');
+      fichas.slice(4, 10).forEach((f, i) => {
+        const de = i < 2 ? 'tu' : i < 4 ? 'maria' : 'carmen';
+        const d = delta(f, asiento(de));
+        tl.fromTo(f, { x: d.x, y: d.y, opacity: 0 }, { x: (i - 2.5) * 9, y: -6 - (i % 3) * 3, opacity: 1, duration: 0.5 }, `p3+=${0.3 + i * 0.1}`);
+      });
+      tl.add(poteN(10), 'p3+=0.8');
+
+      // 4. Tres cartas más
+      tl.addLabel('p4', '+=0.2');
+      tl.to($$('[data-burbuja]'), { scale: 0, opacity: 0, duration: 0.25 }, 'p4');
+      cartas.slice(2, 5).forEach((c, k) => {
+        const i = k + 2;
+        const d = delta(c, mazo);
+        tl.fromTo(c, { x: d.x, y: d.y, rotation: 20, opacity: 0 }, { x: 0, y: 0, rotation: (i - 2) * 4, opacity: 1 }, `p4+=${0.1 + k * 0.2}`).fromTo(
+          giros[i],
+          { rotationY: 180 },
+          { rotationY: 0, duration: 0.5 },
+          '<0.2',
+        );
+      });
+      tl.to(cartas.slice(3, 5), { opacity: 0.5, y: 10, duration: 0.4 }, 'p4+=0.9').add(puntos(31), '<');
+
+      // 5. Botar: las dos sueltas al descarte, llegan dos nuevas
+      tl.addLabel('p5', '+=0.2');
+      cartas.slice(3, 5).forEach((c, k) => {
+        const d = delta(c, descarte);
+        tl.to(c, { x: d.x, y: d.y, rotation: -30 + k * 14, opacity: 0.9, duration: 0.6, ease: 'power2.in' }, `p5+=${k * 0.1}`);
+      });
+      tl.to(giros.slice(3, 5), { rotationY: 180, duration: 0.4 }, 'p5+=0.2');
+      cartas.slice(5, 7).forEach((c, k) => {
+        const i = k + 5;
+        const d = delta(c, mazo);
+        tl.fromTo(c, { x: d.x, y: d.y, rotation: 20, opacity: 0 }, { x: 0, y: 0, rotation: (k + 1) * 4, opacity: 1 }, `p5+=${0.55 + k * 0.18}`).fromTo(
+          giros[i],
+          { rotationY: 180 },
+          { rotationY: 0, duration: 0.5 },
+          '<0.2',
+        );
+      });
+      tl.to(cartas[6], { opacity: 0.5, y: 10, duration: 0.4 }, 'p5+=1.2').add(puntos(41), '<');
+      canto('maria', 'Bota 1', 'p5+=0.3');
+
+      // 6. Se enseñan: el pote viaja hacia ti
+      tl.addLabel('p6', '+=0.2');
+      tl.set(burbuja('maria'), { textContent: '40' }, 'p6');
+      canto('tu', '41 · ¡gana!', 'p6+=0.2');
+      tl.to(burbuja('carmen'), { scale: 0, opacity: 0, duration: 0.25 }, 'p6');
+      // El pote viaja a tu lado (a la izquierda de tu asiento, sin tapar el marcador)
+      const d = delta(pote, asiento('tu'));
+      const lado = -cartas[0].offsetWidth * 2.6;
+      tl.to(fichas, { x: (i) => `+=${d.x + lado + (i % 4) * 8}`, y: (i) => `+=${d.y - 10 - Math.floor(i / 4) * 6}`, duration: 0.8, stagger: 0.03, ease: 'power2.inOut' }, 'p6+=0.5')
+        .to(cartas.filter((_, i) => [0, 1, 2, 5].includes(i)), { y: -16, duration: 0.4, stagger: 0.05, ease: 'back.out(2)' }, '<')
+        .add(poteN(0), '<');
+      tl.addLabel('fin');
+    };
+
+    construir();
+    let actual = 0;
+    const ir = (i: number) => {
+      actual = i;
+      pasos.forEach((p, k) => p.classList.toggle('es-activo', k === i - 1));
+      const destino = i === 6 ? 'fin' : `p${i + 1}`;
+      if (reducido) tl.seek(destino);
+      else tl.tweenTo(destino, { duration: 1.4, ease: 'power1.inOut' });
+    };
+    // En modo reducido, cada paso muestra su estado final.
+    if (reducido) tl.progress(0);
+
+    // En móvil la mesa ocupa la mitad superior: el paso se activa cuando su tarjeta asoma abajo.
+    const movil = matchMedia('(max-width: 900px)').matches;
+    pasos.forEach((p, k) => {
+      ScrollTrigger.create({
+        trigger: movil ? p.querySelector('.ms__tarjeta') : p,
+        start: movil ? 'top 92%' : 'top 62%',
+        end: movil ? 'bottom 40%' : 'bottom 62%',
+        onEnter: () => ir(k + 1),
+        onEnterBack: () => ir(k + 1),
+        onLeaveBack: () => k === 0 && (tl.tweenTo('p0', { duration: 0.6 }), pasos[0].classList.remove('es-activo')),
+      });
+    });
+
+    let t: number | undefined;
+    addEventListener('resize', () => {
+      clearTimeout(t);
+      t = window.setTimeout(() => {
+        construir();
+        if (actual) tl.seek(actual === 6 ? 'fin' : `p${actual + 1}`);
+      }, 250);
+    });
+  }
+</script>
+
+<style>
+  .ms {
+    padding-block: clamp(70px, 10vw, 130px) clamp(40px, 6vw, 80px);
+  }
+  .ms__fila {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(28px, 5vw, 72px);
+  }
+  .ms__cabeza {
+    min-height: 40vh;
+  }
+  .ms__paso {
+    min-height: 62vh;
+    display: grid;
+    align-content: center;
+    gap: 6px;
+    opacity: 0.32;
+    transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+    transform: translateX(-6px);
+  }
+  .ms__paso.es-activo {
+    opacity: 1;
+    transform: none;
+  }
+  .ms__paso h3 {
+    font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.3rem);
+    margin: 0;
+  }
+  .ms__paso p {
+    color: #c9d8cf;
+    font-size: 1.08rem;
+    max-width: 42ch;
+  }
+  .ms__num {
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    font-size: 1rem;
+    color: transparent;
+    background: var(--lamina);
+    -webkit-background-clip: text;
+    background-clip: text;
+    letter-spacing: 0.1em;
+  }
+  .ms__mas {
+    display: inline-flex;
+    margin: 0 0 20vh;
+  }
+  .ms__escenario {
+    position: sticky;
+    top: 92px;
+    height: min(78vh, 640px);
+    display: grid;
+    place-items: center;
+  }
+  .ms__mesa {
+    --w: clamp(56px, 6.6vw, 92px);
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50% / 38%;
+    border: 16px solid #5b3418;
+    box-shadow:
+      inset 0 12px 40px rgb(0 0 0 / 0.55),
+      0 0 0 2px #3c210d,
+      0 40px 60px -30px rgb(0 0 0 / 0.8);
+    background:
+      var(--fieltro),
+      radial-gradient(ellipse at 50% 45%, rgb(64 200 135 / 0.25), transparent 65%), #0e5a3a;
+  }
+  .ms__asiento {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    translate: -50% -50%;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    z-index: 2;
+    transition: opacity 0.3s ease;
+  }
+  .ms__asiento > span {
+    padding: 0.25em 0.8em;
+    border-radius: 999px;
+    background: rgb(0 0 0 / 0.35);
+    color: #fff;
+    font-weight: 900;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+  .ms__asiento i {
+    font-style: normal;
+    font-size: 0.65rem;
+    padding: 0.1em 0.5em;
+    margin-left: 4px;
+    border-radius: 999px;
+    background: var(--rojo);
+    text-transform: uppercase;
+  }
+  .ms__asiento--tu i {
+    background: var(--caribe);
+  }
+  .ms__asiento [data-burbuja] {
+    position: absolute;
+    top: 100%;
+    margin-top: 6px;
+    padding: 0.2em 0.7em;
+    border-radius: 10px;
+    background: var(--lamina);
+    color: var(--tinta-oscura);
+    font-size: 0.85rem;
+    font-weight: 900;
+    white-space: nowrap;
+    opacity: 0;
+    transform: scale(0);
+    box-shadow: 0 8px 16px -8px rgb(0 0 0 / 0.6);
+  }
+  .ms__asiento--tu [data-burbuja] {
+    top: 50%;
+    left: 100%;
+    margin: 0 0 0 8px;
+    translate: 0 -50%;
+  }
+  .ms__mazo,
+  .ms__descarte {
+    position: absolute;
+    top: 44%;
+    width: calc(var(--w) * 0.85);
+    aspect-ratio: 2 / 3;
+    translate: -50% -50%;
+  }
+  .ms__mazo {
+    left: 88%;
+    rotate: 10deg;
+    filter: drop-shadow(-2px -2px 0 #061a40) drop-shadow(-4px -4px 0 #0d2d6b) drop-shadow(0 10px 14px rgb(0 0 0 / 0.5));
+  }
+  .ms__mazo :global(svg),
+  .ms__cara :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+  .ms__descarte {
+    left: 12%;
+    border: 2px dashed rgb(255 255 255 / 0.25);
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+  }
+  .ms__descarte span {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.4);
+    rotate: -90deg;
+  }
+  .ms__pote {
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    translate: -50% -50%;
+    display: grid;
+    justify-items: center;
+    padding-top: 34px;
+    z-index: 1;
+  }
+  .ms__pote-num {
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    font-size: 2.2rem;
+    line-height: 1;
+    color: transparent;
+    background: var(--lamina);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  .ms__pote > span:last-child {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: rgb(255 255 255 / 0.65);
+  }
+  .ms__ficha {
+    --c: #e4002b;
+    position: absolute;
+    left: calc(50% - 13px);
+    top: calc(45% - 40px);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    opacity: 0;
+    background: radial-gradient(circle, var(--c) 0 40%, #fff 40% 48%, var(--c) 48%);
+    box-shadow:
+      inset 0 0 0 3px var(--c),
+      inset 0 0 0 4px rgb(255 255 255 / 0.8),
+      0 3px 0 color-mix(in srgb, var(--c) 60%, #000),
+      0 8px 10px -4px rgb(0 0 0 / 0.6);
+  }
+  .ms__ficha:nth-child(3n) {
+    --c: #0057b8;
+  }
+  .ms__ficha:nth-child(3n + 1) {
+    --c: #c99400;
+  }
+  .ms__carta {
+    position: absolute;
+    left: calc(50% + (var(--slot) - 2) * var(--w) * 0.78);
+    top: 70%;
+    width: var(--w);
+    aspect-ratio: 2 / 3;
+    translate: -50% -50%;
+    opacity: 0;
+    transform-style: preserve-3d;
+    z-index: 2;
+  }
+  .ms__giro {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+  }
+  .ms__cara {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    filter: drop-shadow(0 10px 12px rgb(0 0 0 / 0.45));
+  }
+  .ms__cara--dorso {
+    transform: rotateY(180deg);
+  }
+  .ms__puntos {
+    position: absolute;
+    left: 50%;
+    top: 86%;
+    translate: -50% -50%;
+    padding: 0.2em 0.9em;
+    border-radius: 999px;
+    background: rgb(0 0 0 / 0.4);
+    color: #fff;
+    font-weight: 800;
+    opacity: 0;
+    z-index: 3;
+    white-space: nowrap;
+  }
+  .ms__puntos span {
+    font-family: var(--f-titulo);
+    font-size: 1.3rem;
+    color: var(--oro);
+  }
+
+  @media (max-width: 900px) {
+    .ms__fila {
+      grid-template-columns: 1fr;
+    }
+    .ms__escenario {
+      order: -1;
+      top: 70px;
+      height: 46vh;
+      z-index: 2;
+    }
+    .ms__mesa {
+      --w: clamp(44px, 12vw, 70px);
+      border-width: 10px;
+    }
+    .ms__cabeza {
+      min-height: 0;
+      margin-top: 20px;
+    }
+    .ms__paso {
+      position: relative;
+      z-index: 3;
+      min-height: 80vh;
+      align-content: end;
+      padding-bottom: 4vh;
+      opacity: 1;
+      transform: none;
+    }
+    .ms__tarjeta {
+      padding: 18px 20px;
+      border-radius: 18px;
+      background: rgb(4 22 15 / 0.92);
+      border: 1px solid rgb(242 193 78 / 0.25);
+      box-shadow: 0 20px 40px -20px rgb(0 0 0 / 0.8);
+      backdrop-filter: blur(8px);
+      opacity: 0.5;
+      transition: opacity 0.4s var(--ease);
+    }
+    .ms__paso.es-activo .ms__tarjeta {
+      opacity: 1;
+    }
+    .ms__paso p {
+      font-size: 1rem;
+      margin-bottom: 0;
+    }
+    .ms__asiento > span {
+      font-size: 0.72rem;
+    }
+  }
+</style>

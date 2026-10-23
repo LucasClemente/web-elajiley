@@ -3,6 +3,26 @@
 // y los naipes los reutilizan con <use href="#p-oros"> etc.
 ---
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="g-naipe" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffefa"></stop>
+      <stop offset="1" stop-color="#f4ecdc"></stop>
+    </linearGradient>
+    <linearGradient id="g-oro" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff1b8"></stop>
+      <stop offset=".35" stop-color="#e8b33a"></stop>
+      <stop offset=".6" stop-color="#a87406"></stop>
+      <stop offset="1" stop-color="#f6d27a"></stop>
+    </linearGradient>
+    <linearGradient id="g-dorso" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0d2d6b"></stop>
+      <stop offset="1" stop-color="#061a40"></stop>
+    </linearGradient>
+    <pattern id="trama" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <path d="M0 5H10M5 0V10" stroke="#f2c14e" stroke-width=".6" opacity=".35"></path>
+      <circle cx="5" cy="5" r="1.1" fill="#f2c14e" opacity=".55"></circle>
+    </pattern>
+  </defs>
   <symbol id="p-oros" viewBox="-20 -20 40 40">
     <circle r="17" fill="#ffc20e" stroke="#7a5600" stroke-width="2.2"></circle>
     <circle r="12.5" fill="none" stroke="#c98f00" stroke-width="1.6"></circle>

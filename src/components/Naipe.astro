@@ -20,8 +20,8 @@ const { n, palo, marcada = false, apagada = false, tam = 'm' } = Astro.props;
     display: inline-block;
     width: var(--ancho-naipe);
     flex: none;
-    filter: drop-shadow(0 3px 0 rgb(10 47 110 / 0.18));
-    transition: transform 0.15s ease;
+    filter: drop-shadow(0 8px 10px rgb(0 0 0 / 0.22)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.15));
+    transition: transform 0.3s var(--ease);
   }
   .naipe--s {
     --ancho-naipe: 58px;
@@ -35,7 +35,7 @@ const { n, palo, marcada = false, apagada = false, tam = 'm' } = Astro.props;
   }
   .naipe--marcada {
     transform: translateY(-8px);
-    filter: drop-shadow(0 0 0 transparent) drop-shadow(0 6px 0 var(--oro));
+    filter: drop-shadow(0 0 12px rgb(242 193 78 / 0.8));
   }
   .naipe--apagada {
     opacity: 0.45;

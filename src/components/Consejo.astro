@@ -32,32 +32,31 @@ const { titulo = 'Guaca dice:' } = Astro.props;
   }
   .consejo__bocadillo {
     position: relative;
-    padding: 16px 20px 14px;
+    padding: 18px 22px 16px;
     background: #fff;
-    border: 2px solid var(--tinta);
-    border-radius: 22px 22px 22px 4px;
-    box-shadow: 4px 5px 0 rgb(31 26 20 / 0.12);
+    border-radius: 22px 22px 22px 6px;
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.06),
+      0 18px 36px -18px rgb(20 14 6 / 0.35);
   }
   .consejo__bocadillo::before {
     content: '';
     position: absolute;
-    left: -14px;
-    bottom: 12px;
-    width: 16px;
-    height: 16px;
+    left: -10px;
+    bottom: 10px;
+    width: 18px;
+    height: 18px;
     background: #fff;
-    border-left: 2px solid var(--tinta);
-    border-bottom: 2px solid var(--tinta);
-    transform: skewY(-35deg);
+    clip-path: polygon(100% 0, 0 100%, 100% 100%);
   }
   .consejo__titulo {
     display: block;
-    font-family: var(--f-mano);
-    font-weight: 700;
+    font-weight: 900;
     color: var(--rojo);
-    font-size: 1.55rem;
-    line-height: 1;
-    margin-bottom: 0.2em;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.4em;
   }
   .consejo__bocadillo :global(p:last-child) {
     margin-bottom: 0;

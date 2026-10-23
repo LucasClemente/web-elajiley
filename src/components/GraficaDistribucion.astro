@@ -103,14 +103,14 @@ const huecos = cols.filter((c) => !porPuntos.has(c));
   .grafica {
     margin: 1.6em 0 2em;
     padding: 16px 14px 10px;
-    background: #fff;
-    border: 2px solid var(--linea);
+    background: var(--superficie);
+    border: 1px solid var(--superficie-borde);
     border-radius: var(--radio);
   }
   .grafica__titulo {
     font-family: var(--f-titulo);
     font-weight: 800;
-    color: var(--noche);
+    color: #fff8ea;
     font-size: 1.1rem;
     margin-bottom: 6px;
   }
@@ -128,7 +128,7 @@ const huecos = cols.filter((c) => !porPuntos.has(c));
     stroke-dasharray: 2 4;
   }
   .grafica__base {
-    stroke: #cdbf9f;
+    stroke: rgb(255 255 255 / 0.3);
     stroke-width: 1.5;
   }
   .grafica__eje {
@@ -142,17 +142,17 @@ const huecos = cols.filter((c) => !porPuntos.has(c));
     cursor: pointer;
   }
   .grafica__barra {
-    fill: var(--tapete);
+    fill: #2fa36b;
     transition: fill 0.12s ease;
   }
   .es-alta .grafica__barra {
     fill: var(--oro-600);
   }
   .grafica__col.es-activa .grafica__barra {
-    fill: var(--noche);
+    fill: #fff8ea;
   }
   .grafica__col.es-activa .grafica__hit {
-    fill: rgb(10 47 110 / 0.05);
+    fill: rgb(255 255 255 / 0.05);
   }
   .grafica__tip {
     position: absolute;

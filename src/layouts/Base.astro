@@ -96,7 +96,7 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="robots" content={robots} />
-    <meta name="theme-color" content="#0b6b45" />
+    <meta name="theme-color" content="#04160f" />
 
     <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
     <link rel="icon" type="image/png" sizes="48x48" href="/iconos/favicon-48.png" />
@@ -121,6 +121,17 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
     <meta name="twitter:image" content={ogImage} />
 
     <script type="application/ld+json" set:html={jsonLd} />
+    <script is:inline>
+      // Oculta lo animable antes de pintar; si la animación no carga en 4 s, se muestra todo.
+      (function () {
+        var d = document.documentElement;
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        d.classList.add('js-motion');
+        setTimeout(function () {
+          if (!d.classList.contains('motion-listo')) d.classList.remove('js-motion');
+        }, 4000);
+      })();
+    </script>
     <slot name="head" />
   </head>
   <body>
@@ -131,5 +142,8 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
       <slot />
     </main>
     <Pie />
+    <script>
+      import '../scripts/motion';
+    </script>
   </body>
 </html>

@@ -224,7 +224,8 @@ const cartas = (s = '') =>
     height: 34px;
     border-radius: 50%;
     background: var(--oro);
-    border: 2px solid var(--noche);
+    border: 0;
+    color: var(--tinta-oscura);
     font-size: 1rem;
   }
   .guia__barra {
@@ -233,13 +234,13 @@ const cartas = (s = '') =>
     gap: 12px;
     margin-bottom: 12px;
     font-weight: 800;
-    color: var(--tapete-700);
+    color: var(--oro);
     font-size: 0.92rem;
   }
   .guia__progreso {
     flex: 1;
     height: 8px;
-    background: var(--tapete-100);
+    background: rgb(255 255 255 / 0.1);
     border-radius: 999px;
     overflow: hidden;
   }
@@ -247,7 +248,7 @@ const cartas = (s = '') =>
     display: block;
     height: 100%;
     width: 0;
-    background: var(--tapete);
+    background: var(--oro);
     transition: width 0.3s ease;
   }
   .guia__botones {

@@ -1,0 +1,76 @@
+---
+// Cinta en movimiento con las voces de la mesa.
+import type { Palo } from '../lib/naipe';
+
+const voces: [string, Palo][] = [
+  ['Paso', 'oros'],
+  ['Voy', 'copas'],
+  ['Subo', 'espadas'],
+  ['No voy', 'bastos'],
+  ['¡Barajo!', 'oros'],
+  ['Ajiley · 51', 'copas'],
+  ['Botar', 'espadas'],
+  ['La mano gana', 'bastos'],
+];
+---
+<div class="cinta-m" aria-hidden="true">
+  <div class="cinta-m__pista">
+    {[0, 1].map(() => (
+      <div class="cinta-m__grupo">
+        {voces.map(([v, palo]) => (
+          <span class="cinta-m__voz">
+            {v}
+            <svg viewBox="0 0 40 40"><use href={`#p-${palo}`} width="40" height="40"></use></svg>
+          </span>
+        ))}
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .cinta-m {
+    position: relative;
+    z-index: 3;
+    overflow: hidden;
+    margin-block: -28px;
+    padding-block: 16px;
+    transform: rotate(-2deg);
+    background: linear-gradient(100deg, #ff3d5c, #e4002b 40%, #a8001f);
+    box-shadow: 0 20px 40px -20px rgb(0 0 0 / 0.6);
+    border-block: 2px solid rgb(242 193 78 / 0.7);
+  }
+  .cinta-m__pista {
+    display: flex;
+    width: max-content;
+    animation: cinta 38s linear infinite;
+  }
+  .cinta-m__grupo {
+    display: flex;
+    flex: none;
+  }
+  .cinta-m__voz {
+    display: inline-flex;
+    align-items: center;
+    gap: 28px;
+    padding-right: 28px;
+    font-family: var(--f-titulo);
+    font-style: italic;
+    font-weight: 600;
+    font-variation-settings: 'SOFT' 100, 'WONK' 1;
+    font-size: clamp(1.4rem, 1rem + 1.6vw, 2.3rem);
+    line-height: 1;
+    color: #fff4d6;
+    white-space: nowrap;
+  }
+  .cinta-m__voz svg {
+    width: 30px;
+    height: 30px;
+    filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.3));
+  }
+  @keyframes cinta {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+</style>

@@ -118,7 +118,7 @@ export function svgNaipe(numero: Numero, palo: Palo, opts: { titulo?: boolean } 
   const cortes = CORTES[palo];
   const marco =
     `<path d="${lineaConCortes(8, cortes)}${lineaConCortes(142, cortes)}M8 9V141M92 9V141" ` +
-    `fill="none" stroke="${color}" stroke-width="1.3" stroke-linecap="round" opacity=".75"/>`;
+    `fill="none" stroke="${color}" stroke-width="1" stroke-linecap="round" opacity=".55"/>`;
 
   let centro = '';
   if (numero <= 7) {
@@ -132,21 +132,22 @@ export function svgNaipe(numero: Numero, palo: Palo, opts: { titulo?: boolean } 
   } else {
     const etiqueta = NOMBRE_NUMERO[numero].toUpperCase();
     centro =
-      `<rect x="16" y="30" width="68" height="92" rx="7" fill="${color}" opacity=".09"/>` +
+      `<rect x="16" y="30" width="68" height="92" rx="6" fill="${color}" fill-opacity=".06" stroke="url(#g-oro)" stroke-width="1.6"/>` +
+      `<rect x="19" y="33" width="62" height="86" rx="4" fill="none" stroke="url(#g-oro)" stroke-width=".6" opacity=".8"/>` +
       `<g transform="translate(50 54)">${FIGURA[numero as 10 | 11 | 12]}</g>` +
       `<use href="#p-${palo}" x="35" y="72" width="30" height="30"/>` +
-      `<text x="50" y="116" text-anchor="middle" font-family="Nunito Variable, Nunito, Arial, sans-serif" font-weight="900" font-size="8.5" letter-spacing=".8" fill="${color}">${etiqueta}</text>`;
+      `<text x="50" y="114" text-anchor="middle" font-family="Fraunces Variable, Fraunces, Georgia, serif" font-weight="700" font-size="8" letter-spacing="1.2" fill="${color}">${etiqueta}</text>`;
   }
 
   const indice = (rot: boolean) =>
     `<g${rot ? ' transform="rotate(180 50 75)"' : ''}>` +
-    `<text x="17" y="27" text-anchor="middle" font-family="Baloo 2 Variable, Baloo 2, Arial, sans-serif" font-weight="800" font-size="18" fill="${color}">${numero}</text>` +
+    `<text x="17" y="27" text-anchor="middle" font-family="Fraunces Variable, Fraunces, Georgia, serif" font-weight="700" font-size="17" fill="${color}">${numero}</text>` +
     `</g>`;
 
   const titulo = opts.titulo === false ? '' : `<title>${nombreCarta(numero, palo)}</title>`;
   return (
     `<svg viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg" role="img" class="naipe__svg">${titulo}` +
-    `<rect x="1.5" y="1.5" width="97" height="147" rx="9" fill="#fffdf7" stroke="#0a2f6e" stroke-width="2.5"/>` +
+    `<rect x="1" y="1" width="98" height="148" rx="9" fill="url(#g-naipe)" stroke="#1d2a44" stroke-opacity=".28" stroke-width="1.2"/>` +
     marco +
     indice(false) +
     indice(true) +
@@ -158,10 +159,12 @@ export function svgNaipe(numero: Numero, palo: Palo, opts: { titulo?: boolean } 
 export function svgDorso() {
   return (
     `<svg viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="naipe__svg">` +
-    `<rect x="1.5" y="1.5" width="97" height="147" rx="9" fill="#0a2f6e" stroke="#061d45" stroke-width="2.5"/>` +
-    `<rect x="9" y="9" width="82" height="132" rx="5" fill="none" stroke="#ffc20e" stroke-width="1.5" opacity=".8"/>` +
-    `<use href="#p-oros" x="30" y="55" width="40" height="40"/>` +
-    `<path d="M20 25q30 20 60 0M20 125q30-20 60 0" fill="none" stroke="#ffc20e" stroke-width="1.5" opacity=".6"/>` +
+    `<rect x="1" y="1" width="98" height="148" rx="9" fill="url(#g-dorso)" stroke="#061d45" stroke-width="1.2"/>` +
+    `<rect x="7" y="7" width="86" height="136" rx="5" fill="url(#trama)"/>` +
+    `<rect x="7" y="7" width="86" height="136" rx="5" fill="none" stroke="url(#g-oro)" stroke-width="1.4"/>` +
+    `<rect x="10.5" y="10.5" width="79" height="129" rx="3" fill="none" stroke="url(#g-oro)" stroke-width=".5" opacity=".7"/>` +
+    `<circle cx="50" cy="75" r="21" fill="#061a40" stroke="url(#g-oro)" stroke-width="1.4"/>` +
+    `<use href="#p-oros" x="35" y="60" width="30" height="30"/>` +
     `</svg>`
   );
 }

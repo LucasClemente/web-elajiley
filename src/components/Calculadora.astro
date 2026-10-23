@@ -193,9 +193,10 @@ import { PALOS, NUMEROS, svgNaipe } from '../lib/naipe';
     background:
       var(--fieltro),
       radial-gradient(ellipse at 50% 30%, rgb(255 255 255 / 0.1), transparent 60%), var(--tapete);
-    border: 12px solid var(--madera);
-    border-image: linear-gradient(135deg, #8c5a2f, #5a3216 40%, #7a4a22 60%, #4e2a12) 12;
-    box-shadow: var(--sombra-objeto);
+    border-radius: 28px;
+    box-shadow:
+      inset 0 0 0 1px rgb(242 193 78 / 0.2),
+      0 30px 50px -28px rgb(0 0 0 / 0.7);
     padding: 20px 16px;
     text-align: center;
     color: #fff;
@@ -277,8 +278,8 @@ import { PALOS, NUMEROS, svgNaipe } from '../lib/naipe';
   .calc__asesor {
     margin-top: 18px;
     padding: 16px 18px;
-    background: #fff;
-    border: 1px solid rgb(31 26 20 / 0.15);
+    background: var(--superficie);
+    border: 1px solid var(--superficie-borde);
     border-radius: var(--radio);
     box-shadow: var(--sombra-objeto);
   }
@@ -292,7 +293,7 @@ import { PALOS, NUMEROS, svgNaipe } from '../lib/naipe';
   .calc__asesor-cabeza strong {
     font-family: var(--f-titulo);
     font-size: 1.3rem;
-    color: var(--noche);
+    color: #fff8ea;
   }
   .calc__asesor-nota {
     font-size: 0.92rem;
@@ -316,7 +317,7 @@ import { PALOS, NUMEROS, svgNaipe } from '../lib/naipe';
   }
   .calc__opciones :global(li.es-mejor) {
     border-color: var(--oro-600);
-    background: var(--oro-100);
+    background: rgb(242 193 78 / 0.12);
   }
   .calc__opciones :global(.calc__datos) {
     display: flex;
@@ -335,12 +336,12 @@ import { PALOS, NUMEROS, svgNaipe } from '../lib/naipe';
     border-radius: var(--radio-s);
     padding: 8px 10px 12px;
     margin: 0;
-    background: #fff;
+    background: var(--superficie);
   }
   .calc__palo legend {
     font-family: var(--f-titulo);
     font-weight: 800;
-    color: var(--noche);
+    color: #fff8ea;
     padding: 0 6px;
   }
   .calc__cartas {
@@ -382,7 +383,7 @@ import { PALOS, NUMEROS, svgNaipe } from '../lib/naipe';
     font-weight: 800;
   }
   .calc__tabla :global(tr.es-mejor td) {
-    background: var(--oro-100);
+    background: rgb(242 193 78 / 0.12);
   }
   @media (max-width: 560px) {
     .calc__cartas {

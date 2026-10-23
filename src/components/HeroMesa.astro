@@ -1,0 +1,581 @@
+---
+// Portada animada: la baraja reparte un ajiley en abanico 3D mientras el marcador sube hasta 51.
+// Después se pueden repartir manos al azar. Con "reducir movimiento" se muestra el estado final.
+import { svgNaipe, svgDorso, type Numero, type Palo } from '../lib/naipe';
+import { BETZUE } from '../config';
+
+const inicial: { n: Numero; palo: Palo }[] = [
+  { n: 1, palo: 'oros' },
+  { n: 12, palo: 'oros' },
+  { n: 11, palo: 'oros' },
+  { n: 5, palo: 'oros' },
+  { n: 2, palo: 'oros' },
+];
+const valores = [11, 10, 10, 10, 10];
+---
+<section class="hero oscuro" data-hero>
+  <div class="hero__luz" aria-hidden="true"></div>
+  <div class="hero__polvo" aria-hidden="true">
+    {(['oros', 'copas', 'espadas', 'bastos', 'oros', 'copas', 'espadas', 'bastos', 'oros'] as const).map((p, i) => (
+      <svg class="hero__mota" viewBox="0 0 40 40" style={`--x:${(i * 37 + 7) % 100}%;--y:${(i * 53 + 11) % 92}%;--s:${18 + ((i * 13) % 34)}px;--o:${0.06 + ((i * 7) % 10) / 70}`} data-mota={i}>
+        <use href={`#p-${p}`} width="40" height="40"></use>
+      </svg>
+    ))}
+  </div>
+  <div class="contenedor hero__fila">
+    <div class="hero__texto">
+      <span class="antetitulo hero__a">La guía del juego de cartas venezolano</span>
+      <h1 class="hero__titulo">
+        <span class="hero__linea"><span>El <em>ajiley</em>,</span></span>
+        <span class="hero__linea"><span>de principio</span></span>
+        <span class="hero__linea"><span>a fin.</span></span>
+      </h1>
+      <p class="lead hero__a">
+        Las reglas como se juegan en la mesa, la puntuación carta por carta, estrategia con números de verdad y la historia de un juego que
+        viene de las pulperías.
+      </p>
+      <div class="hero__botones hero__a">
+        <a href="/reglas/" class="boton">Ver las reglas</a>
+        <a href="/practicar/" class="boton boton--claro">Practicar gratis</a>
+      </div>
+      <p class="hero__betzue hero__a">¿Ya sabes jugar? <a href={BETZUE.ajiley('portada')} class="enlace-flecha">Siéntate en la mesa de Betzue</a></p>
+    </div>
+
+    <div class="hero__escena" data-escena>
+      <div class="hero__marcador" aria-live="polite">
+        <span class="hero__num" data-num>51</span>
+        <span class="hero__pts">puntos</span>
+        <span class="hero__sello" data-sello>¡Ajiley!</span>
+      </div>
+
+      <div class="hero__mesa" data-mesa>
+        <div class="hero__mazo" data-mazo aria-hidden="true">
+          {[0, 1, 2].map((i) => <span class="hero__mazo-carta" style={`--i:${i}`} set:html={svgDorso()} />)}
+        </div>
+        {inicial.map((c, i) => (
+          <div class="hero__carta" data-carta={i}>
+            <div class="hero__giro">
+              <div class="hero__cara hero__cara--dorso" set:html={svgDorso()} />
+              <div class="hero__cara hero__cara--frente" set:html={svgNaipe(c.n, c.palo)} />
+            </div>
+            <span class="hero__suma">+{valores[i]}</span>
+          </div>
+        ))}
+        <span class="hero__ficha hero__ficha--roja" data-ficha="1.4"></span>
+        <span class="hero__ficha hero__ficha--azul" data-ficha="0.8"></span>
+        <span class="hero__ficha hero__ficha--oro" data-ficha="1.1"></span>
+      </div>
+
+      <div class="hero__controles">
+        <button type="button" class="boton boton--rojo boton--peque" data-repartir>Repartir otra mano</button>
+        <p class="hero__comentario" data-texto>El as y cuatro cartas de 10 del mismo palo: la jugada máxima.</p>
+      </div>
+    </div>
+  </div>
+  <a class="hero__bajar" href="#que-es" aria-label="Seguir leyendo">
+    <span></span>
+  </a>
+</section>
+
+<script>
+  import { gsap, reducido } from '../scripts/motion';
+  import { baraja, barajar, puntuar, VALOR, type Carta } from '../lib/ajiley';
+  import { svgNaipe } from '../lib/naipe';
+  import probs from '../data/probabilidades.json';
+
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  if (hero) montar(hero);
+
+  function montar(hero: HTMLElement) {
+    const escena = hero.querySelector<HTMLElement>('[data-escena]')!;
+    const mesa = hero.querySelector<HTMLElement>('[data-mesa]')!;
+    const cartas = [...hero.querySelectorAll<HTMLElement>('[data-carta]')];
+    const giros = cartas.map((c) => c.querySelector<HTMLElement>('.hero__giro')!);
+    const sumas = cartas.map((c) => c.querySelector<HTMLElement>('.hero__suma')!);
+    const num = hero.querySelector<HTMLElement>('[data-num]')!;
+    const sello = hero.querySelector<HTMLElement>('[data-sello]')!;
+    const texto = hero.querySelector<HTMLElement>('[data-texto]')!;
+    const boton = hero.querySelector<HTMLButtonElement>('[data-repartir]')!;
+    const mazo = hero.querySelector<HTMLElement>('[data-mazo]')!;
+    const fichas = [...hero.querySelectorAll<HTMLElement>('[data-ficha]')];
+
+    // Geometría del abanico según el ancho de carta
+    const geo = () => {
+      const w = cartas[0].offsetWidth;
+      return {
+        pos: cartas.map((_, i) => ({ x: (i - 2) * w * 0.6, y: Math.abs(i - 2) ** 2 * w * 0.06, r: (i - 2) * 8 })),
+        // Las cartas están centradas en (50 %, 58 %) de la mesa.
+        mazo: { x: mazo.offsetLeft + mazo.offsetWidth / 2 - mesa.offsetWidth / 2, y: mazo.offsetTop + mazo.offsetHeight / 2 - mesa.offsetHeight * 0.58 },
+      };
+    };
+    hero.classList.add('es-montado');
+    gsap.set(cartas, { xPercent: -50, yPercent: -50 });
+    const colocar = () => {
+      const g = geo();
+      cartas.forEach((c, i) => gsap.set(c, { x: g.pos[i].x, y: g.pos[i].y, rotation: g.pos[i].r }));
+    };
+
+    const peorQue = (p: number) => {
+      const f = probs.distribucion.find((d) => d.puntos === p);
+      return f ? Math.round((1 - f.alMenos) * 100) : 0;
+    };
+    const contar = (hasta: number, dur = 0.5) => {
+      const o = { v: Number(num.textContent) || 0 };
+      gsap.to(o, { v: hasta, duration: dur, ease: 'power2.out', onUpdate: () => (num.textContent = String(Math.round(o.v))) });
+      gsap.fromTo(num, { scale: 1.18 }, { scale: 1, duration: 0.5, ease: 'back.out(3)' });
+    };
+
+    if (reducido) {
+      colocar();
+      boton.addEventListener('click', () => repartir(true));
+      return;
+    }
+
+    // ── Entrada ─────────────────────────────────────────────────────────
+    const g = geo();
+    gsap.set(giros, { rotationY: 180 });
+    gsap.set(cartas, { x: g.mazo.x, y: g.mazo.y, rotation: 12, scale: 0.9, opacity: 0 });
+    gsap.set(sumas, { opacity: 0, y: 10 });
+    gsap.set(sello, { scale: 0, rotation: -25, opacity: 0 });
+    num.textContent = '0';
+
+    const tl = gsap.timeline({ delay: 0.1, defaults: { ease: 'power3.out' } });
+    tl.from('.hero__linea > span', { yPercent: 110, duration: 0.9, stagger: 0.08, ease: 'power4.out' }, 0)
+      .from('.hero__a', { y: 24, opacity: 0, duration: 0.7, stagger: 0.06 }, 0.35)
+      .from(mazo, { y: -60, opacity: 0, rotation: -10, duration: 0.7 }, 0.1)
+      .from('.hero__marcador', { opacity: 0, y: 20, duration: 0.5 }, 0.35)
+      .from(fichas, { scale: 0, opacity: 0, stagger: 0.08, duration: 0.6, ease: 'back.out(2)' }, 0.4);
+
+    let acumulado = 0;
+    cartas.forEach((c, i) => {
+      tl.to(c, { x: g.pos[i].x, y: g.pos[i].y, rotation: g.pos[i].r, scale: 1, opacity: 1, duration: 0.65 }, i === 0 ? 0.55 : '-=0.42')
+        .to(giros[i], { rotationY: 0, duration: 0.6, ease: 'power2.inOut' }, '<0.15')
+        .to(sumas[i], { opacity: 1, y: 0, duration: 0.3 }, '<0.35')
+        .add(() => {
+          acumulado += [11, 10, 10, 10, 10][i];
+          contar(acumulado, 0.35);
+        }, '<');
+    });
+    tl.to(sumas, { opacity: 0, y: -10, duration: 0.4, stagger: 0.04 }, '+=0.5')
+      .to(sello, { scale: 1, rotation: -8, opacity: 1, duration: 0.7, ease: 'back.out(2.5)' }, '<')
+      .to(cartas, { y: '-=14', duration: 0.25, stagger: 0.05, yoyo: true, repeat: 1, ease: 'sine.inOut' }, '<');
+
+    // ── Flotación y paralaje ────────────────────────────────────────────
+    gsap.to(mesa, { y: -10, duration: 3, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+    const motas = [...hero.querySelectorAll<SVGElement>('[data-mota]')];
+    motas.forEach((m, i) => {
+      const op = parseFloat(m.style.getPropertyValue('--o')) || 0.1;
+      gsap.fromTo(m, { opacity: 0, scale: 0.6 }, { opacity: op, scale: 1, duration: 1.6, delay: 0.4 + i * 0.12, ease: 'power2.out' });
+      gsap.to(m, {
+        y: gsap.utils.random(-60, -20),
+        x: gsap.utils.random(-30, 30),
+        rotation: gsap.utils.random(-40, 40),
+        duration: gsap.utils.random(6, 11),
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1,
+      });
+    });
+    fichas.forEach((f, i) => gsap.to(f, { y: -14 - i * 4, rotation: 20, duration: 2.4 + i * 0.5, ease: 'sine.inOut', yoyo: true, repeat: -1 }));
+
+    if (matchMedia('(hover: hover)').matches) {
+      const rx = gsap.quickTo(escena, 'rotationX', { duration: 0.8, ease: 'power3.out' });
+      const ry = gsap.quickTo(escena, 'rotationY', { duration: 0.8, ease: 'power3.out' });
+      gsap.set(escena, { transformPerspective: 1100 });
+      hero.addEventListener('pointermove', (e) => {
+        const r = hero.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        ry(px * 14);
+        rx(-py * 10);
+        gsap.to(hero, { '--mx': `${(px + 0.5) * 100}%`, '--my': `${(py + 0.5) * 100}%`, duration: 0.9, ease: 'power3.out', overwrite: 'auto' });
+        fichas.forEach((f) => gsap.to(f, { x: px * 40 * Number(f.dataset.ficha), duration: 0.8, overwrite: 'auto' }));
+        gsap.to('.hero__polvo', { x: px * -30, y: py * -20, duration: 1.2, ease: 'power3.out', overwrite: 'auto' });
+      });
+    }
+
+    boton.addEventListener('click', () => repartir(false));
+
+    // ── Repartir manos al azar ──────────────────────────────────────────
+    let ocupado = false;
+    function repartir(instantaneo: boolean) {
+      if (ocupado) return;
+      ocupado = true;
+      boton.disabled = true;
+      const mano: Carta[] = barajar(baraja()).slice(0, 5);
+      const r = puntuar(mano);
+      const cuenta = mano.map((c) => r.cuentan.includes(c));
+      const comentario = r.ajiley
+        ? '¡AJILEY! La jugada máxima: sale una vez cada 4.700 manos.'
+        : `${r.puntos} puntos en ${r.palo}: mejor que el ${peorQue(r.puntos)} % de las manos.${r.puntos >= 41 ? ' ¡Manón!' : r.puntos >= 30 ? ' Buena mano.' : r.puntos < 21 ? ' Flojita: toca botar.' : ''}`;
+
+      const poner = () =>
+        cartas.forEach((c, i) => {
+          c.querySelector('.hero__cara--frente')!.innerHTML = svgNaipe(mano[i].n, mano[i].palo);
+          sumas[i].textContent = cuenta[i] ? `+${VALOR[mano[i].n]}` : '';
+        });
+
+      if (instantaneo) {
+        poner();
+        num.textContent = String(r.puntos);
+        sello.style.opacity = r.ajiley ? '1' : '0';
+        cartas.forEach((c, i) => (c.style.opacity = cuenta[i] ? '1' : '0.55'));
+        texto.textContent = comentario;
+        ocupado = false;
+        boton.disabled = false;
+        return;
+      }
+
+      const g = geo();
+      const t = gsap.timeline({
+        defaults: { ease: 'power3.inOut' },
+        onComplete: () => {
+          ocupado = false;
+          boton.disabled = false;
+        },
+      });
+      t.to(sello, { scale: 0, opacity: 0, duration: 0.3 })
+        .to(giros, { rotationY: 180, duration: 0.45, stagger: 0.04 }, '<')
+        .to(cartas, { x: g.mazo.x, y: g.mazo.y, rotation: 12, scale: 0.9, opacity: 1, duration: 0.55, stagger: 0.05 }, '-=0.2')
+        .add(() => {
+          poner();
+          num.textContent = '0';
+          texto.textContent = 'Repartiendo…';
+        });
+      cartas.forEach((c, i) => {
+        t.to(c, { x: g.pos[i].x, y: g.pos[i].y, rotation: g.pos[i].r, scale: 1, duration: 0.55, ease: 'power3.out' }, i === 0 ? '+=0.05' : '-=0.38')
+          .to(giros[i], { rotationY: 0, duration: 0.5 }, '<0.1')
+          .to(c, { opacity: cuenta[i] ? 1 : 0.5, y: g.pos[i].y - (cuenta[i] ? 16 : 0), duration: 0.35 }, '+=0.02');
+      });
+      t.to(sumas, { opacity: (i) => (cuenta[i] ? 1 : 0), y: 0, duration: 0.3, stagger: 0.05 })
+        .add(() => {
+          contar(r.puntos, 0.8);
+          texto.textContent = comentario;
+        }, '<')
+        .to(sello, { scale: r.ajiley ? 1 : 0, opacity: r.ajiley ? 1 : 0, rotation: -8, duration: 0.6, ease: 'back.out(2.5)' }, '+=0.3')
+        .to(sumas, { opacity: 0, duration: 0.4 }, '+=1.2');
+      boton.textContent = 'Repartir otra';
+    }
+
+    addEventListener('resize', () => {
+      if (!ocupado) colocar();
+    });
+  }
+</script>
+
+<style>
+  .hero {
+    --mx: 60%;
+    --my: 40%;
+    overflow: hidden;
+    padding-block: clamp(40px, 6vw, 80px) clamp(70px, 9vw, 120px);
+    min-height: min(calc(100svh - 74px), 900px);
+    display: grid;
+    align-items: center;
+  }
+  .hero__luz {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle 520px at var(--mx) var(--my), rgb(64 200 135 / 0.22), transparent 70%),
+      radial-gradient(circle 900px at 70% 50%, rgb(242 193 78 / 0.07), transparent 70%);
+  }
+  .hero__polvo {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .hero__mota {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--s);
+    height: var(--s);
+    opacity: var(--o);
+    filter: blur(0.4px) grayscale(0.3);
+  }
+  .hero__fila {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1.05fr;
+    gap: clamp(28px, 5vw, 72px);
+    align-items: center;
+  }
+  .hero__titulo {
+    font-size: clamp(3rem, 1.4rem + 6vw, 6.6rem);
+    line-height: 0.95;
+    font-weight: 650;
+    margin-bottom: 0.4em;
+  }
+  .hero__linea {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.06em;
+  }
+  .hero__linea > span {
+    display: inline-block;
+  }
+  .hero__botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 1.4em;
+  }
+  .hero__betzue {
+    margin: 1.2em 0 0;
+    font-size: 0.98rem;
+    color: #c9d8cf;
+  }
+
+  /* Escena */
+  .hero__escena {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    transform-style: preserve-3d;
+  }
+  .hero__marcador {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    z-index: 3;
+  }
+  .hero__num {
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    font-size: clamp(4.5rem, 3rem + 5vw, 7.5rem);
+    line-height: 0.9;
+    font-variant-numeric: tabular-nums;
+    color: transparent;
+    background: var(--lamina);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: lamina 5s var(--ease) infinite alternate;
+    filter: drop-shadow(0 6px 18px rgb(242 193 78 / 0.35));
+    display: inline-block;
+    min-width: 2ch;
+    text-align: right;
+  }
+  .hero__pts {
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: #c9d8cf;
+  }
+  .hero__sello {
+    position: absolute;
+    right: -120px;
+    top: 4px;
+    padding: 0.25em 0.7em;
+    border: 3px solid var(--rojo);
+    border-radius: 8px;
+    color: #ff4d6a;
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.5rem;
+    letter-spacing: 0.02em;
+    transform: rotate(-8deg);
+    text-shadow: 0 0 14px rgb(228 0 43 / 0.5);
+    box-shadow: 0 0 22px rgb(228 0 43 / 0.35), inset 0 0 12px rgb(228 0 43 / 0.25);
+    background: rgb(4 22 15 / 0.6);
+  }
+  .hero__mesa {
+    --w: clamp(84px, 9.2vw, 128px);
+    position: relative;
+    width: 100%;
+    height: calc(var(--w) * 2.35);
+    perspective: 1200px;
+  }
+  .hero__mazo {
+    position: absolute;
+    right: 2%;
+    top: 0;
+    width: calc(var(--w) * 0.78);
+    aspect-ratio: 2 / 3;
+    rotate: 14deg;
+  }
+  .hero__mazo-carta {
+    position: absolute;
+    inset: 0;
+    translate: calc(var(--i) * -2px) calc(var(--i) * -3px);
+    filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.4));
+  }
+  .hero__mazo-carta :global(svg),
+  .hero__cara :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+  .hero__carta {
+    position: absolute;
+    left: 50%;
+    top: 58%;
+    width: var(--w);
+    aspect-ratio: 2 / 3;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  /* Sin JavaScript: el abanico ya colocado */
+  .hero:not(.es-montado) .hero__carta {
+    transform: translate(-50%, -50%) translateX(calc((var(--k) - 2) * var(--w) * 0.6)) rotate(calc((var(--k) - 2) * 8deg));
+  }
+  .hero__carta:nth-of-type(2) {
+    --k: 0;
+  }
+  .hero__carta:nth-of-type(3) {
+    --k: 1;
+  }
+  .hero__carta:nth-of-type(4) {
+    --k: 2;
+  }
+  .hero__carta:nth-of-type(5) {
+    --k: 3;
+  }
+  .hero__carta:nth-of-type(6) {
+    --k: 4;
+  }
+  .hero__giro {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+  }
+  .hero__cara {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    filter: drop-shadow(0 14px 18px rgb(0 0 0 / 0.45));
+  }
+  .hero__cara--dorso {
+    transform: rotateY(180deg);
+  }
+  .hero__suma {
+    position: absolute;
+    left: 50%;
+    top: -34px;
+    translate: -50% 0;
+    padding: 0.1em 0.55em;
+    border-radius: 999px;
+    background: var(--lamina);
+    color: var(--tinta-oscura);
+    font-weight: 900;
+    font-size: 0.9rem;
+    box-shadow: 0 6px 14px -6px rgb(0 0 0 / 0.5);
+  }
+  .hero__suma:empty {
+    display: none;
+  }
+  .hero__ficha {
+    --c: #e4002b;
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle, var(--c) 0 42%, #fff 42% 47%, var(--c) 47% 100%);
+    box-shadow:
+      inset 0 0 0 5px var(--c),
+      inset 0 0 0 7px rgb(255 255 255 / 0.85),
+      0 5px 0 color-mix(in srgb, var(--c) 60%, #000),
+      0 16px 20px -6px rgb(0 0 0 / 0.55);
+  }
+  .hero__ficha::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: repeating-conic-gradient(rgb(255 255 255 / 0.95) 0 12deg, transparent 12deg 45deg);
+    -webkit-mask: radial-gradient(circle, transparent 0 62%, #000 63% 100%);
+    mask: radial-gradient(circle, transparent 0 62%, #000 63% 100%);
+  }
+  .hero__ficha--roja {
+    left: 4%;
+    bottom: 6%;
+  }
+  .hero__ficha--azul {
+    --c: #0057b8;
+    left: 14%;
+    top: 4%;
+    width: 34px;
+    height: 34px;
+  }
+  .hero__ficha--oro {
+    --c: #c99400;
+    right: 8%;
+    bottom: 0;
+  }
+  .hero__controles {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    margin-top: 6px;
+    text-align: center;
+  }
+  .hero__comentario {
+    margin: 0;
+    min-height: 1.6em;
+    font-weight: 700;
+    color: #e8efe9;
+    max-width: 40ch;
+  }
+  .hero__bajar {
+    position: absolute;
+    left: 50%;
+    bottom: 22px;
+    translate: -50% 0;
+    width: 26px;
+    height: 42px;
+    border: 2px solid rgb(255 255 255 / 0.45);
+    border-radius: 999px;
+  }
+  .hero__bajar span {
+    position: absolute;
+    left: 50%;
+    top: 8px;
+    width: 4px;
+    height: 8px;
+    translate: -50% 0;
+    border-radius: 4px;
+    background: var(--oro);
+    animation: bajar 1.8s var(--ease) infinite;
+  }
+  @keyframes bajar {
+    0% {
+      opacity: 0;
+      transform: translateY(0);
+    }
+    30% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+  @media (max-width: 900px) {
+    .hero {
+      min-height: 0;
+    }
+    .hero__fila {
+      grid-template-columns: 1fr;
+    }
+    .hero__mesa {
+      --w: clamp(62px, 17vw, 96px);
+    }
+    .hero__sello {
+      right: -104px;
+      font-size: 1.2rem;
+    }
+    .hero__bajar {
+      display: none;
+    }
+  }
+</style>
