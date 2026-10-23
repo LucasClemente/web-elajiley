@@ -1,0 +1,368 @@
+---
+import { Picture, Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Mano from '../components/Mano.astro';
+import TarjetaPagina from '../components/TarjetaPagina.astro';
+import BandaPractica from '../components/BandaPractica.astro';
+import Faq from '../components/Faq.astro';
+import hero from '../assets/hero.jpg';
+import guaca from '../assets/marca/guaca.png';
+import { PAGINAS } from '../lib/paginas';
+import { SITE, BETZUE } from '../config';
+
+const aprende = ['/reglas/', '/como-jugar/', '/puntuacion/', '/estrategia/', '/vocabulario/', '/historia/']
+  .map((h) => PAGINAS.find((p) => p.href === h))
+  .filter((p) => p !== undefined);
+const masTemas = ['/probabilidades/', '/variantes/', '/baraja-espanola/', '/ajiley-o-ajilei/', '/jugar-online/', '/preguntas-frecuentes/']
+  .map((h) => PAGINAS.find((p) => p.href === h))
+  .filter((p) => p !== undefined);
+
+const preguntas = [
+  {
+    q: '¿Qué es el Ajiley?',
+    a: 'El Ajiley es un juego de cartas venezolano de envite y azar que se juega con la baraja española de 40 cartas. Cada jugador recibe cinco cartas, puede botar y pedir cartas nuevas una vez, y gana quien reúna más puntos en cartas de un mismo palo.',
+  },
+  {
+    q: '¿Cuántas personas pueden jugar al Ajiley?',
+    a: 'Se juega entre 2 y 5 personas. La mesa más habitual es de cuatro o cinco jugadores.',
+  },
+  {
+    q: '¿Qué es un ajiley en el juego?',
+    a: 'Es la mejor jugada posible: tener las cinco cartas del mismo palo. Vale 51 puntos y le gana a cualquier otra mano.',
+  },
+  {
+    q: '¿Se escribe ajiley, ajilei o ajilé?',
+    a: 'Las tres formas aparecen en el <em>Diccionario de americanismos</em> de la Asociación de Academias de la Lengua Española, que registra «ajiley» como entrada principal y «ajilé» y «ajiléi» como variantes. <a href="/ajiley-o-ajilei/">Te lo explicamos aquí</a>.',
+  },
+  {
+    q: '¿Dónde puedo jugar Ajiley online?',
+    a: `Puedes practicar gratis en nuestro <a href="/practicar/">simulador</a>. Si quieres jugar en una mesa real desde el celular, en Venezuela puedes hacerlo en <a href="${BETZUE.ajiley('inicio-faq')}">Betzue</a> (solo mayores de 18 años).`,
+  },
+];
+
+const schema = [
+  {
+    '@type': 'WebPage',
+    '@id': `${SITE.url}/#inicio`,
+    url: `${SITE.url}/`,
+    name: 'Ajiley: qué es y cómo se juega el juego de cartas venezolano',
+    inLanguage: SITE.lang,
+    about: { '@id': `${SITE.url}/#juego` },
+    isPartOf: { '@id': `${SITE.url}/#sitio` },
+  },
+  {
+    '@type': 'FAQPage',
+    mainEntity: preguntas.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a.replace(/<[^>]+>/g, '') },
+    })),
+  },
+];
+---
+<Base
+  title="Ajiley: qué es y cómo se juega el juego de cartas venezolano"
+  description="Todo sobre el Ajiley, el juego de cartas venezolano con baraja española: reglas, puntuación, estrategia, vocabulario e historia. Practica gratis contra Guaca."
+  schema={schema}
+>
+  <section class="portada">
+    <div class="contenedor portada__fila">
+      <div class="portada__texto">
+        <p class="antetitulo">La guía del juego de cartas venezolano</p>
+        <h1>Ajiley: aprende a jugarlo de principio a fin</h1>
+        <p class="lead">
+          Reglas claras, la puntuación carta por carta, estrategia de verdad y la historia de un juego que se ha jugado en las mesas
+          venezolanas por generaciones. Todo en un solo sitio, y gratis.
+        </p>
+        <div class="portada__botones">
+          <a href="/reglas/" class="boton">Ver las reglas</a>
+          <a href="/practicar/" class="boton boton--verde">Practicar gratis</a>
+        </div>
+      </div>
+      <div class="portada__imagen">
+        <Picture
+          src={hero}
+          formats={['avif', 'webp']}
+          widths={[480, 760, 1100, 1500]}
+          sizes="(max-width: 900px) 100vw, 640px"
+          alt="Mesa de Ajiley sobre tapete verde: una mano con el as, el rey, el caballo, la sota y el siete de oros"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="que-es">
+    <div class="contenedor que-es">
+      <div class="prosa">
+        <h2 id="que-es">¿Qué es el Ajiley?</h2>
+        <p>
+          <strong>El Ajiley es un juego de cartas venezolano de envite y azar que se juega con la baraja española.</strong> Cada jugador
+          recibe cinco cartas, puede botar las que no le sirven y pedir otras una sola vez, y gana la mano quien reúna más puntos en cartas
+          de un mismo palo. La jugada soñada es el <em>ajiley</em>: las cinco cartas del mismo palo.
+        </p>
+        <p>
+          Se juega entre dos y cinco personas, se apuesta en varias rondas (pasar, ir, subir o irse) y se presta para lo mejor de las
+          mesas venezolanas: mucha conversación, algo de faroleo y una buena dosis de suerte. El <em>Diccionario de americanismos</em> lo
+          recoge como venezolanismo, también escrito <em>ajilé</em> o <em>ajiléi</em>.
+        </p>
+        <p><a href="/reglas/">Lee el reglamento completo</a> o sigue con el resumen.</p>
+      </div>
+
+      <aside class="ficha" aria-label="Ficha del juego">
+        <h3>Ficha del juego</h3>
+        <dl>
+          <div><dt>Tipo</dt><dd>Envite y azar</dd></div>
+          <div><dt>Jugadores</dt><dd>De 2 a 5</dd></div>
+          <div><dt>Baraja</dt><dd>Española de 40 cartas</dd></div>
+          <div><dt>Cartas por jugador</dt><dd>5</dd></div>
+          <div><dt>Descarte</dt><dd>Una sola vez</dd></div>
+          <div><dt>Mejor jugada</dt><dd>Ajiley: 5 cartas del mismo palo</dd></div>
+          <div><dt>Origen</dt><dd>Venezuela</dd></div>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <section class="seccion seccion--arena" aria-labelledby="resumen">
+    <div class="contenedor">
+      <h2 id="resumen">El Ajiley en un minuto</h2>
+      <ol class="minuto">
+        <li>
+          <strong>Se pone la entrada</strong>
+          <span>Cada jugador aporta su parte al pote antes de repartir.</span>
+        </li>
+        <li>
+          <strong>Dos cartas y a envitar</strong>
+          <span>El pie reparte dos cartas a cada uno y empieza la primera ronda: pasar, ir, subir o irse.</span>
+        </li>
+        <li>
+          <strong>Tres cartas más</strong>
+          <span>Se completan las cinco cartas, una a una, y se vuelve a envitar.</span>
+        </li>
+        <li>
+          <strong>Botar y pedir</strong>
+          <span>Cada jugador bota las cartas que no le sirven y recibe otras. Solo una vez.</span>
+        </li>
+        <li>
+          <strong>Se muestran las cartas</strong>
+          <span>Tras el último envite, gana quien sume más puntos en un mismo palo.</span>
+        </li>
+      </ol>
+      <Mano
+        titulo="La mano soñada: un ajiley de oros"
+        cartas="1o 12o 11o 10o 7o"
+        resultado="¡Ajiley! 51 puntos"
+      />
+      <p class="centrado"><a href="/como-jugar/" class="boton boton--claro">Ver una mano completa, paso a paso</a></p>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="aprende">
+    <div class="contenedor">
+      <h2 id="aprende">Aprende el juego</h2>
+      <div class="rejilla">
+        {aprende.map((p) => <TarjetaPagina pagina={p} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion seccion--tapete" aria-labelledby="herramientas">
+    <div class="contenedor herramientas">
+      <div>
+        <h2 id="herramientas">Practica sin arriesgar nada</h2>
+        <p>
+          Guaca reparte, tú decides. Juega manos completas con las reglas venezolanas en el simulador, o usa la calculadora para saber al
+          instante cuántos puntos vale cualquier mano. Todo gratis, sin registro y sin dinero.
+        </p>
+        <div class="portada__botones">
+          <a href="/practicar/" class="boton">Jugar contra Guaca</a>
+          <a href="/calculadora/" class="boton boton--claro">Abrir la calculadora</a>
+        </div>
+      </div>
+      <Image src={guaca} alt="Guaca, la guacamaya, enseñando un abanico de cartas de oros" width={300} densities={[1, 2]} loading="lazy" />
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="mas">
+    <div class="contenedor">
+      <h2 id="mas">Más sobre el Ajiley</h2>
+      <div class="rejilla">
+        {masTemas.map((p) => <TarjetaPagina pagina={p} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion seccion--arena">
+    <div class="contenedor prosa faq-inicio">
+      <Faq preguntas={preguntas} />
+    </div>
+  </section>
+
+  <BandaPractica />
+</Base>
+
+<style>
+  .portada {
+    padding-block: clamp(28px, 5vw, 64px);
+    background:
+      radial-gradient(circle at 85% 10%, rgb(255 194 14 / 0.25), transparent 40%),
+      radial-gradient(circle at 0% 100%, rgb(11 107 69 / 0.14), transparent 45%);
+  }
+  .portada__fila {
+    display: grid;
+    grid-template-columns: 1fr 1.05fr;
+    gap: clamp(24px, 4vw, 56px);
+    align-items: center;
+  }
+  .portada h1 {
+    font-size: clamp(2.3rem, 1.5rem + 3.4vw, 4rem);
+  }
+  .portada__botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 1.2em;
+  }
+  .portada__imagen :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: 24px;
+    border: var(--borde-sticker);
+    box-shadow: 0 8px 0 var(--noche);
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    object-position: 78% 50%;
+  }
+
+  .que-es {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: clamp(24px, 5vw, 64px);
+    align-items: start;
+  }
+  .ficha {
+    background: #fff;
+    border: var(--borde-sticker);
+    border-radius: var(--radio);
+    box-shadow: 0 5px 0 var(--noche);
+    padding: 22px 22px 14px;
+  }
+  .ficha h3 {
+    margin-bottom: 0.6em;
+  }
+  .ficha dl {
+    margin: 0;
+  }
+  .ficha dl > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 0;
+    border-top: 1px dashed var(--linea);
+  }
+  .ficha dt {
+    color: var(--tinta-suave);
+    font-weight: 700;
+  }
+  .ficha dd {
+    margin: 0;
+    font-weight: 800;
+    text-align: right;
+    color: var(--noche);
+  }
+
+  .minuto {
+    list-style: none;
+    counter-reset: m;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    padding: 0;
+    margin: 0 0 8px;
+  }
+  .minuto li {
+    counter-increment: m;
+    background: #fff;
+    border: 2px solid var(--linea);
+    border-radius: var(--radio);
+    padding: 16px;
+    display: grid;
+    gap: 4px;
+    align-content: start;
+  }
+  .minuto li::before {
+    content: counter(m);
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--oro);
+    border: 2px solid var(--noche);
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    color: var(--noche);
+    margin-bottom: 6px;
+  }
+  .minuto strong {
+    font-family: var(--f-titulo);
+    color: var(--noche);
+    font-size: 1.12rem;
+    line-height: 1.2;
+  }
+  .minuto span {
+    font-size: 0.95rem;
+    color: var(--tinta-suave);
+    line-height: 1.5;
+  }
+  .centrado {
+    text-align: center;
+  }
+
+  .herramientas {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 32px;
+    align-items: center;
+  }
+  .herramientas p {
+    max-width: 58ch;
+    font-size: 1.08rem;
+  }
+  .herramientas :global(img) {
+    width: clamp(160px, 22vw, 280px);
+  }
+  .faq-inicio {
+    margin-inline: auto;
+  }
+
+  @media (max-width: 1000px) {
+    .minuto {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 900px) {
+    .portada__fila,
+    .que-es {
+      grid-template-columns: 1fr;
+    }
+    .herramientas {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+    .herramientas :global(img) {
+      margin-inline: auto;
+      order: -1;
+    }
+    .herramientas .portada__botones {
+      justify-content: center;
+    }
+  }
+  @media (max-width: 520px) {
+    .minuto {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

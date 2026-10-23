@@ -1,0 +1,8 @@
+﻿Design a complete horizontal LOGO LOCKUP for a Spanish-language website called "El Ajiley" (the definitive guide to the Venezuelan card game Ajiley).
+
+Left: an emblem — a fan of five Spanish-deck playing cards of the suit of OROS (golden coins with a sun medallion), with one scarlet macaw tail feather tucked behind the fan.
+Right: the wordmark "El Ajiley" exactly spelled E-l space A-j-i-l-e-y, in a chunky, rounded, friendly display typeface (similar to Baloo 2, extra bold), gold #FFC20E letters with a thick navy #0A2F6E outline and a subtle red #E4002B drop shadow, slightly arched. Under it, small clean sans-serif text in navy: "La guía del juego de cartas venezolano".
+
+Style: bold modern flat vector with soft cel shading, thick navy outlines, white sticker border around the whole lockup, festive Venezuelan/Caribbean vibe but tidy and premium. Palette: gold #FFC20E, card-table green #0B6B45, scarlet #E4002B, navy #0A2F6E, cream #FFF4DC.
+
+Background: perfectly flat solid pure magenta #FF00FF. No French suits (no hearts, diamonds, clubs, spades). Spell all text exactly as given, in Spanish, with the accent on "guía".

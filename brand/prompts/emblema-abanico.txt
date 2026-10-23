@@ -1,0 +1,9 @@
+﻿Design a mascot-free logo EMBLEM (icon only, NO text, NO letters) for "El Ajiley", the definitive guide to Ajiley, a traditional Venezuelan card game played with the Spanish deck (baraja española).
+
+Subject: a tidy fan of exactly five Spanish-suited playing cards, all of the suit of OROS (round golden coins with a simple sun/flower medallion in the centre). Show the front card clearly: a cream card with rounded corners showing one big golden oros coin. The other four cards fan out behind it. Tucked behind the fan, one long scarlet-macaw tail feather (red with a little yellow and blue at the tip) peeks out diagonally — a small nod to Venezuela's macaw.
+
+Style: bold, friendly, modern flat vector illustration with soft cel shading, thick clean dark-navy (#0A2F6E) outlines and an outer white sticker border, like a premium mobile-game app icon. Limited palette: gold #FFC20E, deep card-table green #0B6B45, scarlet red #E4002B, navy #0A2F6E, cream #FFF4DC. Crisp, symmetrical, readable at 32px.
+
+Composition: centred, emblem fills about 80% of the frame. Background: perfectly flat, solid pure magenta #FF00FF, no gradient, no shadow on the background, no texture, no border around the image.
+
+Do NOT use French suits (no hearts, diamonds, clubs or spades). No text, no numbers on the cards except optional small corner index "1".

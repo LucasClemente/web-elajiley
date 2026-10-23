@@ -1,0 +1,149 @@
+---
+import { Image } from 'astro:assets';
+import emblema from '../assets/marca/emblema.png';
+import { FOOTER_NAV, SITE, BETZUE } from '../config';
+---
+<footer class="pie">
+  <div class="contenedor">
+    <div class="pie__grid">
+      <div class="pie__marca">
+        <a href="/" class="pie__logo" aria-label="El Ajiley, inicio">
+          <Image src={emblema} alt="" width={64} height={64} densities={[1, 2]} loading="lazy" />
+          <span>El Ajiley</span>
+        </a>
+        <p>{SITE.tagline}. Reglas, puntuación, estrategia e historia del juego de envite con baraja española que se juega en toda Venezuela.</p>
+        <p class="pie__apoyo">
+          Una guía hecha con el apoyo de <a href={BETZUE.ajiley('pie')}>Betzue</a>. {BETZUE.lema}
+        </p>
+      </div>
+
+      {FOOTER_NAV.map((col) => (
+        <nav class="pie__col" aria-label={col.title}>
+          <h2>{col.title}</h2>
+          <ul>
+            {col.links.map((l) => (
+              <li>
+                <a href={l.href}>{l.label}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ))}
+    </div>
+
+    <div class="pie__legal">
+      <span class="pie__edad" aria-label="Solo mayores de 18 años">+18</span>
+      <p>
+        El juego con dinero es solo para mayores de 18 años. Juega con responsabilidad: es un entretenimiento, no una forma de ganar
+        dinero. <a href="/juego-responsable/">Más información</a>.
+      </p>
+      <p class="pie__copy">© 2026 {SITE.name} · elajiley.com</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .pie {
+    background:
+      radial-gradient(circle at 10% 0%, rgb(255 255 255 / 0.05), transparent 40%), var(--tapete-900);
+    color: #cfe6da;
+    padding-block: 56px 28px;
+    font-size: 0.95rem;
+  }
+  .pie a {
+    color: #fff;
+    text-decoration-color: rgb(255 255 255 / 0.3);
+  }
+  .pie a:hover {
+    color: var(--oro);
+  }
+  .pie__grid {
+    display: grid;
+    grid-template-columns: 1.6fr repeat(4, 1fr);
+    gap: 32px;
+  }
+  .pie__logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    margin-bottom: 12px;
+  }
+  .pie__logo img {
+    width: 56px;
+    height: 56px;
+  }
+  .pie__logo span {
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    font-size: 1.7rem;
+    color: var(--oro);
+  }
+  .pie__apoyo {
+    color: #fff;
+    font-weight: 700;
+  }
+  .pie__col h2 {
+    font-size: 1.05rem;
+    color: var(--oro);
+    margin-bottom: 0.6em;
+  }
+  .pie__col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .pie__col a {
+    text-decoration: none;
+    color: #e6f3ec;
+  }
+  .pie__col a:hover {
+    text-decoration: underline;
+  }
+  .pie__legal {
+    margin-top: 40px;
+    padding-top: 22px;
+    border-top: 1px solid rgb(255 255 255 / 0.14);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    align-items: center;
+  }
+  .pie__legal p {
+    margin: 0;
+  }
+  .pie__edad {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 3px solid var(--rojo);
+    color: #fff;
+    font-weight: 900;
+    font-size: 0.95rem;
+    background: rgb(228 0 43 / 0.25);
+  }
+  .pie__copy {
+    color: #9fc4b1;
+    white-space: nowrap;
+  }
+  @media (max-width: 960px) {
+    .pie__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .pie__marca {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 640px) {
+    .pie__legal {
+      grid-template-columns: auto 1fr;
+    }
+    .pie__copy {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

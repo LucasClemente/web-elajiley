@@ -1,0 +1,9 @@
+﻿Design a minimal logo MONOGRAM icon (NO words) for "El Ajiley", the definitive guide to Ajiley, a Venezuelan card game played with the Spanish deck.
+
+Subject: a single upright playing card with rounded corners, tilted slightly (about 8 degrees). On the card, a bold, rounded, geometric capital letter "A". The crossbar of the "A" is replaced by a golden OROS coin (Spanish-deck gold coin with a simple sun medallion). Small sparkle accent near the top-right corner.
+
+Style: bold flat vector, thick dark-navy (#0A2F6E) outline, white outer sticker border, playful but premium, like a top app-store icon. Palette: card-table green #0B6B45 card face with cream #FFF4DC letter, gold #FFC20E coin, a thin scarlet #E4002B inner frame line on the card.
+
+Composition: centred, icon fills about 80% of the frame, readable at 32px. Background: perfectly flat solid pure magenta #FF00FF, no gradient, no shadow on the background.
+
+No other text or numbers.

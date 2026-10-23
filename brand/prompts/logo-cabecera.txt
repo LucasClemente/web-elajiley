@@ -1,0 +1,4 @@
+﻿Use the attached logo as the exact style reference. Create a compact horizontal version WITHOUT the tagline: only the emblem (fan of Spanish-deck OROS cards with the scarlet macaw feather) on the left and the wordmark "El Ajiley" on the right, same chunky rounded gold letters with thick navy outline and red drop shadow. The white sticker border should hug the emblem and wordmark tightly as one shape.
+
+All cards must be OROS (golden coins). No French suit symbols (no spades, hearts, diamonds, clubs).
+Background: perfectly flat solid pure magenta #FF00FF, edge to edge. Spell the wordmark exactly "El Ajiley".

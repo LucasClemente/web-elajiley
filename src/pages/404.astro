@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+import Naipe from '../components/Naipe.astro';
+import TarjetaPagina from '../components/TarjetaPagina.astro';
+import { PAGINAS } from '../lib/paginas';
+
+const destacadas = ['/reglas/', '/como-jugar/', '/puntuacion/', '/practicar/']
+  .map((h) => PAGINAS.find((p) => p.href === h))
+  .filter((p) => p !== undefined);
+---
+<Base title="¡Barajo! Página no encontrada" description="La página que buscas no existe en El Ajiley." noindex>
+  <section class="seccion">
+    <div class="contenedor no-encontrada">
+      <div class="no-encontrada__cartas" aria-hidden="true">
+        <Naipe n={4} palo="oros" tam="l" />
+        <Naipe n={10} palo="copas" tam="l" />
+        <Naipe n={4} palo="espadas" tam="l" />
+      </div>
+      <p class="antetitulo">Error 404</p>
+      <h1>¡Barajo! Esta mano no vale</h1>
+      <p class="lead">La página que buscas no existe o cambió de sitio. Se reparte de nuevo: elige por dónde seguir.</p>
+      <p><a href="/" class="boton">Volver al inicio</a></p>
+      <div class="rejilla">
+        {destacadas.map((p) => <TarjetaPagina pagina={p} />)}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .no-encontrada {
+    text-align: center;
+  }
+  .no-encontrada .lead {
+    max-width: 52ch;
+    margin-inline: auto;
+  }
+  .no-encontrada__cartas {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .no-encontrada .rejilla {
+    margin-top: 40px;
+    text-align: left;
+  }
+</style>

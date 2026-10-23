@@ -1,0 +1,135 @@
+---
+import '../styles/global.css';
+import { SITE, BETZUE, INDEXAR } from '../config';
+import Cabecera from '../components/Cabecera.astro';
+import Pie from '../components/Pie.astro';
+import SpritePalos from '../components/SpritePalos.astro';
+import logoCompleto from '../assets/marca/logo-completo.png';
+import { getImage } from 'astro:assets';
+
+export interface Miga {
+  name: string;
+  href: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  type?: 'website' | 'article';
+  /** JSON-LD propio de la página (Article, FAQPage…). */
+  schema?: Record<string, unknown>[];
+  migas?: Miga[];
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  image = '/compartir.jpg',
+  type = 'website',
+  schema = [],
+  migas = [],
+  noindex = false,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, SITE.url).href;
+const ogImage = new URL(image, SITE.url).href;
+const fullTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
+const robots = !INDEXAR || noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large';
+const logo = await getImage({ src: logoCompleto, width: 600, format: 'png' });
+
+const ORG_ID = `${SITE.url}/#organizacion`;
+const graph: Record<string, unknown>[] = [
+  {
+    '@type': 'Organization',
+    '@id': ORG_ID,
+    name: SITE.name,
+    url: `${SITE.url}/`,
+    logo: { '@type': 'ImageObject', url: new URL(logo.src, SITE.url).href },
+    description: SITE.description,
+    sponsor: { '@type': 'Organization', name: BETZUE.name, url: BETZUE.url, slogan: BETZUE.lema },
+  },
+  {
+    '@type': 'WebSite',
+    '@id': `${SITE.url}/#sitio`,
+    name: SITE.name,
+    alternateName: ['Ajiley', 'elajiley.com'],
+    url: `${SITE.url}/`,
+    inLanguage: SITE.lang,
+    publisher: { '@id': ORG_ID },
+  },
+  {
+    // La entidad "Ajiley" a la que se refieren todas las páginas (about).
+    '@type': 'Game',
+    '@id': `${SITE.url}/#juego`,
+    name: 'Ajiley',
+    alternateName: ['Ajilei', 'Ajilé', 'Ajiléi'],
+    description:
+      'Juego de cartas venezolano de envite y azar que se juega con la baraja española de 40 cartas. Cada jugador recibe cinco cartas, puede descartarse una vez y gana quien reúna más puntos en cartas de un mismo palo.',
+    numberOfPlayers: { '@type': 'QuantitativeValue', minValue: 2, maxValue: 5 },
+    gameItem: { '@type': 'Thing', name: 'Baraja española de 40 cartas' },
+    countryOfOrigin: { '@type': 'Country', name: 'Venezuela' },
+    url: `${SITE.url}/`,
+  },
+];
+if (migas.length) {
+  graph.push({
+    '@type': 'BreadcrumbList',
+    itemListElement: [{ name: 'Inicio', href: '/' }, ...migas].map((m, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: m.name,
+      item: new URL(m.href, SITE.url).href,
+    })),
+  });
+}
+graph.push(...schema);
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+---
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content={robots} />
+    <meta name="theme-color" content="#0b6b45" />
+
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/iconos/favicon-48.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/iconos/favicon-96.png" />
+    <link rel="apple-touch-icon" href="/iconos/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content={SITE.locale} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="El Ajiley, la guía del juego de cartas venezolano" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={jsonLd} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+    <SpritePalos />
+    <Cabecera />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Pie />
+  </body>
+</html>

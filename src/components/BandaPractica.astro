@@ -1,0 +1,63 @@
+---
+// Banda final común: invita a practicar gratis y, con un enlace secundario, a la mesa de Betzue.
+import { Image } from 'astro:assets';
+import guaca from '../assets/marca/guaca.png';
+import { BETZUE } from '../config';
+---
+<section class="banda seccion--tapete" aria-labelledby="banda-titulo">
+  <div class="contenedor banda__fila">
+    <Image src={guaca} alt="Guaca, la guacamaya, con un abanico de cartas de oros" width={220} densities={[1, 2]} loading="lazy" class="banda__guaca" />
+    <div>
+      <h2 id="banda-titulo">¿Te atreves con una mano?</h2>
+      <p>
+        Practica contra Guaca con las reglas venezolanas, sin registrarte y sin dinero. Cuando te sientas listo, tienes mesa de Ajiley
+        en <a href={BETZUE.ajiley('banda')}>Betzue</a>.
+      </p>
+      <div class="banda__botones">
+        <a href="/practicar/" class="boton">Practicar gratis</a>
+        <a href="/reglas/" class="boton boton--claro">Repasar las reglas</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .banda {
+    padding-block: clamp(40px, 6vw, 72px);
+  }
+  .banda__fila {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: clamp(20px, 4vw, 48px);
+    align-items: center;
+  }
+  .banda__guaca {
+    width: clamp(120px, 18vw, 200px);
+    height: auto;
+  }
+  .banda h2 {
+    margin-bottom: 0.3em;
+  }
+  .banda p {
+    max-width: 56ch;
+    font-size: 1.08rem;
+  }
+  .banda__botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  @media (max-width: 600px) {
+    .banda__fila {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+    .banda__guaca {
+      margin-inline: auto;
+    }
+    .banda__botones {
+      justify-content: center;
+    }
+  }
+</style>

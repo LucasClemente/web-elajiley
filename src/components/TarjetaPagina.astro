@@ -1,0 +1,63 @@
+---
+import type { Pagina } from '../lib/paginas';
+
+interface Props {
+  pagina: Pagina;
+}
+const { pagina } = Astro.props;
+---
+<a href={pagina.href} class="tarjeta-pagina">
+  <svg class="tarjeta-pagina__palo" viewBox="0 0 40 40" aria-hidden="true"><use href={`#p-${pagina.palo}`} width="40" height="40"></use></svg>
+  <span class="tarjeta-pagina__titulo">{pagina.titulo}</span>
+  <span class="tarjeta-pagina__resumen">{pagina.resumen}</span>
+  <span class="tarjeta-pagina__flecha" aria-hidden="true">→</span>
+</a>
+
+<style>
+  .tarjeta-pagina {
+    position: relative;
+    display: grid;
+    gap: 6px;
+    align-content: start;
+    padding: 20px 20px 22px;
+    background: #fff;
+    border: 2px solid var(--linea);
+    border-radius: var(--radio);
+    color: var(--tinta);
+    text-decoration: none;
+    transition:
+      transform 0.15s ease,
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  .tarjeta-pagina:hover {
+    transform: translateY(-3px);
+    border-color: var(--noche);
+    box-shadow: 0 5px 0 var(--noche);
+  }
+  .tarjeta-pagina__palo {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 4px;
+  }
+  .tarjeta-pagina__titulo {
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    color: var(--noche);
+    font-size: 1.2rem;
+    line-height: 1.2;
+  }
+  .tarjeta-pagina__resumen {
+    color: var(--tinta-suave);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .tarjeta-pagina__flecha {
+    position: absolute;
+    right: 18px;
+    top: 18px;
+    font-weight: 900;
+    color: var(--tapete);
+    font-size: 1.2rem;
+  }
+</style>

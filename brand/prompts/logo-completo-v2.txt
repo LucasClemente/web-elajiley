@@ -1,0 +1,6 @@
+﻿Use the attached logo as the exact reference. Keep the same composition, wordmark "El Ajiley", tagline "La guía del juego de cartas venezolano", colours, outlines, white sticker border and macaw feather.
+
+Fix only these details:
+- The dark navy card on the right shows a tiny spade symbol: remove it and show a small golden OROS coin instead. Every card must belong to the Spanish-deck suit of OROS (golden coins). No French suit symbols anywhere (no spades, hearts, diamonds, clubs).
+- Background must be perfectly flat solid pure magenta #FF00FF, edge to edge, no vignette.
+Keep the text spelled exactly as in the reference.

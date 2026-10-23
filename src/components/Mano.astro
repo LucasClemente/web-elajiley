@@ -1,0 +1,66 @@
+---
+import Naipe from './Naipe.astro';
+import type { Numero, Palo } from '../lib/naipe';
+
+interface Props {
+  /** Cartas en notación corta: "1o 12o 7c" (número + inicial del palo: o, c, e, b). */
+  cartas: string;
+  /** Índices (desde 0) de las cartas que no cuentan para la mano. */
+  apagar?: number[];
+  titulo?: string;
+  /** Texto del resultado, p. ej. "38 puntos en oros". */
+  resultado?: string;
+  tam?: 's' | 'm' | 'l';
+}
+const { cartas, apagar = [], titulo, resultado, tam = 'm' } = Astro.props;
+
+const PALO: Record<string, Palo> = { o: 'oros', c: 'copas', e: 'espadas', b: 'bastos' };
+const lista = cartas
+  .trim()
+  .split(/\s+/)
+  .map((c) => ({ n: Number(c.slice(0, -1)) as Numero, palo: PALO[c.slice(-1)] }));
+---
+<figure class="mano">
+  {titulo && <figcaption class="mano__titulo">{titulo}</figcaption>}
+  <div class="mano__cartas">
+    {lista.map((c, i) => <Naipe n={c.n} palo={c.palo} apagada={apagar.includes(i)} tam={tam} />)}
+  </div>
+  {resultado && <p class="mano__resultado">{resultado}</p>}
+</figure>
+
+<style>
+  .mano {
+    margin: 1.6em 0;
+    padding: 18px 16px 16px;
+    background:
+      radial-gradient(circle at 30% 0%, rgb(255 255 255 / 0.08), transparent 55%),
+      var(--tapete);
+    border: var(--borde-sticker);
+    border-radius: var(--radio);
+    box-shadow: 0 5px 0 var(--noche);
+    text-align: center;
+  }
+  .mano__titulo {
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    color: #fff;
+    font-size: 1.05rem;
+    margin-bottom: 10px;
+  }
+  .mano__cartas {
+    display: flex;
+    justify-content: center;
+    gap: clamp(4px, 1.5vw, 10px);
+    flex-wrap: nowrap;
+  }
+  .mano__resultado {
+    display: inline-block;
+    margin: 14px 0 0;
+    padding: 0.25em 0.9em;
+    border-radius: 999px;
+    background: var(--oro);
+    color: var(--noche-900);
+    font-weight: 900;
+    border: 2px solid var(--noche);
+  }
+</style>

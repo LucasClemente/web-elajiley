@@ -1,0 +1,54 @@
+---
+// "El consejo de Guaca": la guacamaya de Betzue aparece como tutora en los artículos.
+import { Image } from 'astro:assets';
+import guaca from '../assets/marca/guaca.png';
+
+interface Props {
+  titulo?: string;
+}
+const { titulo = 'El consejo de Guaca' } = Astro.props;
+---
+<aside class="consejo">
+  <Image src={guaca} alt="" width={84} height={84} densities={[1, 2]} class="consejo__guaca" loading="lazy" />
+  <div class="consejo__texto">
+    <strong class="consejo__titulo">{titulo}</strong>
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .consejo {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+    align-items: start;
+    margin: 1.8em 0;
+    padding: 16px 18px 16px 12px;
+    background: var(--rojo-100);
+    border: 2px solid #f6c3cd;
+    border-radius: var(--radio);
+  }
+  .consejo__guaca {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    margin-top: -4px;
+  }
+  .consejo__titulo {
+    display: block;
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    color: var(--rojo-700);
+    font-size: 1.1rem;
+    margin-bottom: 0.15em;
+  }
+  .consejo__texto :global(p:last-child) {
+    margin-bottom: 0;
+  }
+  @media (max-width: 480px) {
+    .consejo__guaca {
+      width: 56px;
+      height: 56px;
+    }
+  }
+</style>

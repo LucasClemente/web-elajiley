@@ -1,0 +1,6 @@
+﻿Edit the attached illustration. Keep the whole scene identical (table, hands, chips, food, coffee, background, style, colours) and change ONLY the five face-up cards held in the foreground hands so they are authentic Spanish-deck (baraja española) cards of the suit of OROS:
+- Corner indices must be NUMBERS only: from left to right 1, 12, 11, 10, 7. No letters at all (no A, K, Q, J).
+- Pips are round golden coins (oros), never stars.
+- 12 = Rey (a king), 11 = Caballo (a rider on a horse), 10 = Sota (a page/squire standing), each holding a golden coin, drawn in the traditional Spanish card style.
+- The 1 shows one large ornate golden coin; the 7 shows seven golden coins.
+No French suit symbols, no text other than the numbers.

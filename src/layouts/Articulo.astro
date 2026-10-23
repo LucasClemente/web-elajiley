@@ -1,0 +1,313 @@
+---
+// Plantilla de los artículos MDX (frontmatter: layout: ../layouts/Articulo.astro).
+import Base from './Base.astro';
+import TarjetaPagina from '../components/TarjetaPagina.astro';
+import BandaPractica from '../components/BandaPractica.astro';
+import { SITE } from '../config';
+import { pagina } from '../lib/paginas';
+
+interface Faq {
+  q: string;
+  a: string;
+}
+interface Frontmatter {
+  title: string;
+  seoTitle?: string;
+  description: string;
+  miga: string;
+  etiqueta?: string;
+  lead?: string;
+  publicado?: string;
+  actualizado?: string;
+  faq?: Faq[];
+  relacionados?: string[];
+  schemaExtra?: Record<string, unknown>[];
+  minutos?: number;
+  indice?: boolean;
+}
+interface Props {
+  frontmatter: Frontmatter;
+  headings?: { depth: number; slug: string; text: string }[];
+}
+
+const { frontmatter: fm, headings = [] } = Astro.props;
+const path = Astro.url.pathname;
+const url = new URL(path, SITE.url).href;
+const publicado = fm.publicado ?? SITE.updated;
+const actualizado = fm.actualizado ?? publicado;
+const h2 = headings.filter((h) => h.depth === 2);
+const mostrarIndice = (fm.indice ?? true) && h2.length >= 3;
+const relacionados = (fm.relacionados ?? []).map(pagina).filter((p) => p !== undefined);
+
+const fecha = (iso: string) =>
+  new Date(`${iso}T12:00:00`).toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' });
+
+const schema: Record<string, unknown>[] = [
+  {
+    '@type': 'Article',
+    '@id': `${url}#articulo`,
+    headline: fm.title,
+    description: fm.description,
+    inLanguage: SITE.lang,
+    datePublished: publicado,
+    dateModified: actualizado,
+    mainEntityOfPage: url,
+    image: new URL('/compartir.jpg', SITE.url).href,
+    author: { '@id': `${SITE.url}/#organizacion` },
+    publisher: { '@id': `${SITE.url}/#organizacion` },
+    about: { '@id': `${SITE.url}/#juego` },
+  },
+  ...(fm.schemaExtra ?? []),
+];
+if (fm.faq?.length) {
+  schema.push({
+    '@type': 'FAQPage',
+    mainEntity: fm.faq.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  });
+}
+---
+<Base
+  title={fm.seoTitle ?? fm.title}
+  description={fm.description}
+  type="article"
+  schema={schema}
+  migas={[{ name: fm.miga, href: path }]}
+>
+  <article class="articulo">
+    <header class="articulo__cabecera">
+      <div class="contenedor">
+        <nav class="migas" aria-label="Migas de pan">
+          <ol>
+            <li><a href="/">Inicio</a></li>
+            <li aria-current="page">{fm.miga}</li>
+          </ol>
+        </nav>
+        {fm.etiqueta && <span class="etiqueta">{fm.etiqueta}</span>}
+        <h1>{fm.title}</h1>
+        {fm.lead && <p class="lead articulo__lead">{fm.lead}</p>}
+        <p class="articulo__meta">
+          Por la redacción de El Ajiley · Actualizado el <time datetime={actualizado}>{fecha(actualizado)}</time>
+          {fm.minutos && <> · {fm.minutos} min de lectura</>}
+        </p>
+      </div>
+    </header>
+
+    <div class="contenedor articulo__cuerpo">
+      <div class="prosa">
+        {mostrarIndice && (
+          <details class="indice indice--movil">
+            <summary>En esta página</summary>
+            <ol>
+              {h2.map((h) => (
+                <li>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+            </ol>
+          </details>
+        )}
+        <slot />
+
+        {fm.faq?.length && (
+          <section class="faq" aria-labelledby="preguntas">
+            <h2 id="preguntas">Preguntas frecuentes</h2>
+            {fm.faq.map((f) => (
+              <details class="faq__item">
+                <summary>{f.q}</summary>
+                <p>{f.a}</p>
+              </details>
+            ))}
+          </section>
+        )}
+      </div>
+
+      <aside class="articulo__lateral">
+        {mostrarIndice && (
+          <nav class="indice" aria-label="En esta página">
+            <strong>En esta página</strong>
+            <ol>
+              {h2.map((h) => (
+                <li>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )}
+        <div class="lateral__practica">
+          <strong>¿Lo probamos?</strong>
+          <p>Juega una mano de práctica contra Guaca. Gratis y sin registro.</p>
+          <a href="/practicar/" class="boton boton--peque">Practicar ahora</a>
+        </div>
+      </aside>
+    </div>
+
+    {relacionados.length > 0 && (
+      <section class="seccion seccion--arena" aria-labelledby="sigue">
+        <div class="contenedor">
+          <h2 id="sigue">Sigue aprendiendo</h2>
+          <div class="rejilla">
+            {relacionados.map((p) => <TarjetaPagina pagina={p} />)}
+          </div>
+        </div>
+      </section>
+    )}
+  </article>
+  <BandaPractica />
+</Base>
+
+<style>
+  .articulo__cabecera {
+    padding-block: clamp(28px, 5vw, 56px) clamp(20px, 3vw, 32px);
+    background:
+      radial-gradient(circle at 90% -20%, rgb(255 194 14 / 0.22), transparent 45%),
+      radial-gradient(circle at 0% 120%, rgb(11 107 69 / 0.12), transparent 45%);
+    border-bottom: 2px dashed var(--linea);
+  }
+  .articulo__cabecera h1 {
+    max-width: 22ch;
+    margin-top: 0.35em;
+  }
+  .articulo__lead {
+    max-width: 62ch;
+  }
+  .articulo__meta {
+    color: var(--tinta-suave);
+    font-size: 0.92rem;
+    margin: 0;
+  }
+  .migas ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 14px;
+    font-size: 0.9rem;
+    color: var(--tinta-suave);
+  }
+  .migas li + li::before {
+    content: '›';
+    margin-right: 6px;
+    color: var(--oro-600);
+    font-weight: 900;
+  }
+  .articulo__cuerpo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: clamp(28px, 5vw, 64px);
+    padding-block: clamp(28px, 5vw, 48px) clamp(48px, 7vw, 80px);
+    align-items: start;
+  }
+  .articulo__lateral {
+    position: sticky;
+    top: 92px;
+    display: grid;
+    gap: 18px;
+  }
+  .indice {
+    background: #fff;
+    border: 2px solid var(--linea);
+    border-radius: var(--radio);
+    padding: 16px 18px;
+    font-size: 0.93rem;
+  }
+  .indice strong,
+  .indice summary {
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    color: var(--noche);
+    font-size: 1.05rem;
+  }
+  .indice ol {
+    margin: 8px 0 0;
+    padding-left: 1.2em;
+    display: grid;
+    gap: 4px;
+  }
+  .indice a {
+    color: var(--tinta);
+    text-decoration: none;
+  }
+  .indice a:hover {
+    color: var(--caribe);
+    text-decoration: underline;
+  }
+  .indice--movil {
+    display: none;
+    margin-bottom: 1.5em;
+  }
+  .indice--movil summary {
+    cursor: pointer;
+  }
+  .lateral__practica {
+    background: var(--tapete);
+    color: #e9f6ef;
+    border: var(--borde-sticker);
+    border-radius: var(--radio);
+    padding: 18px;
+    box-shadow: 0 4px 0 var(--noche);
+  }
+  .lateral__practica strong {
+    font-family: var(--f-titulo);
+    color: #fff;
+    font-size: 1.2rem;
+  }
+  .lateral__practica p {
+    margin: 0.3em 0 0.9em;
+    font-size: 0.95rem;
+  }
+
+  .faq {
+    margin-top: 2.5em;
+  }
+  .faq__item {
+    background: #fff;
+    border: 2px solid var(--linea);
+    border-radius: var(--radio-s);
+    margin-bottom: 10px;
+    padding: 0 1.1em;
+  }
+  .faq__item summary {
+    cursor: pointer;
+    padding: 0.9em 0;
+    font-weight: 800;
+    color: var(--noche);
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .faq__item summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq__item summary::after {
+    content: '+';
+    font-family: var(--f-titulo);
+    font-size: 1.4rem;
+    line-height: 1;
+    color: var(--tapete);
+  }
+  .faq__item[open] summary::after {
+    content: '–';
+  }
+  .faq__item p {
+    margin: 0 0 1em;
+  }
+
+  @media (max-width: 960px) {
+    .articulo__cuerpo {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .articulo__lateral {
+      display: none;
+    }
+    .indice--movil {
+      display: block;
+    }
+  }
+</style>

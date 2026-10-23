@@ -1,0 +1,55 @@
+---
+import { svgNaipe, type Numero, type Palo } from '../lib/naipe';
+
+interface Props {
+  n: Numero;
+  palo: Palo;
+  /** Resalta la carta (p. ej. la que cuenta para la mano). */
+  marcada?: boolean;
+  /** Atenúa la carta (p. ej. la que no suma). */
+  apagada?: boolean;
+  tam?: 's' | 'm' | 'l';
+}
+const { n, palo, marcada = false, apagada = false, tam = 'm' } = Astro.props;
+---
+<span class:list={['naipe', `naipe--${tam}`, { 'naipe--marcada': marcada, 'naipe--apagada': apagada }]} set:html={svgNaipe(n, palo)} />
+
+<style is:global>
+  .naipe {
+    --ancho-naipe: 84px;
+    display: inline-block;
+    width: var(--ancho-naipe);
+    flex: none;
+    filter: drop-shadow(0 3px 0 rgb(10 47 110 / 0.18));
+    transition: transform 0.15s ease;
+  }
+  .naipe--s {
+    --ancho-naipe: 58px;
+  }
+  .naipe--l {
+    --ancho-naipe: 118px;
+  }
+  .naipe svg {
+    width: 100%;
+    height: auto;
+  }
+  .naipe--marcada {
+    transform: translateY(-8px);
+    filter: drop-shadow(0 0 0 transparent) drop-shadow(0 6px 0 var(--oro));
+  }
+  .naipe--apagada {
+    opacity: 0.45;
+    filter: grayscale(0.6);
+  }
+  @media (max-width: 520px) {
+    .naipe {
+      --ancho-naipe: 62px;
+    }
+    .naipe--l {
+      --ancho-naipe: 84px;
+    }
+    .naipe--s {
+      --ancho-naipe: 46px;
+    }
+  }
+</style>

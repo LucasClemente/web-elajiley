@@ -1,0 +1,4 @@
+﻿Use the attached logo as the exact style reference. Create ONLY the emblem as a standalone square app icon: the fan of five Spanish-deck OROS playing cards (golden coins with a sun medallion) with the scarlet macaw tail feather (red, yellow tip, a touch of blue) curling below/behind the fan. NO text, NO letters.
+
+Same flat vector style, thick navy #0A2F6E outlines, white sticker border hugging the shape. Make it bold and simple enough to read at 32px: fewer small details, bigger coins. Centred, filling about 85% of the frame.
+No French suit symbols. Background: perfectly flat solid pure magenta #FF00FF, edge to edge.

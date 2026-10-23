@@ -1,0 +1,5 @@
+﻿Edit the attached image. Keep EVERYTHING identical (composition, colours, outlines, wordmark if present, feather, white sticker border, magenta background) except:
+- On the dark navy card at the right of the fan there are small spade symbols. Remove every spade symbol and replace each one with a small round golden coin dot, like the coin dots on the other cards.
+- No French suit symbols anywhere (no spades, hearts, diamonds, clubs).
+- If there is a small magenta gap/hole between the cards and the feather, fill it with the white sticker border so the outer shape is solid.
+- Background: perfectly flat solid pure magenta #FF00FF.
