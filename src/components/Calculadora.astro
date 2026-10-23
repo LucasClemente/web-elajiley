@@ -81,10 +81,7 @@ import { PALOS, NUMEROS, svgNaipe } from '../lib/naipe';
     setTimeout(() => {
       const ops = analizarDescarte(mano, { sieteDeOrosComodin: comodinEl.checked }, 41);
       const actual = puntuar(mano, { sieteDeOrosComodin: comodinEl.checked }).puntos;
-      const nombre = (i: number) => {
-        const c = mano[i];
-        return `${c.n === 1 ? 'as' : c.n} de ${c.palo}`;
-      };
+      const nombre = (i: number) => nombreCarta(mano[i].n, mano[i].palo).toLowerCase();
       opcionesEl.innerHTML = ops
         .slice(0, 4)
         .map((o, i) => {
