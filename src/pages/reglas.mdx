@@ -1,0 +1,128 @@
+---
+layout: ../layouts/Articulo.astro
+title: Reglas del ajiley, explicadas de principio a fin
+seoTitle: "Reglas del ajiley venezolano: cómo se juega, paso a paso"
+description: Reglamento completo del ajiley, el juego de cartas venezolano. Cuántos juegan, el pie y la mano, la entrada, las tres rondas de envite, cómo se bota, cuánto vale cada carta y quién gana.
+miga: Reglas
+etiqueta: Reglamento
+lead: "El ajiley se aprende en diez minutos y se disfruta toda la vida. Aquí está el reglamento en la forma más extendida en Venezuela, con las variantes que te puedes encontrar en otras mesas señaladas en su sitio."
+relacionados: ['/como-jugar/', '/valor-de-las-cartas/', '/variantes/']
+faq:
+  - q: ¿Cuántos jugadores pueden jugar al ajiley?
+    a: Entre 2 y 5. Con cinco jugadores, en muchas mesas el siete de oros se convierte en comodín.
+  - q: ¿Con cuántas cartas se juega el ajiley?
+    a: Con la baraja española de 40 cartas, es decir, sin ochos, sin nueves y sin comodines. Cada jugador termina con cinco cartas en la mano.
+  - q: ¿Cuántas veces se puede botar en el ajiley?
+    a: Una sola vez por mano. Cada jugador bota las cartas que no le sirven y el pie le da otras tantas.
+  - q: ¿Quién gana si hay empate en el ajiley?
+    a: Gana el jugador mano, el que está sentado a la derecha del que reparte.
+  - q: ¿Qué pasa si todos pasan?
+    a: Las fuentes venezolanas no lo fijan. En el giley español, el pariente más cercano del ajiley, se recogen las cartas y se reparte de nuevo, y es lo más práctico. Acuérdenlo antes de empezar.
+---
+import Mano from '../components/Mano.astro';
+import Consejo from '../components/Consejo.astro';
+import TablaValores from '../components/TablaValores.astro';
+
+<div class="resumen">
+  <span class="resumen__titulo">Las reglas en 30 segundos</span>
+  <ul>
+    <li>De <strong>2 a 5 jugadores</strong>, con la baraja española de <strong>40 cartas</strong>.</li>
+    <li>Todos ponen <strong>la entrada</strong> en el pote antes de repartir.</li>
+    <li>Se reparten <strong>2 cartas</strong>, se envita; luego <strong>3 cartas más</strong>, una a una, y se vuelve a envitar.</li>
+    <li>Cada jugador <strong>bota</strong> las cartas que no le sirven y recibe otras. <strong>Una sola vez.</strong></li>
+    <li>Última ronda de envite y se enseñan las cartas: <strong>gana quien más sume en un mismo palo</strong>.</li>
+    <li>El as vale 11, el siete 7, el seis 6 y <strong>todas las demás 10</strong>. La jugada máxima es el <strong>ajiley: 51 puntos</strong>.</li>
+  </ul>
+</div>
+
+## Lo que necesitas para jugar
+
+- **Jugadores:** de dos a cinco. Con tres o cuatro el juego fluye muy bien; con cinco hay más emoción y entra en juego el comodín.
+- **Una baraja española de 40 cartas.** Si tu baraja tiene 48 o 50, saca los ochos, los nueves y los comodines antes de empezar. ¿Dudas con los palos o las figuras? Repasa [la baraja española](/baraja-espanola/).
+- **Algo con qué envitar:** fichas, monedas, frijoles o caramelos. Para aprender, cualquier cosa sirve.
+
+## El pie y la mano
+
+Antes de la primera mano se decide quién reparte. Se baraja el mazo, se extiende boca abajo sobre la mesa y cada jugador saca una carta: **quien saque la carta más alta será el pie**, el que reparte. Acuerden antes qué cuenta como "más alta" (lo más sencillo es usar el valor en puntos y, si hay empate, volver a sacar).
+
+El jugador sentado a la **derecha del pie es la mano**: es el primero en recibir cartas y el primero en hablar en cada ronda de envite. Ser mano tiene premio: **si hay empate al final, gana la mano**. El turno avanza hacia la derecha, como es costumbre en los juegos de baraja española.
+
+## La entrada
+
+Antes de repartir, cada jugador pone **la entrada**: lo que cuesta participar en la mano. Todas las entradas forman el pote que se llevará el ganador. Quien no pone la entrada no recibe cartas.
+
+## El reparto y las rondas de envite
+
+La mano se juega en tres rondas de envite. El reparto se hace en dos tiempos: primero dos cartas y luego tres.
+
+### Primera ronda: dos cartas
+
+El pie reparte **dos cartas juntas** a cada jugador, empezando por la mano. Con esas dos cartas se abre la primera ronda de envite, que empieza la mano:
+
+- **Pasar** ("paso"): no apuesta, pero sigue en juego. Solo se puede pasar mientras nadie haya apostado en esa ronda.
+- **Apostar**: pone fichas en el pote. Desde ese momento ya nadie puede pasar.
+- **Irse** ("no voy"): abandona la mano y pierde lo que ya puso.
+
+Cuando alguien apuesta, los demás tienen que decidir: **ir** ("voy", igualar la apuesta), **no ir** ("no voy", retirarse) o **subir** ("subo", igualar y apostar más). La ronda termina cuando todos los que siguen en juego han puesto lo mismo.
+
+### Segunda ronda: tres cartas más
+
+El pie reparte **tres cartas más, una a una**, hasta que cada jugador tiene cinco. Se abre la segunda ronda de envite, otra vez empezando por la mano, con las mismas voces: **paso, no voy, voy y subo**.
+
+### El descarte: botar y reponer
+
+Ahora cada jugador que sigue en juego **bota las cartas que no le sirven**, boca abajo, y el pie le da **la misma cantidad de cartas, juntas**. El descarte se hace **una sola vez** por mano. Se puede botar desde ninguna hasta todas, aunque algunas mesas limitan el descarte a cuatro cartas.
+
+<Consejo>
+  <p>Fíjate en cuántas cartas bota cada rival. Quien bota una sola suele tener cuatro del mismo palo; quien bota tres está buscando. Es la mejor pista que da la mesa. Más trucos en <a href="/estrategia/">estrategia</a>.</p>
+</Consejo>
+
+### Última ronda y se enseñan las cartas
+
+Tras el descarte llega la **tercera y última ronda de envite**. Cuando termina, los jugadores que siguen en juego **muestran sus cartas** y se cuentan los puntos. **Gana el pote quien más sume.** Si todos menos uno se retiran en cualquier ronda, el que queda se lleva el pote sin enseñar sus cartas.
+
+## Cómo se cuenta la mano
+
+Solo se suman las cartas **del mismo palo**: cada jugador cuenta el palo que más le sume y el resto de sus cartas no vale nada. Los valores son estos:
+
+<TablaValores />
+
+Sí, leíste bien: **el 2, el 3, el 4 y el 5 valen 10**, igual que la sota, el caballo y el rey. El siete y el seis, en cambio, valen solo lo que marcan. Es la rareza más famosa del juego y la que más discusiones provoca entre los que vienen de otros juegos.
+
+<Mano titulo="Esta mano vale 31: as, sota y tres de bastos" cartas="1b 10b 3b 6o 12e" apagar={[3, 4]} resultado="11 + 10 + 10 = 31 puntos en bastos" />
+
+La jugada máxima es el **ajiley**: el as y cuatro cartas de 10 puntos, todas del mismo palo. Suma **51 puntos** y no hay nada que la supere.
+
+<Mano titulo="¡Ajiley! As, rey, caballo, cinco y dos de espadas" cartas="1e 12e 11e 5e 2e" resultado="11 + 10 + 10 + 10 + 10 = 51 puntos" />
+
+Tener cinco cartas del mismo palo no siempre es un ajiley: si una de ellas es un siete o un seis, la mano suma menos. Todo el detalle, con más ejemplos y un juego para practicar, en [valor de las cartas y puntuación](/valor-de-las-cartas/).
+
+## Empates
+
+Si dos o más jugadores terminan con los mismos puntos, **gana el jugador mano**. Si la mano ya se había retirado, lo más lógico es aplicar el mismo criterio: gana el que esté más cerca de la mano, siguiendo el orden de juego. Pónganse de acuerdo antes de empezar.
+
+## El siete de oros, comodín en la mesa de cinco
+
+Cuando juegan **cinco personas**, el siete de oros se convierte en **comodín**: vale **10 puntos** y se suma a cualquier palo. Con menos jugadores es una carta normal (7 puntos en oros). En algunas mesas el comodín se usa siempre y en la versión de los llanos vale 11, lo que permite llegar a 52. Lo contamos en [variantes](/variantes/).
+
+<Mano titulo="Con cinco jugadores: comodín + as, rey y caballo de copas" cartas="7o 1c 12c 11c 4b" apagar={[4]} resultado="10 + 11 + 10 + 10 = 41 puntos" />
+
+## ¡Barajo!
+
+Si alguien hace trampa o el reparto sale mal (una carta boca arriba, un jugador con cartas de más), cualquiera puede cantar **"¡barajo!"**: la mano se anula, se recogen las cartas, **el mazo pasa a la mano y la mano se convierte en el nuevo pie**.
+
+## Si todos pasan
+
+Las fuentes venezolanas no dicen qué hacer si todos pasan en todas las rondas. En el giley español, el pariente más cercano del ajiley, **se recogen las cartas y se reparte de nuevo**, y es la solución más práctica. Si en tu mesa lo resuelven de otra forma, adelante: lo importante es acordarlo antes.
+
+## Lo que conviene acordar antes de repartir
+
+Como pasa con todos los juegos que se aprenden en familia, cada mesa tiene sus costumbres. Para evitar discusiones, acuerden:
+
+1. **Cuánto es la entrada** y si hay un tope para las apuestas y las subidas.
+2. **Cuántas cartas se pueden botar** (todas o un máximo de cuatro).
+3. **Si se juega con comodín** y cuánto vale (10 u 11).
+4. **Cómo rota el pie**: lo habitual es que pase al siguiente jugador en cada mano.
+5. **Qué pasa si todos pasan.**
+
+Con eso claro, a jugar. Si quieres ver todo esto en acción, sigue una [mano completa paso a paso](/como-jugar/) o [practica gratis contra Guaca](/practicar/).

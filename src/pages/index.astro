@@ -5,37 +5,42 @@ import Mano from '../components/Mano.astro';
 import TarjetaPagina from '../components/TarjetaPagina.astro';
 import BandaPractica from '../components/BandaPractica.astro';
 import Faq from '../components/Faq.astro';
+import Repartidor from '../components/Repartidor.astro';
 import hero from '../assets/hero.jpg';
 import guaca from '../assets/marca/guaca.png';
 import { PAGINAS } from '../lib/paginas';
 import { SITE, BETZUE } from '../config';
 
-const aprende = ['/reglas/', '/como-jugar/', '/puntuacion/', '/estrategia/', '/vocabulario/', '/historia/']
+const aprende = ['/reglas/', '/como-jugar/', '/valor-de-las-cartas/', '/estrategia/', '/vocabulario/', '/historia/']
   .map((h) => PAGINAS.find((p) => p.href === h))
   .filter((p) => p !== undefined);
-const masTemas = ['/probabilidades/', '/variantes/', '/baraja-espanola/', '/ajiley-o-ajilei/', '/jugar-online/', '/preguntas-frecuentes/']
+const masTemas = ['/probabilidades/', '/variantes/', '/baraja-espanola/', '/como-se-escribe/', '/jugar-online/', '/preguntas-frecuentes/']
   .map((h) => PAGINAS.find((p) => p.href === h))
   .filter((p) => p !== undefined);
 
 const preguntas = [
   {
-    q: '¿Qué es el Ajiley?',
-    a: 'El Ajiley es un juego de cartas venezolano de envite y azar que se juega con la baraja española de 40 cartas. Cada jugador recibe cinco cartas, puede botar y pedir cartas nuevas una vez, y gana quien reúna más puntos en cartas de un mismo palo.',
+    q: '¿Qué es el ajiley?',
+    a: 'El ajiley es un juego de cartas venezolano de envite y azar que se juega con la baraja española de 40 cartas. Cada jugador recibe cinco cartas, bota las que no le sirven y recibe otras, y gana quien sume más puntos con cartas de un mismo palo. La jugada máxima, de 51 puntos, se llama ajiley.',
   },
   {
-    q: '¿Cuántas personas pueden jugar al Ajiley?',
-    a: 'Se juega entre 2 y 5 personas. La mesa más habitual es de cuatro o cinco jugadores.',
+    q: '¿Cuánto vale cada carta en el ajiley?',
+    a: 'El as vale 11 puntos, el siete vale 7 y el seis vale 6. Todas las demás (el 2, el 3, el 4, el 5, la sota, el caballo y el rey) valen 10. Solo se suman las cartas del mismo palo. <a href="/valor-de-las-cartas/">Ver la tabla completa</a>.',
   },
   {
     q: '¿Qué es un ajiley en el juego?',
-    a: 'Es la mejor jugada posible: tener las cinco cartas del mismo palo. Vale 51 puntos y le gana a cualquier otra mano.',
+    a: 'Es la jugada máxima: el as y cuatro cartas de 10 puntos, todas del mismo palo, que suman 51. Sale en una de cada 4.700 manos repartidas, más o menos.',
+  },
+  {
+    q: '¿Cuántas personas pueden jugar al ajiley?',
+    a: 'Se juega entre 2 y 5 personas. Con cinco jugadores, en muchas mesas el siete de oros pasa a ser comodín.',
   },
   {
     q: '¿Se escribe ajiley, ajilei o ajilé?',
-    a: 'Las tres formas aparecen en el <em>Diccionario de americanismos</em> de la Asociación de Academias de la Lengua Española, que registra «ajiley» como entrada principal y «ajilé» y «ajiléi» como variantes. <a href="/ajiley-o-ajilei/">Te lo explicamos aquí</a>.',
+    a: 'La forma principal es «ajiley». El <em>Diccionario de americanismos</em> de las Academias de la Lengua recoge también «ajilé» y «ajiléi», y en internet se ve mucho «ajilei» y «jiley». <a href="/como-se-escribe/">Te lo explicamos aquí</a>.',
   },
   {
-    q: '¿Dónde puedo jugar Ajiley online?',
+    q: '¿Dónde puedo jugar ajiley online?',
     a: `Puedes practicar gratis en nuestro <a href="/practicar/">simulador</a>. Si quieres jugar en una mesa real desde el celular, en Venezuela puedes hacerlo en <a href="${BETZUE.ajiley('inicio-faq')}">Betzue</a> (solo mayores de 18 años).`,
   },
 ];
@@ -62,7 +67,7 @@ const schema = [
 ---
 <Base
   title="Ajiley: qué es y cómo se juega el juego de cartas venezolano"
-  description="Todo sobre el Ajiley, el juego de cartas venezolano con baraja española: reglas, puntuación, estrategia, vocabulario e historia. Practica gratis contra Guaca."
+  description="Todo sobre el ajiley, el juego de cartas venezolano con baraja española: reglas, puntuación, estrategia, vocabulario e historia. Practica gratis contra Guaca."
   schema={schema}
 >
   <section class="portada">
@@ -79,33 +84,24 @@ const schema = [
           <a href="/practicar/" class="boton boton--verde">Practicar gratis</a>
         </div>
       </div>
-      <div class="portada__imagen">
-        <Picture
-          src={hero}
-          formats={['avif', 'webp']}
-          widths={[480, 760, 1100, 1500]}
-          sizes="(max-width: 900px) 100vw, 640px"
-          alt="Mesa de Ajiley sobre tapete verde: una mano con el as, el rey, el caballo, la sota y el siete de oros"
-          loading="eager"
-          fetchpriority="high"
-        />
-      </div>
+      <Repartidor />
     </div>
   </section>
 
   <section class="seccion" aria-labelledby="que-es">
     <div class="contenedor que-es">
       <div class="prosa">
-        <h2 id="que-es">¿Qué es el Ajiley?</h2>
+        <h2 id="que-es">¿Qué es el ajiley?</h2>
         <p>
-          <strong>El Ajiley es un juego de cartas venezolano de envite y azar que se juega con la baraja española.</strong> Cada jugador
-          recibe cinco cartas, puede botar las que no le sirven y pedir otras una sola vez, y gana la mano quien reúna más puntos en cartas
-          de un mismo palo. La jugada soñada es el <em>ajiley</em>: las cinco cartas del mismo palo.
+          <strong>El ajiley es un juego de cartas venezolano de envite y azar que se juega con la baraja española de 40 cartas.</strong>
+          Cada jugador recibe cinco cartas, bota las que no le sirven y recibe otras, y gana la mano quien sume más puntos con cartas de un
+          mismo palo. La jugada soñada es el <em>ajiley</em>: el as y cuatro cartas de 10 del mismo palo, 51 puntos.
         </p>
         <p>
-          Se juega entre dos y cinco personas, se apuesta en varias rondas (pasar, ir, subir o irse) y se presta para lo mejor de las
-          mesas venezolanas: mucha conversación, algo de faroleo y una buena dosis de suerte. El <em>Diccionario de americanismos</em> lo
-          recoge como venezolanismo, también escrito <em>ajilé</em> o <em>ajiléi</em>.
+          Tiene una rareza que desconcierta a los nuevos: el 2, el 3, el 4 y el 5 valen 10 puntos, como las figuras, mientras que el 7 y
+          el 6 valen solo lo que marcan. Se juega entre dos y cinco personas, se envita en varias rondas (paso, voy, no voy, subo) y se
+          presta para lo mejor de las mesas venezolanas: conversación, algo de faroleo y una buena dosis de suerte. El
+          <em>Diccionario de americanismos</em> lo recoge como venezolanismo, también escrito <em>ajilé</em> o <em>ajiléi</em>.
         </p>
         <p><a href="/reglas/">Lee el reglamento completo</a> o sigue con el resumen.</p>
       </div>
@@ -118,7 +114,8 @@ const schema = [
           <div><dt>Baraja</dt><dd>Española de 40 cartas</dd></div>
           <div><dt>Cartas por jugador</dt><dd>5</dd></div>
           <div><dt>Descarte</dt><dd>Una sola vez</dd></div>
-          <div><dt>Mejor jugada</dt><dd>Ajiley: 5 cartas del mismo palo</dd></div>
+          <div><dt>Valores</dt><dd>As 11 · 7 y 6 lo que marcan · resto 10</dd></div>
+          <div><dt>Jugada máxima</dt><dd>Ajiley: 51 puntos</dd></div>
           <div><dt>Origen</dt><dd>Venezuela</dd></div>
         </dl>
       </aside>
@@ -127,7 +124,7 @@ const schema = [
 
   <section class="seccion seccion--arena" aria-labelledby="resumen">
     <div class="contenedor">
-      <h2 id="resumen">El Ajiley en un minuto</h2>
+      <h2 id="resumen">El ajiley en un minuto</h2>
       <ol class="minuto">
         <li>
           <strong>Se pone la entrada</strong>
@@ -151,8 +148,8 @@ const schema = [
         </li>
       </ol>
       <Mano
-        titulo="La mano soñada: un ajiley de oros"
-        cartas="1o 12o 11o 10o 7o"
+        titulo="La mano soñada: un ajiley de oros (11 + 10 + 10 + 10 + 10)"
+        cartas="1o 12o 11o 5o 2o"
         resultado="¡Ajiley! 51 puntos"
       />
       <p class="centrado"><a href="/como-jugar/" class="boton boton--claro">Ver una mano completa, paso a paso</a></p>
@@ -164,6 +161,32 @@ const schema = [
       <h2 id="aprende">Aprende el juego</h2>
       <div class="rejilla">
         {aprende.map((p) => <TarjetaPagina pagina={p} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion seccion--arena" aria-labelledby="mesa">
+    <div class="contenedor mesa">
+      <Picture
+        src={hero}
+        formats={['avif', 'webp']}
+        widths={[480, 760, 1100, 1500]}
+        sizes="(max-width: 900px) 100vw, 620px"
+        alt="Mesa de ajiley sobre tapete verde al atardecer: una mano con el as, el rey, el caballo, la sota y el siete de oros (48 puntos), fichas, café y tequeños"
+        loading="lazy"
+      />
+      <div class="prosa">
+        <h2 id="mesa">Un juego de mesa, de patio y de familia</h2>
+        <p>
+          Como el dominó o el truco, el ajiley es de esos juegos que se aprenden mirando: alguien reparte, alguien explica a medias, y a la
+          tercera mano ya estás botando cartas con criterio. Por eso las reglas cambian un poquito de una mesa a otra, y por eso conviene
+          ponerse de acuerdo antes de repartir.
+        </p>
+        <p>
+          En esta guía explicamos la forma más extendida de jugarlo, señalamos las <a href="/variantes/">variantes</a> que te puedes
+          encontrar y te damos las palabras de la mesa, del <em>pie</em> a la <em>mano</em> pasando por el <em>¡barajo!</em>, en nuestro
+          <a href="/vocabulario/"> vocabulario</a>.
+        </p>
       </div>
     </div>
   </section>
@@ -187,7 +210,7 @@ const schema = [
 
   <section class="seccion" aria-labelledby="mas">
     <div class="contenedor">
-      <h2 id="mas">Más sobre el Ajiley</h2>
+      <h2 id="mas">Más sobre el ajiley</h2>
       <div class="rejilla">
         {masTemas.map((p) => <TarjetaPagina pagina={p} />)}
       </div>
@@ -225,7 +248,13 @@ const schema = [
     gap: 12px;
     margin-top: 1.2em;
   }
-  .portada__imagen :global(img) {
+  .mesa {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: clamp(24px, 4vw, 56px);
+    align-items: center;
+  }
+  .mesa :global(img) {
     width: 100%;
     height: auto;
     border-radius: 24px;
@@ -234,6 +263,7 @@ const schema = [
     aspect-ratio: 4 / 3;
     object-fit: cover;
     object-position: 78% 50%;
+    rotate: -1.5deg;
   }
 
   .que-es {
@@ -345,6 +375,7 @@ const schema = [
   }
   @media (max-width: 900px) {
     .portada__fila,
+    .mesa,
     .que-es {
       grid-template-columns: 1fr;
     }

@@ -1,0 +1,127 @@
+---
+layout: ../layouts/Articulo.astro
+title: Estrategia para el ajiley, con números de verdad
+seoTitle: "Estrategia y consejos para ganar al ajiley: qué botar y cuándo ir"
+description: Consejos de estrategia para el ajiley basados en las probabilidades exactas. Qué es una buena mano, qué cartas botar, cuándo ir y cuándo retirarse, cómo leer el descarte de los rivales y por qué a veces hay que botar el as.
+miga: Estrategia
+etiqueta: Para mejorar
+lead: "En el ajiley la suerte reparte, pero las decisiones las tomas tú. Hemos calculado todas las manos y todos los descartes posibles para darte consejos con base, no corazonadas."
+relacionados: ['/probabilidades/', '/calculadora/', '/practicar/']
+faq:
+  - q: ¿Qué es una buena mano en el ajiley?
+    a: La mano mediana que se reparte vale 21 puntos. Con 30 ya estás entre el 20 % mejor, con 36 entre el 4 % mejor y con 41 entre el 1 % mejor.
+  - q: ¿Hay que botar el as en el ajiley?
+    a: Si está solo y tienes dos o más cartas de otro palo, casi siempre sí. Un as solitario suma 11, mientras que dos cartas de 10 del mismo palo suman 20 y tienen más opciones de crecer.
+  - q: ¿Hay una estrategia para ganar siempre al ajiley?
+    a: No. El reparto es azar y nadie gana siempre. Una buena estrategia te hace perder menos con las malas manos y ganar más con las buenas, pero no garantiza nada.
+---
+import Mano from '../components/Mano.astro';
+import Consejo from '../components/Consejo.astro';
+
+<div class="nota nota--aviso">
+  <span class="nota__titulo">Antes de nada</span>
+  <p>Ninguna estrategia garantiza ganar: el ajiley es un juego de envite y azar. Estos consejos te ayudan a decidir mejor, pero la suerte siempre tiene la última palabra. Juega con <a href="/juego-responsable/">responsabilidad</a>.</p>
+</div>
+
+## Qué es una buena mano (en números)
+
+Calculamos las 658.008 manos de cinco cartas que pueden salir de una baraja de 40. Estas son las referencias que conviene tener en la cabeza:
+
+<div class="tabla">
+  <table>
+    <thead><tr><th>Puntos</th><th>Qué significa</th><th>Manos que superas</th></tr></thead>
+    <tbody>
+      <tr><td><strong>21</strong></td><td>La mano mediana: la mitad de las manos están por debajo.</td><td>la mitad</td></tr>
+      <tr><td><strong>30</strong></td><td>Tres cartas de 10 del mismo palo. Ya es buena mano.</td><td>81 %</td></tr>
+      <tr><td><strong>36</strong></td><td>Cuatro cartas del mismo palo con un seis, o mejor.</td><td>96 %</td></tr>
+      <tr><td><strong>41</strong></td><td>El techo de las manos de cuatro cartas.</td><td>99 %</td></tr>
+      <tr><td><strong>51</strong></td><td>El ajiley. Una de cada 4.700 manos.</td><td>todas</td></tr>
+    </tbody>
+  </table>
+</div>
+
+Y una cifra que lo explica casi todo: **en el 64 % de las manos tu mejor palo tiene solo dos cartas**. Tres cartas del mismo palo salen en el 32 % de las manos, cuatro en menos del 4 % y cinco en el 0,15 %. La mayoría de las manos se juegan, por tanto, con dos o tres cartas útiles y un buen descarte.
+
+## Primera ronda: lo que dicen dos cartas
+
+Con solo dos cartas sabes poco, pero no nada:
+
+- **Dos cartas del mismo palo** salen en el 23 % de los repartos y son el mejor comienzo. Si una es el as (21 puntos), es un arranque de lujo.
+- **Dos cartas de palos distintos** dependen de las tres que vienen. No es mala señal, pero tampoco motivo para subir.
+- **Sietes y seises** son las cartas flojas: suman poco y no te acercan a 41 ni a 51.
+
+<Consejo>
+  <p>En la primera ronda apuesta poco y mira mucho. Lo importante pasa después de las cinco cartas y, sobre todo, después del descarte.</p>
+</Consejo>
+
+## Qué botar: la decisión más importante
+
+Aquí es donde se ganan las manos. Con el asesor de la [calculadora](/calculadora/) evaluamos las 32 formas de botar de cada mano y todas las cartas que podrían llegar del mazo. Estas son las lecciones que más se repiten.
+
+### 1. Quédate con tu mejor palo y bota todo lo demás
+
+<Mano titulo="Tres de 10 en oros (30): bota el as de copas y el seis de bastos" cartas="12o 11o 10o 1c 6b" apagar={[3, 4]} resultado="Media tras botar: 33,7 puntos · 36 % de mejorar" />
+
+Botar las dos cartas sueltas da una media de **33,7 puntos** frente a los 30 que tienes. Botar solo una de ellas da 31,8. **Bota todo lo que no sea de tu palo**, incluso un as.
+
+### 2. Un as solitario no vale la pena
+
+<Mano titulo="As de oros suelto y rey y caballo de copas: bota el as" cartas="1o 12c 11c 6b 7e" apagar={[0, 3, 4]} resultado="Botando as, seis y siete: 26,7 de media (guardando el as: 25,0)" />
+
+Parece un sacrilegio, pero las cuentas son claras: **dos cartas de 10 del mismo palo valen más que un as solo**, porque 20 es más que 11 y porque tienen más formas de crecer.
+
+<Mano titulo="¿Tres ases? Bótalos todos" cartas="1o 1c 1e 12b 7b" apagar={[0, 1, 2]} resultado="Botando los tres ases: 24,5 de media" />
+
+Este es el caso más contraintuitivo del juego. Tres ases de palos distintos valen 11 cada uno, pero no se suman entre sí. El rey y el siete de bastos, juntos, ya suman 17 y son la mejor base. **Botar los tres ases da la mejor media** (24,5). Si lo que buscas es arriesgar por una mano enorme, guardar un as y botar cuatro sube un poco la probabilidad de llegar a 41 (2 % frente a 0,9 %), pero baja la media.
+
+### 3. Con cuatro del mismo palo, bota solo la carta suelta
+
+<Mano titulo="Cuatro copas con un siete (37): bota solo el as de oros" cartas="12c 11c 7c 3c 1o" apagar={[4]} resultado="Media: 38,6 · 17 % de llegar a 41 o más" />
+
+Con cuatro del mismo palo, **no toques el siete ni el seis**: botarlos para buscar una carta de 10 parece buena idea, pero baja la media de 38,6 a 33,3. Bota la carta suelta y que sea lo que sea.
+
+### 4. Los sietes y seises sí se quedan si son de tu palo
+
+<Mano titulo="Siete, seis y dos de oros (23): bota las otras dos" cartas="7o 6o 2o 12c 11e" apagar={[3, 4]} resultado="Media: 27,1 · botar también el seis: 24,2" />
+
+Son cartas flojas, pero mientras sean de tu mejor palo, suman. Bótalas solo si tienes un palo mejor.
+
+## Cómo leer la mesa
+
+El descarte es la única información que dan tus rivales, y es muy valiosa:
+
+- **Bota una carta:** casi seguro tiene cuatro del mismo palo. Su mano está entre 33 y 41 (casi siempre 36 o más) y aún puede completar cinco.
+- **Bota dos:** tiene tres de un palo, con una base de entre 23 y 31 puntos.
+- **Bota tres o más:** está buscando. Su mano final probable ronda los 25 a 28 puntos.
+- **No bota nada:** o tiene una mano de cinco cartas del mismo palo (rarísimo) o está faroleando. Vigila cómo apuesta.
+
+Cruza esa lectura con sus apuestas. Quien botó una carta y sube fuerte en la última ronda suele tener 40 o 41. Quien botó tres y sube, o tuvo mucha suerte o está tirando un farol.
+
+<Consejo>
+  <p>Si quieres farolear, el descarte es tu mejor herramienta: botar una sola carta con una mano mediocre asusta a más de uno. Pero úsalo poco, que en las mesas de siempre todo se sabe.</p>
+</Consejo>
+
+## Cuándo ir, cuándo subir y cuándo retirarse
+
+No hay fórmulas mágicas, pero sí criterios razonables para la **última ronda**, cuando ya sabes lo que tienes:
+
+- **41 o más:** sube. Con cuatro cartas no se puede superar el 41, así que solo te gana una mano de cinco cartas del mismo palo. Y si empatan a 41 y eres la mano, ganas.
+- **De 36 a 40:** ve, y sube si nadie ha botado una sola carta.
+- **De 30 a 34:** ve si la apuesta es pequeña respecto al pote. Retírate si alguien que botó una carta sube fuerte.
+- **Menos de 30:** solo si nadie apuesta o si el pote es muy grande para lo poco que cuesta ir.
+
+Piensa siempre en **cuánto cuesta ir y cuánto puedes ganar**. Si el pote tiene 20 fichas y te piden 2 para ver las cartas, con ganar una de cada once veces ya compensa. Si te piden 10, tu mano tiene que ser muy buena.
+
+## La posición: ser mano vale
+
+La mano habla primero en cada ronda, lo que es un pequeño inconveniente (los demás deciden sabiendo lo que hiciste), pero **gana todos los empates**, y en un juego donde el 41 y el 40 son tan comunes entre las buenas manos, eso vale mucho. Cuando seas mano y tengas una mano buena, no tengas miedo de ir hasta el final.
+
+## Los cinco mandamientos
+
+1. **Juega tu mejor palo y bota lo demás**, incluso el as solitario.
+2. **Con cuatro del mismo palo, bota solo la carta suelta.**
+3. **Mira cuántas bota cada uno**: es la mejor pista de la mesa.
+4. **Piensa en el pote**: cuánto pones frente a cuánto puedes ganar.
+5. **Decide antes cuánto vas a jugar** y no lo cambies a mitad de la noche.
+
+¿Quieres practicar estas ideas? Juega unas manos contra Guaca en el [simulador](/practicar/) o comprueba tus dudas en la [calculadora](/calculadora/).

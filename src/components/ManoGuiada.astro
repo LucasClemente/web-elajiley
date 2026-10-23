@@ -1,0 +1,263 @@
+---
+// Una mano completa contada paso a paso. Sin JavaScript se ven todos los pasos en lista;
+// con JavaScript se convierte en un recorrido con botones Anterior / Siguiente.
+import { svgNaipe, svgDorso, type Numero, type Palo } from '../lib/naipe';
+
+interface Jugador {
+  nombre: string;
+  /** Lo que hizo en este paso: "Voy", "Sube 2"… */
+  accion?: string;
+  fuera?: boolean;
+  pie?: boolean;
+}
+export interface Paso {
+  titulo: string;
+  texto: string;
+  /** Tus cartas, notación corta ("1c 10c"). Las que no cuentan, con * al final ("7o*"). */
+  mano?: string;
+  pote: number;
+  mesa: Jugador[];
+}
+interface Props {
+  pasos: Paso[];
+}
+const { pasos } = Astro.props;
+
+const PALO: Record<string, Palo> = { o: 'oros', c: 'copas', e: 'espadas', b: 'bastos' };
+const cartas = (s = '') =>
+  s
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((t) => {
+      const apagada = t.endsWith('*');
+      const c = t.replace('*', '');
+      return { svg: svgNaipe(Number(c.slice(0, -1)) as Numero, PALO[c.slice(-1)]), apagada };
+    });
+---
+<div class="guia" data-guia>
+  <div class="guia__barra" hidden data-barra>
+    <span class="guia__contador" data-contador></span>
+    <div class="guia__progreso"><span data-progreso></span></div>
+  </div>
+  <ol class="guia__pasos">
+    {pasos.map((p, i) => (
+      <li class="guia__paso" data-paso={i}>
+        <div class="guia__mesa">
+          <div class="guia__pote">Pote: <strong>{p.pote}</strong> fichas</div>
+          <ul class="guia__jugadores">
+            {p.mesa.map((j) => (
+              <li class:list={['guia__jugador', { 'es-fuera': j.fuera, 'es-tu': j.nombre === 'Tú' }]}>
+                <span class="guia__nombre">
+                  {j.nombre}
+                  {j.pie && <span class="guia__pie">pie</span>}
+                </span>
+                {j.accion && <span class="guia__accion">{j.accion}</span>}
+              </li>
+            ))}
+          </ul>
+          <div class="guia__cartas" aria-label="Tus cartas">
+            {p.mano
+              ? cartas(p.mano).map((c) => <span class:list={['guia__carta', { 'es-apagada': c.apagada }]} set:html={c.svg} />)
+              : [0, 1].map(() => <span class="guia__carta" set:html={svgDorso()} />)}
+          </div>
+        </div>
+        <div class="guia__texto">
+          <h3>
+            <span class="guia__num">{i + 1}</span> {p.titulo}
+          </h3>
+          <p set:html={p.texto} />
+        </div>
+      </li>
+    ))}
+  </ol>
+  <div class="guia__botones" hidden data-botones>
+    <button type="button" class="boton boton--claro boton--peque" data-anterior>← Anterior</button>
+    <button type="button" class="boton boton--peque" data-siguiente>Siguiente →</button>
+  </div>
+</div>
+
+<script>
+  for (const raiz of document.querySelectorAll<HTMLElement>('[data-guia]')) {
+    const pasos = [...raiz.querySelectorAll<HTMLElement>('[data-paso]')];
+    const ant = raiz.querySelector<HTMLButtonElement>('[data-anterior]')!;
+    const sig = raiz.querySelector<HTMLButtonElement>('[data-siguiente]')!;
+    const contador = raiz.querySelector<HTMLElement>('[data-contador]')!;
+    const progreso = raiz.querySelector<HTMLElement>('[data-progreso]')!;
+    let actual = 0;
+    raiz.classList.add('es-interactiva');
+    raiz.querySelector<HTMLElement>('[data-barra]')!.hidden = false;
+    raiz.querySelector<HTMLElement>('[data-botones]')!.hidden = false;
+
+    const ir = (i: number, foco = false) => {
+      actual = Math.max(0, Math.min(pasos.length - 1, i));
+      pasos.forEach((p, j) => (p.hidden = j !== actual));
+      contador.textContent = `Paso ${actual + 1} de ${pasos.length}`;
+      progreso.style.width = `${((actual + 1) / pasos.length) * 100}%`;
+      ant.disabled = actual === 0;
+      sig.textContent = actual === pasos.length - 1 ? 'Volver a empezar ↺' : 'Siguiente →';
+      if (foco) pasos[actual].querySelector('h3')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    };
+    ant.addEventListener('click', () => ir(actual - 1, true));
+    sig.addEventListener('click', () => ir(actual === pasos.length - 1 ? 0 : actual + 1, true));
+    ir(0);
+  }
+</script>
+
+<style>
+  .guia {
+    margin: 1.6em 0 2em;
+  }
+  .guia__pasos {
+    list-style: none;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: grid;
+    gap: 22px;
+  }
+  .guia__paso {
+    display: grid;
+    gap: 16px;
+    margin: 0 !important;
+  }
+  .es-interactiva .guia__paso {
+    animation: entra 0.3s ease;
+  }
+  @keyframes entra {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  .guia__mesa {
+    padding: 16px;
+    border-radius: var(--radio);
+    border: var(--borde-sticker);
+    box-shadow: 0 5px 0 var(--noche);
+    background:
+      radial-gradient(ellipse at 50% 30%, rgb(255 255 255 / 0.1), transparent 60%), var(--tapete);
+    color: #fff;
+  }
+  .guia__pote {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .guia__pote strong {
+    font-family: var(--f-titulo);
+    font-size: 1.4rem;
+    color: var(--oro);
+  }
+  .guia__jugadores {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 0 !important;
+    margin: 0 0 14px !important;
+  }
+  .guia__jugador {
+    display: grid;
+    gap: 3px;
+    justify-items: center;
+    padding: 8px 4px;
+    border-radius: 12px;
+    background: rgb(0 0 0 / 0.18);
+    margin: 0 !important;
+    text-align: center;
+  }
+  .guia__jugador.es-tu {
+    background: rgb(255 194 14 / 0.22);
+    outline: 2px solid var(--oro);
+  }
+  .guia__jugador.es-fuera {
+    opacity: 0.45;
+  }
+  .guia__nombre {
+    font-weight: 900;
+    font-size: 0.95rem;
+  }
+  .guia__pie {
+    margin-left: 4px;
+    font-size: 0.68rem;
+    background: var(--rojo);
+    border-radius: 999px;
+    padding: 0.05em 0.5em;
+    vertical-align: middle;
+    text-transform: uppercase;
+  }
+  .guia__accion {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--noche-900);
+    background: var(--oro);
+    border-radius: 999px;
+    padding: 0.05em 0.6em;
+  }
+  .guia__cartas {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+  }
+  .guia__carta {
+    width: clamp(50px, 12vw, 76px);
+  }
+  .guia__carta :global(svg) {
+    width: 100%;
+    height: auto;
+  }
+  .guia__carta.es-apagada {
+    opacity: 0.4;
+  }
+  .guia__texto h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 0 !important;
+  }
+  .guia__num {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--oro);
+    border: 2px solid var(--noche);
+    font-size: 1rem;
+  }
+  .guia__barra {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-weight: 800;
+    color: var(--tapete-700);
+    font-size: 0.92rem;
+  }
+  .guia__progreso {
+    flex: 1;
+    height: 8px;
+    background: var(--tapete-100);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .guia__progreso span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--tapete);
+    transition: width 0.3s ease;
+  }
+  .guia__botones {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  @media (max-width: 520px) {
+    .guia__jugadores {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

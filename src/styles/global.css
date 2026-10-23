@@ -58,6 +58,11 @@
   box-sizing: border-box;
 }
 
+/* Los componentes fijan display propio: hidden debe ganar siempre. */
+[hidden] {
+  display: none !important;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;

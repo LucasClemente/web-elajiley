@@ -1,0 +1,102 @@
+---
+layout: ../layouts/Articulo.astro
+title: Valor de las cartas en el ajiley y cómo se cuenta la mano
+seoTitle: "Ajiley: valor de las cartas, puntuación y el ajiley de 51"
+description: Cuánto vale cada carta en el ajiley (as 11, siete 7, seis 6 y el resto 10), cómo se cuenta la mano, qué es el ajiley de 51 y qué jugadas le siguen. Con ejemplos y un juego para practicar.
+miga: Valor de las cartas
+etiqueta: Puntuación
+lead: "En el ajiley las cuentas tienen su truco: el dos vale más que el siete. Aquí tienes el valor de cada carta, cómo se suma la mano y la lista de jugadas de mejor a peor, con lo difícil que es sacar cada una."
+relacionados: ['/reglas/', '/probabilidades/', '/calculadora/']
+faq:
+  - q: ¿Cuánto vale cada carta en el ajiley?
+    a: El as vale 11 puntos, el siete 7 y el seis 6. Todas las demás cartas, es decir, el 2, el 3, el 4, el 5, la sota, el caballo y el rey, valen 10.
+  - q: ¿Por qué el dos vale 10 en el ajiley?
+    a: Es una regla de la tradición, sin una explicación documentada. Su pariente español, el giley, también da 10 puntos al dos y al tres. Lo que sí está claro es la consecuencia, que el siete y el seis son las cartas más flojas del palo.
+  - q: ¿Cuál es la jugada máxima del ajiley?
+    a: El ajiley, que es el as más cuatro cartas de 10 puntos del mismo palo, en total 51. Sale en una de cada 4.700 manos repartidas, más o menos.
+  - q: ¿Cinco cartas del mismo palo siempre son ajiley?
+    a: No. Si entre esas cinco hay un siete o un seis, la mano suma menos de 51. Por ejemplo, as, rey, caballo, sota y siete de oros suman 48.
+  - q: ¿Cuál es la mejor mano con cuatro cartas?
+    a: El as y tres cartas de 10 del mismo palo, que suman 41. Con cuatro cartas no se puede superar esa cifra.
+---
+import Mano from '../components/Mano.astro';
+import Consejo from '../components/Consejo.astro';
+import TablaValores from '../components/TablaValores.astro';
+import TablaJugadas from '../components/TablaJugadas.astro';
+import QuienGana from '../components/QuienGana.astro';
+
+## El valor de cada carta
+
+<TablaValores palo="oros" />
+
+En resumen: **as 11, siete 7, seis 6 y todo lo demás 10.** Es la regla que recogen las fuentes venezolanas, del blog *Juegos de cartas Venezuela* a las crónicas de los juegos tradicionales del llano, y la que se usa en la gran mayoría de las mesas.
+
+### ¿Por qué el dos vale más que el siete?
+
+Es la primera pregunta de todo el que aprende, y no tiene una respuesta documentada: es así por tradición. Lo que sí sabemos es que el ajiley no es el único. El **giley español**, su pariente más cercano, también da 10 puntos al dos y al tres. En la práctica, el siete y el seis son las "cartas malas" de cada palo: suman, pero te alejan de los números redondos.
+
+## Cómo se cuenta una mano
+
+1. **Agrupa tus cinco cartas por palo.**
+2. **Suma cada grupo** con los valores de arriba.
+3. **Tu puntuación es la del palo que más suma.** Las demás cartas no cuentan para nada.
+
+<Mano titulo="Dos palos: cuenta solo el mejor" cartas="1o 4o 12c 11c 3c" apagar={[0, 1]} resultado="Copas: 10 + 10 + 10 = 30 (oros solo suma 21)" />
+
+Fíjate en el ejemplo: el as de oros es la carta más valiosa de la mano, pero no cuenta, porque las tres copas suman más que el as y el cuatro de oros juntos. **Tener muchas cartas del mismo palo vale más que tener cartas sueltas valiosas.**
+
+<Mano titulo="Cinco del mismo palo, pero no es ajiley" cartas="1b 12b 11b 10b 7b" resultado="11 + 10 + 10 + 10 + 7 = 48 puntos" />
+
+## El ajiley: la jugada máxima
+
+El **ajiley** es la mejor mano posible: **el as y cuatro cartas de 10 puntos, todas del mismo palo**. Suman exactamente **51**, y no hay forma de superarlo (salvo en la variante con comodín de 11, que permite 52).
+
+<Mano titulo="¡Ajiley de copas!" cartas="1c 2c 3c 4c 5c" resultado="11 + 10 + 10 + 10 + 10 = 51 puntos" />
+
+Sí, del as al cinco de copas también es ajiley: el dos, el tres, el cuatro y el cinco valen 10 cada uno. Hay **35 combinaciones de ajiley por palo** (el as más cuatro de las siete cartas que valen 10), 140 en total.
+
+## Todas las jugadas buenas, de mejor a peor
+
+<TablaJugadas
+  desde={36}
+  ejemplos={{
+    51: 'As + cuatro cartas de 10, mismo palo',
+    50: 'Cinco cartas de 10, mismo palo',
+    48: 'As + tres de 10 + siete',
+    47: 'As + tres de 10 + seis, o cuatro de 10 + siete',
+    46: 'Cuatro de 10 + seis',
+    44: 'As + dos de 10 + siete + seis',
+    43: 'Tres de 10 + siete + seis',
+    41: 'As + tres de 10 (cuatro cartas)',
+    40: 'Cuatro cartas de 10',
+    38: 'As + dos de 10 + siete',
+    37: 'As + dos de 10 + seis, o tres de 10 + siete',
+    36: 'Tres de 10 + seis',
+  }}
+/>
+
+Dos cosas saltan a la vista. Primero, **cualquier mano de cinco cartas del mismo palo es rarísima** (menos de una de cada 600). Segundo, el **41** es la jugada "buena de verdad" que más vas a ver: es el techo de las manos de cuatro cartas, y no es casualidad que a su pariente español, el giley, también se le llame *cuarenta y una*.
+
+## Empates
+
+Si dos jugadores terminan con los mismos puntos, **gana la mano**, el jugador sentado a la derecha del pie. No se desempata por palos ni por número de cartas.
+
+## El siete de oros como comodín
+
+En la mesa de cinco jugadores el **siete de oros es comodín**: vale **10 puntos** y se suma al palo que más te convenga. Con el comodín, el as y tres cartas de 10 de cualquier palo también hacen 51.
+
+<Mano titulo="Mesa de cinco: el comodín completa un ajiley" cartas="7o 1e 12e 3e 2e" resultado="10 (comodín) + 11 + 10 + 10 + 10 = 51" />
+
+En los llanos se juega una variante en la que el comodín vale **11**, y entonces la jugada máxima llega a **52**. Más en [variantes](/variantes/).
+
+## Ponte a prueba: ¿quién gana?
+
+Dos manos, una pregunta. Toca la que crees que gana y mira si aciertas. Cuando lleves una racha de diez, ya cuentas como un veterano.
+
+<QuienGana />
+
+<Consejo>
+  <p>Para contar rápido, no sumes carta por carta: cuenta cuántas cartas de 10 tienes en el palo y luego añade el as (11), el siete (7) o el seis (6). Tres de 10 y un as: 41. Sin pensarlo.</p>
+</Consejo>
+
+¿Quieres comprobar una mano concreta o saber qué te conviene botar? Usa la [calculadora de manos](/calculadora/).

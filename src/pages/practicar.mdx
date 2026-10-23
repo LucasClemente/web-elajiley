@@ -1,0 +1,54 @@
+---
+layout: ../layouts/Articulo.astro
+title: Juega al ajiley gratis contra Guaca
+seoTitle: "Jugar ajiley gratis online: simulador sin registro"
+description: Juega al ajiley gratis en el navegador contra Guaca y sus amigos. Manos completas con las reglas venezolanas, tres rondas de envite, descarte y consejos en vivo. Sin registro y sin dinero.
+miga: Practicar gratis
+etiqueta: Simulador
+lead: "Siéntate a la mesa con Guaca, Chepe y Yuli. Reglas venezolanas, fichas de práctica y consejos en vivo para que aprendas mientras juegas. Sin registro, sin descargas y sin dinero."
+relacionados: ['/reglas/', '/estrategia/', '/jugar-online/']
+indice: false
+completo: true
+schemaExtra:
+  - '@type': WebApplication
+    name: Simulador de ajiley de El Ajiley
+    applicationCategory: GameApplication
+    operatingSystem: Cualquiera (navegador web)
+    inLanguage: es-VE
+    isAccessibleForFree: true
+    offers:
+      '@type': Offer
+      price: '0'
+      priceCurrency: USD
+faq:
+  - q: ¿Se juega con dinero en el simulador?
+    a: No. Se juega con fichas de práctica que no valen nada. Si te quedas sin fichas, se recargan solas.
+  - q: ¿Contra quién juego?
+    a: Contra la máquina. Guaca juega equilibrado, Chepe es atrevido y farolea más, y Yuli es prudente. Con cinco jugadores se suma Toño.
+  - q: ¿Qué reglas usa el simulador?
+    a: Las más extendidas en Venezuela. Entrada de una ficha, tres rondas de envite con apuestas de 2, 2 y 4 fichas, descarte único, as 11, siete 7, seis 6 y el resto 10. Con cinco jugadores el siete de oros es comodín, y en caso de empate gana la mano.
+  - q: ¿Se guarda mi progreso?
+    a: Tus fichas y estadísticas se guardan solo en tu navegador. No las enviamos a ningún sitio.
+---
+import Simulador from '../components/Simulador.astro';
+
+<Simulador />
+
+## Cómo se juega en el simulador
+
+1. **Pulsa «Repartir».** Todos ponen una ficha de entrada y recibes tus dos primeras cartas.
+2. **Envita con los botones**: paso, apuesto, voy, subo o no voy. Las apuestas son de 2 fichas en las dos primeras rondas y de 4 en la última, con un máximo de dos subidas por ronda.
+3. **Llegan tres cartas más** y hay otra ronda de envite.
+4. **Toca las cartas que quieras botar** y pulsa el botón. Guaca te dirá qué haría ella si tienes los consejos activados.
+5. **Última ronda y se enseñan las cartas.** Gana quien más sume en un mismo palo; en caso de empate, la mano.
+
+Las cartas que suman se ven un poco más arriba que el resto, y debajo de tu mano tienes siempre tus puntos. Si te pierdes, abre «Lo que ha pasado en la mesa».
+
+## Tus rivales
+
+- **Guaca** juega equilibrado: apuesta cuando tiene con qué y rara vez farolea.
+- **Chepe** es atrevido: sube más de la cuenta y de vez en cuando va de farol.
+- **Yuli** es prudente: si sube, desconfía, que suele tener mano.
+- **Toño** se sienta cuando eliges cinco jugadores, y entonces el siete de oros pasa a ser comodín.
+
+Practicar contra estilos distintos es la mejor forma de aprender a leer la mesa. Para afinar, repasa la [estrategia](/estrategia/) y usa la [calculadora](/calculadora/) cuando dudes qué botar.

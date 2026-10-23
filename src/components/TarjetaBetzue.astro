@@ -1,0 +1,65 @@
+---
+// Tarjeta de Betzue para la página de juego online. Única pieza "comercial" explícita del sitio.
+import { BETZUE } from '../config';
+
+interface Props {
+  campana?: string;
+}
+const { campana = 'jugar-online' } = Astro.props;
+---
+<aside class="betzue" aria-label="Jugar ajiley en Betzue">
+  <div class="betzue__cabeza">
+    <span class="betzue__marca">Betzue</span>
+    <span class="betzue__lema">{BETZUE.lema}</span>
+  </div>
+  <ul class="betzue__lista">
+    <li>Mesa de ajiley con las reglas venezolanas, desde el celular</li>
+    <li>También dominó, animalitos, ruleta y más</li>
+    <li>Recargas por Pago Móvil</li>
+  </ul>
+  <a class="boton betzue__boton" href={BETZUE.ajiley(campana)}>Ir a la mesa de ajiley</a>
+  <p class="betzue__aviso">+18 · Juega con responsabilidad</p>
+</aside>
+
+<style>
+  .betzue {
+    margin: 1.8em 0;
+    padding: 22px 22px 18px;
+    border-radius: var(--radio);
+    border: var(--borde-sticker);
+    box-shadow: 0 6px 0 var(--noche);
+    color: #fff;
+    background:
+      radial-gradient(circle at 100% 0%, rgb(255 194 14 / 0.3), transparent 45%),
+      radial-gradient(circle at 0% 100%, rgb(228 0 43 / 0.35), transparent 50%), #0057b8;
+  }
+  .betzue__cabeza {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 14px;
+  }
+  .betzue__marca {
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    font-size: 2rem;
+    color: var(--oro);
+    letter-spacing: 0.02em;
+    text-shadow: 0 2px 0 var(--rojo-700);
+  }
+  .betzue__lema {
+    font-weight: 800;
+  }
+  .betzue__lista {
+    margin: 10px 0 16px !important;
+    padding-left: 1.2em !important;
+  }
+  .betzue__lista li::marker {
+    color: var(--oro) !important;
+  }
+  .betzue__aviso {
+    margin: 10px 0 0;
+    font-size: 0.85rem;
+    opacity: 0.85;
+  }
+</style>

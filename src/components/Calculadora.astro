@@ -1,0 +1,394 @@
+---
+// Calculadora de manos: eliges cinco cartas y muestra la puntuación al instante.
+// La mano queda en la URL (?mano=1o-12o-11o-10o-7o) para poder compartirla.
+import { PALOS, NUMEROS, svgNaipe } from '../lib/naipe';
+---
+<div class="calc" data-calc>
+  <div class="calc__mesa">
+    <div class="calc__mano" data-mano aria-live="polite">
+      {[0, 1, 2, 3, 4].map(() => <span class="calc__hueco" />)}
+    </div>
+    <div class="calc__resultado" data-resultado>
+      <span class="calc__puntos" data-puntos>0</span>
+      <span class="calc__detalle" data-detalle>Elige cinco cartas</span>
+    </div>
+    <div class="calc__acciones">
+      <button type="button" class="boton boton--peque" data-azar>Repartir al azar</button>
+      <button type="button" class="boton boton--peque boton--claro" data-limpiar>Limpiar</button>
+      <button type="button" class="boton boton--peque boton--claro" data-copiar hidden>Copiar enlace</button>
+    </div>
+    <label class="calc__opcion">
+      <input type="checkbox" data-comodin />
+      Mesa de cinco: el siete de oros es comodín (vale 10)
+    </label>
+  </div>
+
+  <div class="calc__asesor" data-asesor hidden>
+    <div class="calc__asesor-cabeza">
+      <strong>¿Qué me conviene botar?</strong>
+      <button type="button" class="boton boton--peque boton--verde" data-analizar>Analizar las 32 opciones</button>
+    </div>
+    <p class="calc__asesor-nota">
+      Probamos todas las formas de botar y todas las cartas que podrían llegarte del mazo. Sin trucos: son las cuentas exactas.
+    </p>
+    <ol class="calc__opciones" data-opciones></ol>
+  </div>
+
+  <div class="calc__selector">
+    {PALOS.map((palo) => (
+      <fieldset class="calc__palo">
+        <legend>{palo[0].toUpperCase() + palo.slice(1)}</legend>
+        <div class="calc__cartas">
+          {NUMEROS.map((n) => (
+            <button
+              type="button"
+              class="calc__carta"
+              data-carta={`${n}${palo[0]}`}
+              aria-pressed="false"
+              set:html={svgNaipe(n, palo)}
+            />
+          ))}
+        </div>
+      </fieldset>
+    ))}
+  </div>
+  <div class="calc__tabla tabla" data-tabla></div>
+</div>
+
+<script>
+  import { puntuar, deCodigo, aCodigo, baraja, barajar, analizarDescarte, VALOR, type Carta } from '../lib/ajiley';
+  import { svgNaipe, nombreCarta } from '../lib/naipe';
+
+  const raiz = document.querySelector<HTMLElement>('[data-calc]')!;
+  const manoEl = raiz.querySelector<HTMLElement>('[data-mano]')!;
+  const puntosEl = raiz.querySelector<HTMLElement>('[data-puntos]')!;
+  const detalleEl = raiz.querySelector<HTMLElement>('[data-detalle]')!;
+  const tablaEl = raiz.querySelector<HTMLElement>('[data-tabla]')!;
+  const comodinEl = raiz.querySelector<HTMLInputElement>('[data-comodin]')!;
+  const copiarEl = raiz.querySelector<HTMLButtonElement>('[data-copiar]')!;
+  const asesorEl = raiz.querySelector<HTMLElement>('[data-asesor]')!;
+  const opcionesEl = raiz.querySelector<HTMLElement>('[data-opciones]')!;
+  const analizarEl = raiz.querySelector<HTMLButtonElement>('[data-analizar]')!;
+  const botones = [...raiz.querySelectorAll<HTMLButtonElement>('[data-carta]')];
+  const pct = (x: number) => `${(x * 100).toLocaleString('es-VE', { maximumFractionDigits: 1 })} %`;
+  const num = (x: number) => x.toLocaleString('es-VE', { maximumFractionDigits: 1 });
+
+  function analizar() {
+    analizarEl.disabled = true;
+    analizarEl.textContent = 'Calculando…';
+    opcionesEl.innerHTML = '';
+    // Deja pintar el botón antes del cálculo (unas 660.000 manos).
+    setTimeout(() => {
+      const ops = analizarDescarte(mano, { sieteDeOrosComodin: comodinEl.checked }, 41);
+      const actual = puntuar(mano, { sieteDeOrosComodin: comodinEl.checked }).puntos;
+      const nombre = (i: number) => {
+        const c = mano[i];
+        return `${c.n === 1 ? 'as' : c.n} de ${c.palo}`;
+      };
+      opcionesEl.innerHTML = ops
+        .slice(0, 4)
+        .map((o, i) => {
+          const que = o.botar.length === 0 ? 'No botar nada (te quedas con ' + actual + ')' : 'Botar ' + o.botar.map(nombre).join(', ');
+          return `<li class="${i === 0 ? 'es-mejor' : ''}"><span class="calc__que">${i === 0 ? '<b>Mejor opción:</b> ' : ''}${que}</span>
+            <span class="calc__datos"><span><b>${num(o.esperado)}</b> pts de media</span><span><b>${pct(o.pMejorar)}</b> de mejorar</span><span><b>${pct(o.pMeta)}</b> de llegar a 41</span></span></li>`;
+        })
+        .join('');
+      analizarEl.disabled = false;
+      analizarEl.textContent = 'Analizar de nuevo';
+    }, 30);
+  }
+  analizarEl.addEventListener('click', analizar);
+
+  let mano: Carta[] = [];
+  const igual = (a: Carta, b: Carta) => a.n === b.n && a.palo === b.palo;
+
+  function pintar() {
+    const r = puntuar(mano, { sieteDeOrosComodin: comodinEl.checked });
+    const huecos = 5 - mano.length;
+    manoEl.innerHTML =
+      mano
+        .map((c) => {
+          const cuenta = r.cuentan.some((x) => igual(x, c));
+          return `<button type="button" class="calc__en-mano${cuenta ? ' es-cuenta' : ''}" data-quitar="${aCodigo(c)}" aria-label="Quitar ${nombreCarta(c.n, c.palo)}">${svgNaipe(c.n, c.palo, { titulo: false })}</button>`;
+        })
+        .join('') + '<span class="calc__hueco"></span>'.repeat(huecos);
+
+    puntosEl.textContent = String(r.puntos);
+    raiz.classList.toggle('es-ajiley', r.ajiley);
+    if (mano.length === 0) detalleEl.textContent = 'Elige cinco cartas';
+    else if (r.ajiley) detalleEl.textContent = `¡Ajiley de ${r.palo}! La mejor mano posible.`;
+    else if (r.palo)
+      detalleEl.textContent = `puntos en ${r.palo}${r.comodinEn ? ' (con el siete de oros como comodín)' : ''}${mano.length < 5 ? ` · faltan ${5 - mano.length} cartas` : ''}`;
+
+    tablaEl.innerHTML = mano.length
+      ? `<table><thead><tr><th>Palo</th><th>Cartas</th><th>Puntos</th></tr></thead><tbody>${r.porPalo
+          .filter((p) => p.cartas.length)
+          .map(
+            (p) =>
+              `<tr${p.palo === r.palo && !r.comodinEn ? ' class="es-mejor"' : ''}><td>${p.palo}</td><td>${p.cartas
+                .map((c) => `${c.n === 1 ? 'As' : c.n} (${VALOR[c.n]})`)
+                .join(' + ')}</td><td><strong>${p.puntos}</strong></td></tr>`,
+          )
+          .join('')}</tbody></table>`
+      : '';
+
+    for (const b of botones) {
+      const c = deCodigo(b.dataset.carta!)!;
+      const dentro = mano.some((x) => igual(x, c));
+      b.setAttribute('aria-pressed', String(dentro));
+      b.disabled = !dentro && mano.length >= 5;
+    }
+
+    const url = new URL(location.href);
+    if (mano.length) url.searchParams.set('mano', mano.map(aCodigo).join('-'));
+    else url.searchParams.delete('mano');
+    history.replaceState(null, '', url);
+    copiarEl.hidden = mano.length === 0;
+    asesorEl.hidden = mano.length !== 5;
+    opcionesEl.innerHTML = '';
+    analizarEl.textContent = 'Analizar las 32 opciones';
+  }
+
+  raiz.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    const carta = t.closest<HTMLButtonElement>('[data-carta]');
+    const quitar = t.closest<HTMLButtonElement>('[data-quitar]');
+    if (carta) {
+      const c = deCodigo(carta.dataset.carta!)!;
+      mano = mano.some((x) => igual(x, c)) ? mano.filter((x) => !igual(x, c)) : [...mano, c].slice(0, 5);
+      pintar();
+    } else if (quitar) {
+      const c = deCodigo(quitar.dataset.quitar!)!;
+      mano = mano.filter((x) => !igual(x, c));
+      pintar();
+    } else if (t.closest('[data-azar]')) {
+      mano = barajar(baraja()).slice(0, 5);
+      pintar();
+    } else if (t.closest('[data-limpiar]')) {
+      mano = [];
+      pintar();
+    } else if (t.closest('[data-copiar]')) {
+      navigator.clipboard?.writeText(location.href).then(() => {
+        copiarEl.textContent = '¡Enlace copiado!';
+        setTimeout(() => (copiarEl.textContent = 'Copiar enlace'), 1800);
+      });
+    }
+  });
+  comodinEl.addEventListener('change', pintar);
+
+  const inicial = new URL(location.href).searchParams.get('mano');
+  if (inicial) {
+    mano = inicial
+      .split('-')
+      .map(deCodigo)
+      .filter((c): c is Carta => c !== null)
+      .filter((c, i, arr) => arr.findIndex((x) => igual(x, c)) === i)
+      .slice(0, 5);
+  }
+  pintar();
+</script>
+
+<style>
+  .calc {
+    margin: 1.5em 0 2em;
+  }
+  .calc__mesa {
+    background:
+      radial-gradient(circle at 30% 0%, rgb(255 255 255 / 0.08), transparent 55%), var(--tapete);
+    border: var(--borde-sticker);
+    border-radius: var(--radio);
+    box-shadow: 0 5px 0 var(--noche);
+    padding: 20px 16px;
+    text-align: center;
+    color: #fff;
+  }
+  .calc__mano {
+    display: flex;
+    justify-content: center;
+    gap: clamp(4px, 1.5vw, 10px);
+    min-height: 120px;
+  }
+  .calc__mano :global(.calc__en-mano),
+  .calc__mano :global(.calc__hueco) {
+    width: clamp(54px, 15vw, 84px);
+    aspect-ratio: 2 / 3;
+    border-radius: 9px;
+  }
+  .calc__mano :global(.calc__hueco) {
+    border: 2px dashed rgb(255 255 255 / 0.4);
+  }
+  .calc__mano :global(.calc__en-mano) {
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+    opacity: 0.55;
+  }
+  .calc__mano :global(.calc__en-mano.es-cuenta) {
+    opacity: 1;
+    transform: translateY(-6px);
+  }
+  .calc__mano :global(svg) {
+    width: 100%;
+    height: auto;
+  }
+  .calc__resultado {
+    margin: 16px 0 12px;
+    display: grid;
+    gap: 2px;
+  }
+  .calc__puntos {
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    font-size: clamp(2.8rem, 8vw, 4rem);
+    line-height: 1;
+    color: var(--oro);
+  }
+  .calc__detalle {
+    font-weight: 700;
+  }
+  .es-ajiley .calc__puntos {
+    animation: brillo 1.2s ease-in-out 2;
+  }
+  @keyframes brillo {
+    50% {
+      transform: scale(1.12);
+      text-shadow: 0 0 24px rgb(255 194 14 / 0.8);
+    }
+  }
+  .calc__acciones {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .calc__opcion {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 14px;
+    font-size: 0.92rem;
+    cursor: pointer;
+  }
+  .calc__opcion input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--oro);
+  }
+  .calc__asesor {
+    margin-top: 18px;
+    padding: 16px 18px;
+    background: #fff;
+    border: var(--borde-sticker);
+    border-radius: var(--radio);
+    box-shadow: 0 4px 0 var(--noche);
+  }
+  .calc__asesor-cabeza {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  .calc__asesor-cabeza strong {
+    font-family: var(--f-titulo);
+    font-size: 1.3rem;
+    color: var(--noche);
+  }
+  .calc__asesor-nota {
+    font-size: 0.92rem;
+    color: var(--tinta-suave);
+    margin: 6px 0 10px;
+  }
+  .calc__opciones {
+    list-style: none;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: grid;
+    gap: 8px;
+  }
+  .calc__opciones :global(li) {
+    display: grid;
+    gap: 4px;
+    padding: 10px 12px;
+    border: 2px solid var(--linea);
+    border-radius: var(--radio-s);
+    margin: 0 !important;
+  }
+  .calc__opciones :global(li.es-mejor) {
+    border-color: var(--oro-600);
+    background: var(--oro-100);
+  }
+  .calc__opciones :global(.calc__datos) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    font-size: 0.92rem;
+    color: var(--tinta-suave);
+  }
+  .calc__selector {
+    display: grid;
+    gap: 12px;
+    margin-top: 22px;
+  }
+  .calc__palo {
+    border: 2px solid var(--linea);
+    border-radius: var(--radio-s);
+    padding: 8px 10px 12px;
+    margin: 0;
+    background: #fff;
+  }
+  .calc__palo legend {
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    color: var(--noche);
+    padding: 0 6px;
+  }
+  .calc__cartas {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 6px;
+  }
+  .calc__carta {
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition:
+      transform 0.12s ease,
+      opacity 0.12s ease;
+  }
+  .calc__carta :global(svg) {
+    width: 100%;
+    height: auto;
+  }
+  .calc__carta:hover:not(:disabled) {
+    transform: translateY(-3px);
+  }
+  .calc__carta[aria-pressed='true'] {
+    outline: 3px solid var(--oro-600);
+    outline-offset: 1px;
+    transform: translateY(-3px);
+  }
+  .calc__carta:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .calc__tabla:empty {
+    display: none;
+  }
+  .calc__tabla :global(td:first-child) {
+    text-transform: capitalize;
+    font-weight: 800;
+  }
+  .calc__tabla :global(tr.es-mejor td) {
+    background: var(--oro-100);
+  }
+  @media (max-width: 560px) {
+    .calc__cartas {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+</style>

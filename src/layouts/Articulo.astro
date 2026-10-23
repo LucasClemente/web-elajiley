@@ -24,6 +24,8 @@ interface Frontmatter {
   schemaExtra?: Record<string, unknown>[];
   minutos?: number;
   indice?: boolean;
+  /** Página de herramienta: sin columna lateral y con el contenido a todo el ancho. */
+  completo?: boolean;
 }
 interface Props {
   frontmatter: Frontmatter;
@@ -77,7 +79,7 @@ if (fm.faq?.length) {
   schema={schema}
   migas={[{ name: fm.miga, href: path }]}
 >
-  <article class="articulo">
+  <article class:list={['articulo', { 'articulo--completo': fm.completo }]}>
     <header class="articulo__cabecera">
       <div class="contenedor">
         <nav class="migas" aria-label="Migas de pan">
@@ -125,7 +127,7 @@ if (fm.faq?.length) {
         )}
       </div>
 
-      <aside class="articulo__lateral">
+      <aside class="articulo__lateral" hidden={fm.completo}>
         {mostrarIndice && (
           <nav class="indice" aria-label="En esta página">
             <strong>En esta página</strong>
@@ -202,6 +204,15 @@ if (fm.faq?.length) {
     gap: clamp(28px, 5vw, 64px);
     padding-block: clamp(28px, 5vw, 48px) clamp(48px, 7vw, 80px);
     align-items: start;
+  }
+  .articulo--completo .articulo__cuerpo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .articulo--completo .prosa {
+    max-width: none;
+  }
+  .articulo--completo .prosa > :global(:where(p, ul, ol, h2, h3, blockquote, .nota, .faq, .resumen)) {
+    max-width: var(--ancho-prosa);
   }
   .articulo__lateral {
     position: sticky;

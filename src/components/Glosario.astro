@@ -1,0 +1,166 @@
+---
+// Glosario con buscador en vivo y JSON-LD DefinedTermSet.
+import { SITE } from '../config';
+
+export interface Termino {
+  termino: string;
+  id: string;
+  definicion: string;
+  /** Otras formas o sinónimos, para el buscador. */
+  alias?: string[];
+}
+interface Props {
+  terminos: Termino[];
+}
+const { terminos } = Astro.props;
+const ordenados = [...terminos].sort((a, b) => a.termino.localeCompare(b.termino, 'es', { ignorePunctuation: true }));
+const url = new URL(Astro.url.pathname, SITE.url).href;
+const quitarHtml = (s: string) => s.replace(/<[^>]+>/g, '');
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'DefinedTermSet',
+  '@id': `${url}#glosario`,
+  name: 'Vocabulario del ajiley',
+  inLanguage: SITE.lang,
+  hasDefinedTerm: ordenados.map((t) => ({
+    '@type': 'DefinedTerm',
+    '@id': `${url}#${t.id}`,
+    name: t.termino,
+    description: quitarHtml(t.definicion),
+    url: `${url}#${t.id}`,
+  })),
+});
+const letras = [...new Set(ordenados.map((t) => t.termino.replace(/^[¡¿]/, '')[0].toUpperCase()))];
+---
+<div class="glosario" data-glosario>
+  <label class="glosario__buscar">
+    <span class="sr-only">Buscar un término</span>
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"></circle><path d="m15.5 15.5 5 5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path></svg>
+    <input type="search" placeholder="Busca una palabra: pie, botar, pinta…" data-buscar autocomplete="off" />
+  </label>
+  <nav class="glosario__letras" aria-label="Ir a la letra">
+    {letras.map((l) => <a href={`#letra-${l}`}>{l}</a>)}
+  </nav>
+  <p class="glosario__vacio" data-vacio hidden>No encontramos esa palabra. ¿Nos falta alguna? Seguro que la añadimos.</p>
+  <dl class="glosario__lista">
+    {ordenados.map((t, i) => {
+      const letra = t.termino.replace(/^[¡¿]/, '')[0].toUpperCase();
+      const primera = i === 0 || ordenados[i - 1].termino.replace(/^[¡¿]/, '')[0].toUpperCase() !== letra;
+      return (
+        <div class="glosario__item" id={t.id} data-texto={[t.termino, ...(t.alias ?? []), quitarHtml(t.definicion)].join(' ').toLowerCase()}>
+          {primera && <span class="glosario__letra" id={`letra-${letra}`}>{letra}</span>}
+          <dt>
+            <a href={`#${t.id}`}>{t.termino}</a>
+          </dt>
+          <dd set:html={t.definicion} />
+        </div>
+      );
+    })}
+  </dl>
+</div>
+<script type="application/ld+json" set:html={jsonLd} />
+
+<script>
+  for (const raiz of document.querySelectorAll<HTMLElement>('[data-glosario]')) {
+    const input = raiz.querySelector<HTMLInputElement>('[data-buscar]')!;
+    const items = [...raiz.querySelectorAll<HTMLElement>('.glosario__item')];
+    const vacio = raiz.querySelector<HTMLElement>('[data-vacio]')!;
+    const normal = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    input.addEventListener('input', () => {
+      const q = normal(input.value.trim());
+      let visibles = 0;
+      for (const it of items) {
+        const ok = !q || normal(it.dataset.texto!).includes(q);
+        it.hidden = !ok;
+        if (ok) visibles++;
+      }
+      raiz.classList.toggle('es-filtrado', q.length > 0);
+      vacio.hidden = visibles > 0;
+    });
+  }
+</script>
+
+<style>
+  .glosario__buscar {
+    position: sticky;
+    top: 80px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 16px;
+    background: #fff;
+    border: var(--borde-sticker);
+    border-radius: 999px;
+    box-shadow: 0 4px 0 var(--noche);
+    color: var(--noche);
+  }
+  .glosario__buscar input {
+    flex: 1;
+    min-height: 52px;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: 1.05rem;
+    color: var(--tinta);
+    outline: none;
+  }
+  .glosario__letras {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 18px 0 8px;
+  }
+  .glosario__letras a {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--tapete-100);
+    color: var(--tapete-700);
+    font-weight: 900;
+    text-decoration: none;
+  }
+  .glosario__letras a:hover {
+    background: var(--tapete);
+    color: #fff;
+  }
+  .es-filtrado .glosario__letra,
+  .es-filtrado ~ * .glosario__letra {
+    display: none;
+  }
+  .glosario__lista {
+    margin: 0;
+  }
+  .glosario__item {
+    padding: 14px 0;
+    border-bottom: 1px dashed var(--linea);
+    scroll-margin-top: 150px;
+  }
+  .glosario__item:target {
+    background: var(--oro-100);
+    border-radius: 12px;
+    padding-inline: 12px;
+  }
+  .glosario__letra {
+    display: block;
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    font-size: 2rem;
+    color: var(--oro-600);
+    margin: 14px 0 4px;
+    scroll-margin-top: 150px;
+  }
+  .glosario__item dt {
+    margin-top: 0 !important;
+  }
+  .glosario__item dt a {
+    color: var(--noche);
+    text-decoration: none;
+  }
+  .glosario__vacio {
+    font-weight: 700;
+    color: var(--tinta-suave);
+  }
+</style>

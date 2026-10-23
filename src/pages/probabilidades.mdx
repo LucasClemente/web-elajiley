@@ -1,0 +1,107 @@
+---
+layout: ../layouts/Articulo.astro
+title: Probabilidades del ajiley, contadas mano a mano
+seoTitle: "Probabilidades del ajiley: cada cuánto sale un ajiley de 51"
+description: Las probabilidades exactas del ajiley, calculadas sobre las 658.008 manos posibles. Cada cuánto sale un ajiley, qué puntuación es normal, cuántas cartas del mismo palo te tocan y cuánto ayuda el descarte.
+miga: Probabilidades
+etiqueta: Los números
+lead: "No son estimaciones: contamos una a una las 658.008 manos de cinco cartas que pueden salir de una baraja española de 40 cartas. Estas son las cuentas reales del ajiley."
+relacionados: ['/estrategia/', '/calculadora/', '/valor-de-las-cartas/']
+faq:
+  - q: ¿Cada cuánto sale un ajiley?
+    a: El ajiley de 51 sale en 140 de las 658.008 manos posibles, es decir, más o menos una vez cada 4.700 manos repartidas, sin contar el descarte.
+  - q: ¿Cuál es la puntuación media en el ajiley?
+    a: Al repartir, la mano media vale 22,9 puntos y la mediana 21. Después de un buen descarte, la media sube varios puntos.
+  - q: ¿Qué probabilidad hay de mejorar con el descarte?
+    a: Depende de lo que guardes. Con cuatro cartas del mismo palo, la carta que pides es de tu palo el 17 % de las veces. Con tres, al menos una de las dos que pides es de tu palo el 36,5 % de las veces.
+---
+import GraficaDistribucion from '../components/GraficaDistribucion.astro';
+import TablaJugadas from '../components/TablaJugadas.astro';
+import Consejo from '../components/Consejo.astro';
+import probs from '../data/probabilidades.json';
+
+export const fmt = (x, d = 1) => x.toLocaleString('es-VE', { maximumFractionDigits: d });
+
+## Cómo lo calculamos
+
+Una baraja española de 40 cartas permite formar exactamente **658.008 manos distintas de cinco cartas**. Las generamos todas, una a una, y puntuamos cada una con las reglas del ajiley: as 11, siete 7, seis 6, todo lo demás 10, y solo cuenta el mejor palo. Lo que sigue son los resultados, **antes de botar**. Para el descarte usamos el mismo método: todas las cartas que podrían llegarte de las 35 que no ves.
+
+## La puntuación al repartir
+
+<GraficaDistribucion />
+
+- **Media:** {fmt(probs.media)} puntos. **Mediana:** {probs.mediana} puntos: la mitad de las manos vale menos que eso.
+- **Las puntuaciones más comunes** son 20 y 21 (dos cartas de un palo) y 30 y 31 (tres cartas de un palo).
+- **El 90 % de las manos** vale {probs.p90} puntos o menos al repartir.
+
+## Cuántas cartas del mismo palo te tocan
+
+Como hay cuatro palos y recibes cinco cartas, **siempre tendrás al menos dos del mismo palo**. Lo demás depende de la suerte:
+
+<div class="tabla">
+  <table>
+    <thead><tr><th>Cartas de tu mejor palo</th><th>Probabilidad</th><th>Sale una de cada…</th></tr></thead>
+    <tbody>
+      {probs.porCartas.map((f) => (
+        <tr>
+          <td><strong>{f.cartasDelMismoPalo}</strong></td>
+          <td>{fmt(f.p * 100, 2)} %</td>
+          <td>{fmt(1 / f.p, 0)} manos</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+## Las jugadas grandes
+
+<TablaJugadas desde={30} />
+
+El **ajiley de 51** sale en **140 de las 658.008 manos** (35 por palo): una de cada 4.700, más o menos. En una mesa de cuatro que juegue cien manos por noche se reparten 400 manos: harían falta unas doce noches para ver un ajiley servido de entrada. Con el descarte aparece algo más a menudo, pero sigue siendo un acontecimiento.
+
+## Cuánto ayuda el descarte
+
+El descarte lo cambia todo. Estas son las probabilidades de que te llegue lo que buscas, según cuántas cartas de tu palo guardes:
+
+<div class="tabla">
+  <table>
+    <thead><tr><th>Guardas</th><th>Botas</th><th>Te llega al menos una de tu palo</th><th>Te llegan todas de tu palo</th></tr></thead>
+    <tbody>
+      <tr><td>4 del mismo palo</td><td>1</td><td>17,1 %</td><td>17,1 %</td></tr>
+      <tr><td>3 del mismo palo</td><td>2</td><td>36,5 %</td><td>3,5 %</td></tr>
+      <tr><td>2 del mismo palo</td><td>3</td><td>55,3 %</td><td>0,9 %</td></tr>
+    </tbody>
+  </table>
+</div>
+
+En cada caso quedan 35 cartas que no ves, y de tu palo quedan 10 menos las que tienes: 6 si guardas cuatro, 7 si guardas tres y 8 si guardas dos.
+
+Y estos son algunos ejemplos reales, con la mejor forma de botar calculada por el asesor de la calculadora:
+
+<div class="tabla">
+  <table>
+    <thead><tr><th>Mano</th><th>Puntos</th><th>Mejor descarte</th><th>Media después</th><th>Llega a 41</th></tr></thead>
+    <tbody>
+      {probs.ejemplos.map((e) => (
+        <tr>
+          <td>{e.nombre}</td>
+          <td>{e.actual}</td>
+          <td>Botar {e.mejor.botar.length} {e.mejor.botar.length === 1 ? 'carta' : 'cartas'}</td>
+          <td><strong>{fmt(e.mejor.esperado)}</strong></td>
+          <td>{fmt(e.mejor.p41 * 100)} %</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<Consejo>
+  <p>¿Quieres saber las cuentas de tu propia mano? Elige tus cinco cartas en la <a href="/calculadora/">calculadora</a> y pulsa <em>Analizar</em>: prueba las 32 formas de botar en menos de un segundo.</p>
+</Consejo>
+
+## Lo que significan estos números para tu juego
+
+- **Una mano de 30 ya está en el 20 % mejor.** No la tires a la primera apuesta.
+- **El 41 es la gran mano realista.** Sale en menos del 1 % de los repartos, pero con buen descarte aparece bastante más.
+- **Cinco del mismo palo es rarísimo.** Si alguien no bota ninguna carta, desconfía: o tiene una mano histórica o está faroleando.
+- **El descarte multiplica tus opciones.** Por eso las mejores decisiones del ajiley están en qué botar. Las tienes explicadas en [estrategia](/estrategia/).

@@ -1,0 +1,47 @@
+---
+// Tabla de jugadas por puntos con su frecuencia exacta (src/data/probabilidades.json).
+import probs from '../data/probabilidades.json';
+
+interface Props {
+  /** Puntuación mínima a mostrar. */
+  desde?: number;
+  /** Ejemplo de cada jugada (puntos → texto). */
+  ejemplos?: Record<number, string>;
+}
+const { desde = 36, ejemplos = {} } = Astro.props;
+
+const filas = probs.distribucion.filter((d) => d.puntos >= desde).reverse();
+const fmt = (x: number) => x.toLocaleString('es-VE', { maximumFractionDigits: 3 });
+const unoDe = (p: number) => Math.round(1 / p).toLocaleString('es-VE');
+---
+<div class="tabla">
+  <table>
+    <thead>
+      <tr>
+        <th>Puntos</th>
+        {Object.keys(ejemplos).length > 0 && <th>Cómo se forma</th>}
+        <th>Probabilidad</th>
+        <th>Sale una de cada…</th>
+      </tr>
+    </thead>
+    <tbody>
+      {filas.map((f) => (
+        <tr>
+          <td><strong>{f.puntos === 51 ? '51 · ajiley' : f.puntos}</strong></td>
+          {Object.keys(ejemplos).length > 0 && <td>{ejemplos[f.puntos] ?? ''}</td>}
+          <td>{fmt(f.p * 100)} %</td>
+          <td>{unoDe(f.p)} manos</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+<p class="nota-tabla">Probabilidades exactas para las 5 cartas que te reparten, antes de botar, calculadas sobre las {probs.totalManos.toLocaleString('es-VE')} manos posibles.</p>
+
+<style>
+  .nota-tabla {
+    font-size: 0.88rem;
+    color: var(--tinta-suave);
+    margin-top: -1em;
+  }
+</style>

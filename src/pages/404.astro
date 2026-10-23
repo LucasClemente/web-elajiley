@@ -4,7 +4,7 @@ import Naipe from '../components/Naipe.astro';
 import TarjetaPagina from '../components/TarjetaPagina.astro';
 import { PAGINAS } from '../lib/paginas';
 
-const destacadas = ['/reglas/', '/como-jugar/', '/puntuacion/', '/practicar/']
+const destacadas = ['/reglas/', '/como-jugar/', '/valor-de-las-cartas/', '/practicar/']
   .map((h) => PAGINAS.find((p) => p.href === h))
   .filter((p) => p !== undefined);
 ---

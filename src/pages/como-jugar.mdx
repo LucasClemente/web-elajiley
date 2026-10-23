@@ -1,0 +1,150 @@
+---
+layout: ../layouts/Articulo.astro
+title: Cómo se juega al ajiley, mano a mano
+seoTitle: "Cómo jugar ajiley con cartas españolas: una mano completa, paso a paso"
+description: Aprende a jugar ajiley viendo una mano completa, jugada a jugada. Cuatro jugadores, tres rondas de envite, el descarte y el final, con los consejos que nadie te da en la mesa.
+miga: Cómo jugar
+etiqueta: Paso a paso
+lead: Las reglas se entienden mejor jugando. Siéntate en la mesa con María, José y Carmen y sigue una mano completa, de la entrada al pote, decisión por decisión.
+relacionados: ['/reglas/', '/estrategia/', '/practicar/']
+faq:
+  - q: ¿Es difícil aprender a jugar ajiley?
+    a: No. Si sabes sumar hasta 51 y reconoces los cuatro palos de la baraja española, en tres o cuatro manos ya juegas con soltura. Lo difícil, como en todo juego de envite, es decidir bien cuándo ir y cuándo retirarse.
+  - q: ¿Cómo se juega al ajiley con cartas españolas?
+    a: Se quitan los ochos y los nueves, se reparten dos cartas, se envita, se reparten tres más, se vuelve a envitar, cada uno bota lo que no le sirve, hay una última ronda y gana quien más sume en un mismo palo.
+  - q: ¿Qué es lo primero que debo mirar al recibir mis cartas?
+    a: Cuántas cartas tienes del mismo palo y si alguna es un as. Dos cartas del mismo palo con as ya son un buen comienzo; dos cartas de palos distintos sin as, un comienzo flojo.
+---
+import ManoGuiada from '../components/ManoGuiada.astro';
+import Consejo from '../components/Consejo.astro';
+
+export const pasos = [
+  {
+    titulo: 'Se sortea el pie',
+    texto: 'Se baraja, se extiende el mazo boca abajo y cada uno saca una carta. Carmen saca un as: <strong>ella será el pie</strong> y repartirá. Tú estás sentado a su derecha, así que <strong>eres la mano</strong>: hablarás primero y, si hay empate al final, ganas tú.',
+    pote: 0,
+    mesa: [{ nombre: 'Tú' }, { nombre: 'María' }, { nombre: 'José' }, { nombre: 'Carmen', pie: true }],
+  },
+  {
+    titulo: 'Todos ponen la entrada',
+    texto: 'Antes de ver una sola carta, cada jugador pone <strong>la entrada</strong>: una ficha. El pote arranca con 4 fichas.',
+    pote: 4,
+    mesa: [
+      { nombre: 'Tú', accion: '1 ficha' },
+      { nombre: 'María', accion: '1 ficha' },
+      { nombre: 'José', accion: '1 ficha' },
+      { nombre: 'Carmen', accion: '1 ficha', pie: true },
+    ],
+  },
+  {
+    titulo: 'Dos cartas para cada uno',
+    texto: 'Carmen reparte <strong>dos cartas juntas</strong> a cada jugador, empezando por ti. Te llegan el <strong>as y la sota de copas</strong>: 11 + 10 = 21 puntos en un mismo palo. Para ser solo dos cartas, es un comienzo excelente.',
+    mano: '1c 10c',
+    pote: 4,
+    mesa: [{ nombre: 'Tú' }, { nombre: 'María' }, { nombre: 'José' }, { nombre: 'Carmen', pie: true }],
+  },
+  {
+    titulo: 'Primera ronda de envite',
+    texto: 'Como eres la mano, hablas primero y <strong>apuestas 1</strong>: tu comienzo lo merece. María <strong>va</strong>. José <strong>no va</strong> y se retira. Carmen <strong>sube 1</strong> (pone 2). Ahora tú y María tienen que igualar: los dos <strong>van</strong> y ponen una ficha más. Fíjate en que, desde que apostaste, ya nadie podía pasar. Pote: 10 fichas.',
+    mano: '1c 10c',
+    pote: 10,
+    mesa: [
+      { nombre: 'Tú', accion: 'Apuesta 1 · voy' },
+      { nombre: 'María', accion: 'Voy · voy' },
+      { nombre: 'José', accion: 'No voy', fuera: true },
+      { nombre: 'Carmen', accion: 'Subo 1', pie: true },
+    ],
+  },
+  {
+    titulo: 'Tres cartas más, una a una',
+    texto: 'Carmen reparte <strong>tres cartas más, una a una</strong>. Te llegan el <strong>tres de copas</strong> (¡vale 10!), el siete de oros y el rey de espadas. Tus copas suman 11 + 10 + 10 = <strong>31 puntos</strong>. El siete y el rey, sueltos, no te sirven para nada.',
+    mano: '1c 10c 3c 7o* 12e*',
+    pote: 10,
+    mesa: [{ nombre: 'Tú' }, { nombre: 'María' }, { nombre: 'José', fuera: true }, { nombre: 'Carmen', pie: true }],
+  },
+  {
+    titulo: 'Segunda ronda de envite',
+    texto: 'Esta vez <strong>pasas</strong>: tienes buena mano pero prefieres ver qué hacen los demás. María <strong>apuesta 2</strong>. Carmen <strong>va</strong>. Como María ya apostó, tú no puedes volver a pasar: <strong>vas</strong> y pones 2. Pote: 16 fichas.',
+    mano: '1c 10c 3c 7o* 12e*',
+    pote: 16,
+    mesa: [
+      { nombre: 'Tú', accion: 'Paso · voy' },
+      { nombre: 'María', accion: 'Apuesto 2' },
+      { nombre: 'José', fuera: true },
+      { nombre: 'Carmen', accion: 'Voy', pie: true },
+    ],
+  },
+  {
+    titulo: 'El descarte: a botar',
+    texto: 'Botas el siete de oros y el rey de espadas, y Carmen te da dos cartas: <strong>el cinco de copas</strong> y el seis de bastos. Tus copas ahora son as, sota, tres y cinco: <strong>41 puntos</strong>, más que el 99 % de las manos que se reparten. Y mira a los demás: <strong>María bota una sola carta</strong> (seguramente tiene cuatro del mismo palo) y <strong>Carmen bota tres</strong> (anda buscando).',
+    mano: '1c 10c 3c 5c 6b*',
+    pote: 16,
+    mesa: [
+      { nombre: 'Tú', accion: 'Boto 2' },
+      { nombre: 'María', accion: 'Boto 1' },
+      { nombre: 'José', fuera: true },
+      { nombre: 'Carmen', accion: 'Boto 3', pie: true },
+    ],
+  },
+  {
+    titulo: 'Última ronda de envite',
+    texto: 'Con 41 puntos <strong>apuestas 2</strong>. María, que botó una, <strong>sube 2</strong>: tiene algo bueno. Carmen <strong>no va</strong>. Con cuatro cartas no se puede pasar de 41, así que solo te ganaría alguien con cinco del mismo palo, y si te empatan a 41 ganas tú por ser mano. <strong>Vas</strong> y pones 2 más. Pote: 24 fichas.',
+    mano: '1c 10c 3c 5c 6b*',
+    pote: 24,
+    mesa: [
+      { nombre: 'Tú', accion: 'Apuesto 2 · voy' },
+      { nombre: 'María', accion: 'Subo 2' },
+      { nombre: 'José', fuera: true },
+      { nombre: 'Carmen', accion: 'No voy', pie: true, fuera: true },
+    ],
+  },
+  {
+    titulo: 'Se enseñan las cartas',
+    texto: 'María enseña rey, caballo, cuatro y dos de espadas: <strong>40 puntos</strong>. Tú enseñas tus copas: <strong>41</strong>. ¡El pote de 24 fichas es tuyo! Tu as marcó la diferencia. En la próxima mano el pie pasa a ser otro jugador y vuelta a empezar.',
+    mano: '1c 10c 3c 5c 6b*',
+    pote: 24,
+    mesa: [
+      { nombre: 'Tú', accion: '41 · ¡gana!' },
+      { nombre: 'María', accion: '40' },
+      { nombre: 'José', fuera: true },
+      { nombre: 'Carmen', pie: true, fuera: true },
+    ],
+  },
+];
+
+## Antes de empezar
+
+Saca de la baraja los ochos, los nueves y los comodines: el ajiley se juega con **40 cartas**. Busca fichas (o frijoles, o caramelos) y siéntate con dos, tres o cuatro amigos. Si no recuerdas cuánto vale cada carta, ten a mano esta regla de oro:
+
+> **As 11 · siete 7 · seis 6 · todo lo demás 10.** Y solo suman las cartas del mismo palo.
+
+## Una mano completa, paso a paso
+
+En esta mano juegan cuatro personas. Tú eres **la mano** y Carmen es **el pie**. Avanza con los botones y fíjate en el pote y en lo que hace cada jugador.
+
+<ManoGuiada pasos={pasos} />
+
+## Lo que acabas de aprender
+
+- El **pie** reparte y la **mano** (a su derecha) habla primero y gana los empates.
+- La **entrada** se pone antes de ver las cartas.
+- Hay **tres rondas de envite**: con dos cartas, con cinco y después del descarte.
+- Mientras nadie apuesta se puede **pasar**; en cuanto alguien apuesta, toca **ir, subir o retirarse**.
+- Se **bota una sola vez**, y lo que botan los demás es información valiosísima.
+- Solo cuentan las cartas del **mismo palo**, y el 2, el 3, el 4 y el 5 valen 10.
+
+<Consejo>
+  <p>En el paso 7 María botó una sola carta y al final tenía 40. Casi siempre es así: <strong>quien bota una tiene cuatro del mismo palo</strong>. Cuando la veas, piensa dos veces antes de ir con menos de 40.</p>
+</Consejo>
+
+## Los errores típicos del que empieza
+
+1. **Sumar cartas de distintos palos.** Un as de oros y un rey de copas no suman 21: suman 11, porque solo vale el mejor palo.
+2. **Pensar que el siete vale más que el dos.** En el ajiley es al revés: el dos vale 10 y el siete, 7.
+3. **Enamorarse del as.** Es la carta que más vale, pero un as solo, sin compañía de su palo, suma apenas 11. Si tienes dos o más cartas de otro palo, casi siempre conviene botarlo. Lo explicamos con números en [estrategia](/estrategia/).
+4. **Pasar después de una apuesta.** En cuanto alguien apuesta en una ronda, ya no se puede pasar: o vas, o subes, o te retiras.
+5. **Jugar con ochos y nueves.** Cambian todas las cuentas. Revisa la baraja antes de empezar.
+
+## ¿Y ahora qué?
+
+Lo mejor para fijar lo aprendido es jugar. En el [simulador](/practicar/) juegas manos completas contra Guaca y sus amigos, gratis y sin registro. Y si quieres afinar tus decisiones, la [calculadora](/calculadora/) te dice qué botar en cada mano con las cuentas exactas.

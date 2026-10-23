@@ -1,0 +1,77 @@
+---
+layout: ../layouts/Articulo.astro
+title: Variantes del ajiley
+seoTitle: "Variantes del ajiley: comodín, ajiley de 52 y reglas de la casa"
+description: El ajiley cambia de una mesa a otra. El siete de oros comodín, el ajiley de 52 de los llanos, cuántas cartas se pueden botar, cuántas rondas de envite hay y otras reglas que conviene acordar.
+miga: Variantes
+etiqueta: Reglas de la casa
+lead: "Como todo juego que se aprende en familia, el ajiley tiene acentos regionales. Aquí reunimos las diferencias documentadas entre mesas, para que nadie te tome por sorpresa."
+relacionados: ['/reglas/', '/historia/', '/valor-de-las-cartas/']
+faq:
+  - q: ¿El siete de oros siempre es comodín en el ajiley?
+    a: En la regla más extendida, solo cuando juegan cinco personas, y vale 10 puntos. En otras mesas se usa siempre, y en la versión llanera vale 11.
+  - q: ¿Por qué en algunos sitios el ajiley es de 52?
+    a: Porque en la versión de los llanos el comodín vale 11, como un as. Con el as y el comodín más tres cartas de 10 del mismo palo se llega a 52.
+---
+import Mano from '../components/Mano.astro';
+import Consejo from '../components/Consejo.astro';
+
+## Las diferencias, de un vistazo
+
+<div class="tabla">
+  <table>
+    <thead><tr><th>Regla</th><th>Forma más extendida</th><th>Otras formas que se ven</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Jugadores</strong></td><td>De 2 a 5</td><td>Algunas mesas en línea admiten 6 o 7</td></tr>
+      <tr><td><strong>Baraja</strong></td><td>40 cartas (sin 8, 9 ni comodines)</td><td>En el llano se habla de jugar "con todas las cartas"</td></tr>
+      <tr><td><strong>Comodín</strong></td><td>Siete de oros, solo con 5 jugadores, vale 10</td><td>Siempre comodín; o comodín de 11 (llanos)</td></tr>
+      <tr><td><strong>Jugada máxima</strong></td><td>Ajiley de 51</td><td>Ajiley de 52 (llanos, con comodín de 11)</td></tr>
+      <tr><td><strong>Rondas de envite</strong></td><td>Tres (2 cartas, 5 cartas y tras el descarte)</td><td>Dos (tras las 2 primeras cartas y tras el descarte)</td></tr>
+      <tr><td><strong>Descarte</strong></td><td>Una vez, las cartas que quieras</td><td>Máximo cuatro cartas</td></tr>
+      <tr><td><strong>Empates</strong></td><td>Gana la mano</td><td>Gana quien tenga más cartas del palo</td></tr>
+    </tbody>
+  </table>
+</div>
+
+## El siete de oros: ¿comodín o no?
+
+La regla más extendida dice que el **siete de oros es comodín solo cuando juegan cinco personas**. Tiene su lógica: con cinco jugadores se reparten 25 cartas de 40 y las manos buenas escasean, así que el comodín añade vida a la mesa. Vale **10 puntos** y se suma al palo que más le convenga a quien lo tenga.
+
+Hay mesas que lo usan **siempre**, juegue quien juegue. Si es tu caso, ten en cuenta que el comodín sube bastante el nivel de las manos: el as, el comodín y tres cartas de 10 de cualquier palo ya hacen 51.
+
+<Mano titulo="Con comodín: as, caballo, dos y tres de bastos + siete de oros" cartas="1b 11b 2b 3b 7o" resultado="11 + 10 + 10 + 10 + 10 (comodín) = 51" />
+
+## El ajiley de 52 de los llanos
+
+En los llanos, a ambos lados de la frontera colombo-venezolana, se juega una versión en la que **el comodín vale 11**, igual que los ases. Así, el as, el comodín y tres cartas de 10 del mismo palo suman **52**, y esa es la jugada que en el llano llaman ajiley. El resto de valores es el mismo: todo vale 10 salvo los ases (11) y los sietes y seises, que valen lo que marcan.
+
+<Mano titulo="Ajiley llanero: as, comodín y tres cartas de 10" cartas="1e 7o 12e 10e 4e" resultado="11 + 11 (comodín) + 10 + 10 + 10 = 52" />
+
+La crónica que la recoge no dice si el comodín se usa solo con cinco jugadores, así que, si juegas así, acuérdalo antes.
+
+## Dos o tres rondas de envite
+
+La forma tradicional tiene **tres rondas**: con las dos primeras cartas, con las cinco y después del descarte. Algunas mesas, sobre todo en línea, simplifican el juego y se saltan la ronda del medio: reparten las tres cartas restantes sin envitar y pasan directamente al descarte. El juego es más rápido, pero se pierde una oportunidad de leer a los rivales.
+
+## Cuántas cartas se pueden botar
+
+La regla general es que **se bota una sola vez y las cartas que uno quiera**. Hay mesas que ponen un **máximo de cuatro** para que nadie "cambie la mano entera". En la práctica importa poco: botar las cinco casi nunca es la mejor opción, como puedes comprobar en la [calculadora](/calculadora/).
+
+## Cómo se desempata
+
+La regla extendida es clara: **en caso de empate gana la mano**. Algunas mesas dicen que desempata quien tenga más cartas del palo que puntúa, pero, curiosamente, con los valores del ajiley ese criterio nunca decide nada: dos cartas suman como mucho 21, tres van de 23 a 31, cuatro de 33 a 41 y cinco de 43 a 51. **Dos manos empatadas siempre tienen el mismo número de cartas**, así que al final siempre hay que recurrir a la mano.
+
+<Consejo>
+  <p>Antes de la primera mano, haz la pregunta mágica: "¿Comodín sí o no, y cuánto vale?". Te ahorra la discusión más común del ajiley.</p>
+</Consejo>
+
+## Reglas de la casa que no cambian el juego
+
+Hay costumbres que varían mucho y que no afectan a la puntuación:
+
+- **La entrada y los topes:** cuánto se pone para entrar y cuánto se puede subir.
+- **La rotación del pie:** lo habitual es que pase al jugador siguiente en cada mano.
+- **Cómo se elige el primer pie:** sacando la carta más alta, pero cada mesa decide qué es "más alta".
+- **Qué pasa si todos pasan:** lo más práctico es recoger y repartir de nuevo, como en el giley español.
+
+Lo importante no es cuál elijas, sino que todos en la mesa jueguen con las mismas reglas.

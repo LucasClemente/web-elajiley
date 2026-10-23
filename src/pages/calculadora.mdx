@@ -1,0 +1,50 @@
+---
+layout: ../layouts/Articulo.astro
+title: Calculadora de manos de ajiley y asesor de descarte
+seoTitle: "Calculadora de ajiley: cuántos puntos tienes y qué botar"
+description: Elige tus cinco cartas y la calculadora te dice al instante cuántos puntos vale tu mano de ajiley. El asesor de descarte prueba las 32 formas de botar y te dice cuál conviene, con las cuentas exactas.
+miga: Calculadora
+etiqueta: Herramienta
+lead: Toca las cartas que tienes en la mano. Te decimos cuántos puntos valen y, si tienes cinco, qué te conviene botar según las cuentas exactas, no según la intuición.
+relacionados: ['/valor-de-las-cartas/', '/estrategia/', '/probabilidades/']
+indice: false
+completo: true
+schemaExtra:
+  - '@type': WebApplication
+    name: Calculadora de manos de ajiley
+    applicationCategory: GameApplication
+    operatingSystem: Cualquiera (navegador web)
+    inLanguage: es-VE
+    isAccessibleForFree: true
+    offers:
+      '@type': Offer
+      price: '0'
+      priceCurrency: USD
+faq:
+  - q: ¿Cómo calcula la calculadora los puntos?
+    a: Agrupa tus cartas por palo, suma cada palo con los valores del ajiley (as 11, siete 7, seis 6 y el resto 10) y se queda con el palo que más suma.
+  - q: ¿Cómo sabe el asesor qué me conviene botar?
+    a: Prueba las 32 combinaciones posibles de cartas para botar y, para cada una, todas las cartas que podrían llegarte de las 35 que quedan en el mazo. Así calcula la puntuación media que tendrías y la probabilidad de mejorar o de llegar a 41.
+  - q: ¿Tiene en cuenta las cartas de los demás jugadores?
+    a: No, porque no las ves. El cálculo supone que cualquiera de las 35 cartas que no tienes puede llegarte, que es justo lo que sabes en la mesa.
+---
+import Calculadora from '../components/Calculadora.astro';
+
+<Calculadora />
+
+## Cómo usarla
+
+1. **Toca tus cartas** en las filas de oros, copas, espadas y bastos. Puedes elegir hasta cinco.
+2. **Mira el resultado**: la calculadora resalta las cartas que cuentan (las del mejor palo) y te da los puntos.
+3. **Con cinco cartas aparece el asesor**: pulsa *Analizar* y te dice qué botar, con la media de puntos que tendrías y la probabilidad de mejorar.
+4. **Comparte la mano** con el botón *Copiar enlace*: la mano queda guardada en la dirección de la página.
+
+Si juegas en una mesa de cinco con comodín, activa la casilla del **siete de oros**: la calculadora lo sumará al palo que más te convenga.
+
+## Qué significan los números del asesor
+
+- **Puntos de media:** lo que sumarías, en promedio, si botaras esas cartas. Es el mejor criterio general.
+- **Probabilidad de mejorar:** cuántas veces de cada cien terminarías con más puntos de los que tienes ahora.
+- **Probabilidad de llegar a 41:** cuántas veces de cada cien acabarías con 41 o más, que es lo que de verdad gana manos grandes.
+
+A veces la opción con mejor media no es la que más probabilidad de 41 tiene. Si el pote es grande y necesitas un golpe de suerte, quizá te interese arriesgar; si no, quédate con la mejor media. En [estrategia](/estrategia/) tienes ejemplos de las dos situaciones.

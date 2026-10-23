@@ -1,0 +1,55 @@
+---
+layout: ../layouts/Articulo.astro
+title: Vocabulario del ajiley, de la A a la Z
+seoTitle: "Vocabulario del ajiley: pie, mano, entrada, botar, pinta y más"
+description: Diccionario de la mesa de ajiley. Qué significan pie, mano, entrada, botar, pinta, ¡barajo!, envite, paso, voy, subo y todas las palabras del juego de cartas venezolano.
+miga: Vocabulario
+etiqueta: Diccionario
+lead: "En la mesa de ajiley se habla un idioma propio. Si alguien te dice que eres mano, que pongas la entrada o que no botes el as, aquí está todo lo que necesitas para entenderlo (y contestar)."
+relacionados: ['/reglas/', '/como-se-escribe/', '/historia/']
+indice: false
+---
+import Glosario from '../components/Glosario.astro';
+
+export const terminos = [
+  { termino: 'Ajiley', id: 'ajiley', alias: ['ajilei', 'jiley', 'ajile'], definicion: 'El juego de cartas venezolano de envite y azar que explica esta guía. También se llama así a la <strong>jugada máxima</strong>: el as y cuatro cartas de 10 puntos del mismo palo, que suman 51. El <em>Diccionario de americanismos</em> recoge además las formas <em>ajilé</em> y <em>ajiléi</em>. <a href="/como-se-escribe/">Cómo se escribe</a>.' },
+  { termino: 'Apostar', id: 'apostar', alias: ['apuesta'], definicion: 'Poner fichas en el pote durante una ronda de envite. En cuanto alguien apuesta, los demás ya no pueden pasar: tienen que ir, subir o retirarse.' },
+  { termino: 'As', id: 'as', alias: ['uno', '1'], definicion: 'La carta número 1 de cada palo. Vale <strong>11 puntos</strong>, la que más. Es imprescindible para el ajiley de 51.' },
+  { termino: '¡Barajo!', id: 'barajo', definicion: 'Voz que se canta para <strong>anular la mano</strong> cuando hay trampa o el reparto sale mal. Se recogen las cartas, el mazo pasa a la mano y la mano se convierte en el nuevo pie. El <em>Diccionario de americanismos</em> la registra en Venezuela como anuncio de que una jugada se anula.' },
+  { termino: 'Baraja española', id: 'baraja-espanola', alias: ['naipes', 'cartas'], definicion: 'La baraja con la que se juega: cuatro palos (oros, copas, espadas y bastos). El ajiley usa la versión de <strong>40 cartas</strong>, sin ochos, nueves ni comodines. <a href="/baraja-espanola/">Más sobre la baraja</a>.' },
+  { termino: 'Bastos', id: 'bastos', definicion: 'Uno de los cuatro palos. Se dibuja con garrotes de madera, normalmente en verde.' },
+  { termino: 'Botar', id: 'botar', alias: ['descartar', 'botado'], definicion: 'Descartarse: tirar las cartas que no sirven para recibir otras tantas del pie. En el ajiley se bota <strong>una sola vez</strong> por mano. "Botó una" es una de las frases que más información dan en la mesa.' },
+  { termino: 'Caballo', id: 'caballo', definicion: 'La carta número 11, un jinete a caballo. Vale <strong>10 puntos</strong>.' },
+  { termino: 'Cantos', id: 'cantos', alias: ['cantar', 'voces'], definicion: 'Las voces que se dicen en voz alta durante el envite (paso, voy, no voy, subo) y al anunciar la jugada al final. En la mesa cuenta lo que se canta: una ficha empujada sin decir nada se presta a discusiones.' },
+  { termino: 'Comodín', id: 'comodin', alias: ['siete de oros'], definicion: 'En la mesa de cinco jugadores, el <strong>siete de oros</strong>: vale 10 puntos y se suma al palo que más te convenga. En la variante llanera vale 11. <a href="/variantes/">Ver variantes</a>.' },
+  { termino: 'Copas', id: 'copas', definicion: 'Uno de los cuatro palos. Se dibuja con copas o cálices, normalmente en rojo.' },
+  { termino: 'Cuarenta y una', id: 'cuarenta-y-una', alias: ['41'], definicion: 'La mejor mano posible con cuatro cartas: el as y tres cartas de 10 del mismo palo. Es la gran mano "realista" del juego. En España, <em>cuarenta y una</em> es también otro nombre del giley.' },
+  { termino: 'Descarte', id: 'descarte', definicion: 'El momento de la mano en el que cada jugador bota las cartas que no le sirven y recibe otras. Llega después de la segunda ronda de envite.' },
+  { termino: 'Entrada', id: 'entrada', alias: ['ante'], definicion: 'Lo que pone cada jugador en el pote <strong>antes del reparto</strong> para participar en la mano.' },
+  { termino: 'Envite', id: 'envite', alias: ['envitar'], definicion: 'Apuesta. Según el diccionario de la RAE, la que se hace en algunos juegos, sobre todo de naipes. El ajiley es un "juego de envite" porque se apuesta en varias rondas.' },
+  { termino: 'Espadas', id: 'espadas', definicion: 'Uno de los cuatro palos. Se dibuja con espadas, normalmente en azul.' },
+  { termino: 'Figuras', id: 'figuras', definicion: 'La sota (10), el caballo (11) y el rey (12). Las tres valen <strong>10 puntos</strong>.' },
+  { termino: 'Flux', id: 'flux', definicion: 'Palabra antigua de los juegos de naipes que, según la RAE, nombra el tener todas las cartas de un mismo palo. Es justo lo que persigue el ajiley.' },
+  { termino: 'Giley', id: 'giley', alias: ['gilé'], definicion: 'Juego de envite español en el que gana quien suma más puntos con cartas del mismo palo. Se juega con cuatro cartas y su jugada máxima es 41. Es el pariente más cercano del ajiley. <a href="/historia/">Ver historia</a>.' },
+  { termino: 'Ir', id: 'ir', alias: ['voy'], definicion: 'Igualar la apuesta para seguir en la mano. Se canta "voy".' },
+  { termino: 'Irse', id: 'irse', alias: ['no voy', 'no ir', 'retirarse'], definicion: 'Retirarse de la mano y perder lo que ya se puso en el pote. Se canta "no voy".' },
+  { termino: 'Mano (jugador)', id: 'mano', alias: ['ser mano'], definicion: 'El jugador sentado a la <strong>derecha del pie</strong>. Recibe primero, habla primero en cada ronda y <strong>gana los empates</strong>. La RAE define la mano, en los juegos, como la persona a la que le toca jugar en primer lugar.' },
+  { termino: 'Mano (cartas)', id: 'mano-cartas', definicion: 'Las cinco cartas que tiene un jugador. También, cada partida completa, de la entrada al pote: "jugamos diez manos".' },
+  { termino: 'Mazo', id: 'mazo', definicion: 'Las cartas que quedan por repartir. De él salen las cartas que el pie da tras el descarte.' },
+  { termino: 'Oros', id: 'oros', definicion: 'Uno de los cuatro palos. Se dibuja con monedas de oro. Su siete es el comodín de la mesa de cinco.' },
+  { termino: 'Pasar', id: 'pasar', alias: ['paso'], definicion: 'No apostar, pero seguir en la mano. Solo se puede pasar mientras nadie haya apostado en esa ronda. Se canta "paso".' },
+  { termino: 'Pie', id: 'pie', alias: ['repartidor'], definicion: 'El jugador que <strong>reparte</strong> las cartas. Se elige sacando cartas del mazo: la más alta es pie. Es el último en hablar en cada ronda; la RAE define el pie, en los juegos, como el último en orden de jugar.' },
+  { termino: 'Pinta', id: 'pinta', definicion: 'La señal en el marco de las cartas españolas que indica el palo: los cortes en la línea (oros ninguno, copas uno, espadas dos, bastos tres). En Venezuela se llama también pinta al <strong>palo</strong> mismo: "cinco de la misma pinta".' },
+  { termino: 'Pique', id: 'pique', definicion: 'En los llanos, la apuesta, especialmente la primera de la mano.' },
+  { termino: 'Pote', id: 'pote', alias: ['bote'], definicion: 'Todas las fichas apostadas en una mano, entradas incluidas. Se lo lleva el ganador.' },
+  { termino: 'Rey', id: 'rey', definicion: 'La carta número 12, un rey coronado. Vale <strong>10 puntos</strong>.' },
+  { termino: 'Ronda de envite', id: 'ronda', alias: ['ronda'], definicion: 'Cada uno de los tres momentos de apuestas de la mano: con dos cartas, con cinco y después del descarte.' },
+  { termino: 'Seis', id: 'seis', definicion: 'Vale solo <strong>6 puntos</strong>. Junto con el siete, es de las cartas más flojas de cada palo.' },
+  { termino: 'Siete', id: 'siete', definicion: 'Vale <strong>7 puntos</strong>, menos que el dos. El siete de oros puede ser comodín en la mesa de cinco.' },
+  { termino: 'Sota', id: 'sota', definicion: 'La carta número 10, un paje de pie. Vale <strong>10 puntos</strong>.' },
+  { termino: 'Subir', id: 'subir', alias: ['subo'], definicion: 'Igualar la apuesta y añadir más. Obliga a los demás a ir o a retirarse. Se canta "subo".' },
+];
+
+Las definiciones siguen la forma de hablar más extendida en las mesas venezolanas y, cuando existen, las del *Diccionario de americanismos* (Asociación de Academias de la Lengua Española) y el *Diccionario de la lengua española* (RAE).
+
+<Glosario terminos={terminos} />

@@ -43,13 +43,13 @@ const { n, palo, marcada = false, apagada = false, tam = 'm' } = Astro.props;
   }
   @media (max-width: 520px) {
     .naipe {
-      --ancho-naipe: 62px;
+      --ancho-naipe: min(56px, 16vw);
     }
     .naipe--l {
-      --ancho-naipe: 84px;
+      --ancho-naipe: min(68px, 19vw);
     }
     .naipe--s {
-      --ancho-naipe: 46px;
+      --ancho-naipe: min(44px, 13vw);
     }
   }
 </style>

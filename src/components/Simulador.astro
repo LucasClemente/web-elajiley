@@ -1,0 +1,692 @@
+---
+// Simulador de práctica: juegas manos completas contra Guaca y sus amigos (la máquina).
+// Fichas de práctica, sin dinero. Las estadísticas se guardan solo en este navegador.
+import { getImage } from 'astro:assets';
+import guaca from '../assets/marca/guaca.png';
+import { BETZUE } from '../config';
+
+const avatar = await getImage({ src: guaca, width: 112, height: 112, format: 'webp' });
+---
+<section class="sim" data-sim data-guaca={avatar.src} data-betzue={BETZUE.ajiley('simulador')} aria-label="Simulador de ajiley">
+  <div class="sim__barra">
+    <label>
+      Jugadores
+      <select data-num>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4" selected>4</option>
+        <option value="5">5 (con comodín)</option>
+      </select>
+    </label>
+    <label class="sim__check"><input type="checkbox" data-consejos checked /> Consejos de Guaca</label>
+    <span class="sim__stats" data-stats></span>
+  </div>
+
+  <div class="sim__mesa">
+    <div class="sim__rivales" data-rivales></div>
+
+    <div class="sim__centro">
+      <div class="sim__pote">
+        <span>Pote</span>
+        <strong data-pote>0</strong>
+      </div>
+      <p class="sim__fase" data-fase>Pulsa «Repartir» para empezar</p>
+      <div class="sim__guaca" data-bocadillo hidden>
+        <img src={avatar.src} alt="" width="56" height="56" />
+        <p data-dice></p>
+      </div>
+    </div>
+
+    <div class="sim__tu" data-tu>
+      <div class="sim__tu-cabeza">
+        <strong>Tú</strong>
+        <span class="sim__fichas" data-mis-fichas></span>
+        <span class="sim__insignias" data-mis-insignias></span>
+      </div>
+      <div class="sim__cartas" data-mis-cartas></div>
+      <p class="sim__puntos" data-mis-puntos></p>
+    </div>
+
+    <div class="sim__acciones" data-acciones>
+      <button type="button" class="boton" data-repartir>Repartir</button>
+    </div>
+  </div>
+
+  <details class="sim__registro">
+    <summary>Lo que ha pasado en la mesa</summary>
+    <ol data-log aria-live="polite"></ol>
+  </details>
+  <p class="sim__pie">
+    Fichas de práctica, sin dinero real. ¿Con ganas de una mesa de verdad? Hay ajiley en <a data-enlace-betzue href="#">Betzue</a> (+18).
+  </p>
+</section>
+
+<script>
+  import { Mesa, decidirBot, descarteBot, APUESTA, FICHAS_INICIALES, type Accion, type Final } from '../lib/simulador';
+  import { analizarDescarte, puntuar } from '../lib/ajiley';
+  import { svgNaipe, svgDorso, nombreCarta } from '../lib/naipe';
+  import probs from '../data/probabilidades.json';
+
+  const raiz = document.querySelector<HTMLElement>('[data-sim]');
+  if (raiz) iniciar(raiz);
+
+  function iniciar(raiz: HTMLElement) {
+    const $ = <T extends HTMLElement = HTMLElement>(s: string) => raiz.querySelector<T>(s)!;
+    const rivalesEl = $('[data-rivales]');
+    const poteEl = $('[data-pote]');
+    const faseEl = $('[data-fase]');
+    const bocadillo = $('[data-bocadillo]');
+    const diceEl = $('[data-dice]');
+    const misCartas = $('[data-mis-cartas]');
+    const misFichas = $('[data-mis-fichas]');
+    const misInsignias = $('[data-mis-insignias]');
+    const misPuntos = $('[data-mis-puntos]');
+    const acciones = $('[data-acciones]');
+    const logEl = $('[data-log]');
+    const statsEl = $('[data-stats]');
+    const numEl = $<HTMLSelectElement>('[data-num]');
+    const consejosEl = $<HTMLInputElement>('[data-consejos]');
+    $<HTMLAnchorElement>('[data-enlace-betzue]').href = raiz.dataset.betzue!;
+    const avatarGuaca = raiz.dataset.guaca!;
+    const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ── Estado guardado (solo en este navegador) ─────────────────────────
+    const CLAVE = 'elajiley-simulador';
+    const stats = { manos: 0, ganadas: 0, mejor: 0, fichas: FICHAS_INICIALES };
+    try {
+      Object.assign(stats, JSON.parse(localStorage.getItem(CLAVE) ?? '{}'));
+    } catch {}
+    const guardar = () => {
+      try {
+        localStorage.setItem(CLAVE, JSON.stringify(stats));
+      } catch {}
+    };
+
+    const RIVALES = [
+      { nombre: 'Guaca', estilo: 'equilibrado' as const },
+      { nombre: 'Chepe', estilo: 'atrevido' as const },
+      { nombre: 'Yuli', estilo: 'prudente' as const },
+      { nombre: 'Toño', estilo: 'equilibrado' as const },
+    ];
+    let mesa: Mesa;
+    const crearMesa = (n: number) => {
+      mesa = new Mesa([{ nombre: 'Tú', humano: true, fichas: stats.fichas }, ...RIVALES.slice(0, n - 1)]);
+    };
+    crearMesa(Number(numEl.value));
+
+    let seleccion = new Set<number>();
+    let enCurso = false;
+    let mostrarTodo = false;
+    const pausa = (ms: number) => new Promise((r) => setTimeout(r, reducido ? 0 : ms));
+    const yo = () => mesa.jugadores[0];
+    const yoFuera = () => yo().fuera;
+
+    // ── Pintado ───────────────────────────────────────────────────────────
+    const carta = (svg: string, extra = '') => `<span class="sim__carta ${extra}">${svg}</span>`;
+
+    function pintar() {
+      const f = mesa.final;
+      rivalesEl.innerHTML = mesa.jugadores
+        .map((j, i) => {
+          if (i === 0) return '';
+          const insignias = [i === mesa.pie ? '<b class="ins ins--pie">pie</b>' : '', i === mesa.mano && mesa.fase !== 'espera' ? '<b class="ins ins--mano">mano</b>' : '']
+            .join('');
+          const ver = mostrarTodo && !j.fuera && f && !f.porAbandono;
+          const cartas = j.mano.map((c) => carta(ver ? svgNaipe(c.n, c.palo, { titulo: false }) : svgDorso())).join('');
+          const res = ver && f?.resultados[i] ? `<span class="sim__res">${f.resultados[i]!.puntos} pts</span>` : '';
+          const avatar =
+            j.nombre === 'Guaca'
+              ? `<img src="${avatarGuaca}" alt="" width="44" height="44" />`
+              : `<span class="sim__inicial">${j.nombre[0]}</span>`;
+          return `<div class="sim__rival${j.fuera ? ' es-fuera' : ''}${mesa.turno === i && mesa.fase.startsWith('ronda') ? ' es-turno' : ''}${f && f.ganador === i ? ' es-ganador' : ''}">
+            <div class="sim__rival-cabeza">${avatar}<div><strong>${j.nombre}</strong><span>${j.fichas} fichas</span></div></div>
+            <div class="sim__insignias">${insignias}${j.botadas !== null ? `<b class="ins">botó ${j.botadas}</b>` : ''}</div>
+            <div class="sim__cartas sim__cartas--rival">${cartas}</div>
+            <span class="sim__canto">${j.canto || '&nbsp;'}</span>${res}
+          </div>`;
+        })
+        .join('');
+
+      poteEl.textContent = String(mesa.pote);
+      const tu = yo();
+      misFichas.textContent = `${tu.fichas} fichas`;
+      misInsignias.innerHTML = [
+        mesa.pie === 0 ? '<b class="ins ins--pie">pie</b>' : '',
+        mesa.mano === 0 && mesa.fase !== 'espera' ? '<b class="ins ins--mano">mano</b>' : '',
+        tu.canto ? `<b class="ins">${tu.canto}</b>` : '',
+      ].join('');
+      const r = tu.mano.length ? puntuar(tu.mano, { sieteDeOrosComodin: mesa.comodin }) : null;
+      misCartas.innerHTML = tu.mano
+        .map((c, k) => {
+          const cuenta = r?.cuentan.includes(c);
+          const marcada = seleccion.has(k);
+          const svg = svgNaipe(c.n, c.palo);
+          return mesa.fase === 'descarte' && !tu.fuera && tu.botadas === null
+            ? `<button type="button" class="sim__carta sim__carta--elegible${marcada ? ' es-marcada' : ''}" data-k="${k}" aria-pressed="${marcada}" aria-label="${nombreCarta(c.n, c.palo)}">${svg}</button>`
+            : carta(svg, cuenta ? 'es-cuenta' : 'es-suelta');
+        })
+        .join('');
+      raiz.querySelector('[data-tu]')!.classList.toggle('es-fuera', tu.fuera);
+      raiz.querySelector('[data-tu]')!.classList.toggle('es-turno', mesa.turno === 0 && mesa.fase.startsWith('ronda'));
+      raiz.querySelector('[data-tu]')!.classList.toggle('es-ganador', !!f && f.ganador === 0);
+      misPuntos.textContent = r && tu.mano.length ? `${r.puntos} puntos${r.palo ? ` en ${r.palo}` : ''}${r.comodinEn ? ' (con comodín)' : ''}` : '';
+
+      logEl.innerHTML = mesa.log.map((l) => `<li>${l}</li>`).join('');
+      statsEl.textContent = stats.manos
+        ? `${stats.manos} manos · ${stats.ganadas} ganadas · mejor mano: ${stats.mejor}`
+        : 'Fichas de práctica: no se juega dinero';
+    }
+
+    function decir(texto: string) {
+      if (!consejosEl.checked && !texto.startsWith('!')) {
+        bocadillo.hidden = true;
+        return;
+      }
+      diceEl.innerHTML = texto.replace(/^!/, '');
+      bocadillo.hidden = false;
+    }
+
+    const FASES: Record<string, string> = {
+      ronda1: 'Primera ronda de envite · dos cartas',
+      reparto: 'Repartiendo tres cartas más…',
+      ronda2: 'Segunda ronda de envite · cinco cartas',
+      descarte: 'Descarte: cada uno bota lo que no le sirve',
+      ronda3: 'Última ronda de envite',
+      fin: 'Fin de la mano',
+    };
+
+    // ── Acciones del jugador ─────────────────────────────────────────────
+    const ETIQUETA: Record<Accion, (m: Mesa) => string> = {
+      paso: () => 'Paso',
+      apuesto: (m) => `Apuesto ${APUESTA[m.ronda]}`,
+      voy: (m) => `Voy (${m.debe(0)})`,
+      subo: (m) => `Subo ${APUESTA[m.ronda]}`,
+      novoy: () => 'No voy',
+    };
+
+    function pedirAccion(): Promise<Accion> {
+      return new Promise((resolver) => {
+        const ops = mesa.opciones(0);
+        acciones.innerHTML = ops
+          .map(
+            (a) =>
+              `<button type="button" class="boton boton--peque ${a === 'novoy' ? 'boton--claro' : a === 'subo' || a === 'apuesto' ? 'boton--rojo' : ''}" data-accion="${a}">${ETIQUETA[a](mesa)}</button>`,
+          )
+          .join('');
+        consejoEnvite();
+        acciones.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true });
+        acciones.onclick = (e) => {
+          const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-accion]');
+          if (!b) return;
+          acciones.onclick = null;
+          acciones.innerHTML = '';
+          resolver(b.dataset.accion as Accion);
+        };
+      });
+    }
+
+    function pedirDescarte(): Promise<number[]> {
+      return new Promise((resolver) => {
+        seleccion = new Set();
+        const actualizar = () => {
+          acciones.innerHTML = `<button type="button" class="boton boton--peque" data-botar>${seleccion.size === 0 ? 'No botar ninguna' : `Botar ${seleccion.size} ${seleccion.size === 1 ? 'carta' : 'cartas'}`}</button>`;
+        };
+        actualizar();
+        consejoDescarte();
+        misCartas.onclick = (e) => {
+          const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-k]');
+          if (!b) return;
+          const k = Number(b.dataset.k);
+          seleccion.has(k) ? seleccion.delete(k) : seleccion.add(k);
+          pintar();
+          actualizar();
+        };
+        acciones.onclick = (e) => {
+          if (!(e.target as HTMLElement).closest('[data-botar]')) return;
+          acciones.onclick = null;
+          misCartas.onclick = null;
+          acciones.innerHTML = '';
+          const elegidas = [...seleccion];
+          seleccion = new Set();
+          resolver(elegidas);
+        };
+      });
+    }
+
+    // ── Consejos de Guaca ────────────────────────────────────────────────
+    const mejorQue = (p: number) => {
+      const fila = probs.distribucion.find((d) => d.puntos === p);
+      return fila ? Math.round((1 - fila.alMenos) * 100) : p > 51 ? 100 : 0;
+    };
+
+    function consejoEnvite() {
+      const r = puntuar(yo().mano, { sieteDeOrosComodin: mesa.comodin });
+      if (mesa.ronda === 1) {
+        const mismo = r.cuentan.length === 2;
+        decir(
+          mismo
+            ? `Dos de ${r.palo}: ${r.puntos} puntos. ${r.puntos >= 20 ? '¡Arranque de lujo! Puedes apostar sin miedo.' : 'Buen comienzo, ve tranquilo.'}`
+            : 'Dos cartas de palos distintos. Nada grave: lo importante viene después. Si te piden poco, ve.',
+        );
+      } else if (mesa.ronda === 2) {
+        decir(`Tienes ${r.puntos} en ${r.palo}, más que el ${mejorQue(r.puntos)} % de las manos. ${r.cuentan.length >= 4 ? 'Con cuatro del mismo palo, esto pinta bien.' : 'Todavía puedes mejorar en el descarte.'}`);
+      } else if (mesa.ronda === 3) {
+        const peligro = mesa.activos().some((k) => k !== 0 && mesa.jugadores[k].botadas !== null && mesa.jugadores[k].botadas! <= 1);
+        decir(
+          `${r.puntos} puntos. ${r.puntos >= 40 ? 'Esto es un manón: ¡a subir!' : r.puntos >= 31 ? 'Buena mano.' : 'Mano floja: cuidado con lo que pones.'}${peligro ? ' Ojo: alguien botó una sola carta.' : ''}`,
+        );
+      }
+    }
+
+    function consejoDescarte() {
+      if (!consejosEl.checked) return;
+      decir('Déjame pensar qué te conviene botar…');
+      setTimeout(() => {
+        const ops = analizarDescarte(yo().mano, { sieteDeOrosComodin: mesa.comodin }, 41);
+        const o = ops[0];
+        const que = o.botar.length ? o.botar.map((k) => nombreCarta(yo().mano[k].n, yo().mano[k].palo).toLowerCase()).join(', ') : 'nada';
+        decir(`Yo botaría: <strong>${que}</strong>. Así tendrías ${o.esperado.toLocaleString('es-VE', { maximumFractionDigits: 1 })} puntos de media. Toca las cartas que quieras botar.`);
+      }, 40);
+    }
+
+    // ── Desarrollo de la mano ────────────────────────────────────────────
+    async function rondaEnvite() {
+      faseEl.textContent = FASES[mesa.fase];
+      pintar();
+      while (!mesa.rondaTerminada()) {
+        const i = mesa.turno;
+        if (i === 0) {
+          pintar();
+          mesa.actuar(await pedirAccion());
+        } else {
+          pintar();
+          await pausa(yoFuera() ? 220 : 750);
+          mesa.actuar(decidirBot(mesa, i));
+        }
+        pintar();
+      }
+      if (!yoFuera()) bocadillo.hidden = true;
+    }
+
+    async function jugarMano() {
+      enCurso = true;
+      mostrarTodo = false;
+      numEl.disabled = true;
+      acciones.innerHTML = '';
+      bocadillo.hidden = true;
+      if (yo().fichas < 15) {
+        yo().fichas = FICHAS_INICIALES;
+        decir('!Te recargué 100 fichas de práctica. ¡A por ellas!');
+      }
+      mesa.nuevaMano();
+      await rondaEnvite();
+
+      if (mesa.activos().length > 1) {
+        mesa.fase = 'reparto';
+        faseEl.textContent = FASES.reparto;
+        for (let v = 0; v < 3; v++)
+          for (const i of mesa.activos()) {
+            mesa.dar(i, 1);
+            pintar();
+            await pausa(yoFuera() ? 60 : 160);
+          }
+        mesa.iniciarRonda(2);
+        await rondaEnvite();
+      }
+
+      if (mesa.activos().length > 1) {
+        mesa.fase = 'descarte';
+        faseEl.textContent = FASES.descarte;
+        pintar();
+        for (const i of mesa.activos()) {
+          if (i === 0) mesa.botar(0, await pedirDescarte());
+          else {
+            await pausa(yoFuera() ? 150 : 550);
+            mesa.botar(i, descarteBot(mesa.jugadores[i].mano, mesa.comodin));
+          }
+          pintar();
+        }
+        mesa.iniciarRonda(3);
+        await rondaEnvite();
+      }
+
+      const f = mesa.terminar();
+      mostrarTodo = true;
+      faseEl.textContent = FASES.fin;
+      comentarFinal(f);
+      stats.manos++;
+      if (f.ganador === 0) stats.ganadas++;
+      const misPts = f.resultados[0]?.puntos ?? 0;
+      stats.mejor = Math.max(stats.mejor, misPts);
+      stats.fichas = yo().fichas;
+      guardar();
+      pintar();
+      acciones.innerHTML = '<button type="button" class="boton" data-repartir>Otra mano</button>';
+      numEl.disabled = false;
+      enCurso = false;
+    }
+
+    function comentarFinal(f: Final) {
+      const g = mesa.jugadores[f.ganador];
+      const mio = f.resultados[0]?.puntos;
+      let t: string;
+      if (f.porAbandono) t = f.ganador === 0 ? `¡Se fueron todos! Te llevas ${f.pote} fichas sin enseñar las cartas.` : `${g.nombre} se lleva ${f.pote} fichas: todos los demás se retiraron.`;
+      else if (f.ganador === 0) t = `¡Ganaste ${f.pote} fichas con ${f.puntos} puntos!${f.empate ? ' Hubo empate, pero el desempate fue para ti.' : ''}${f.puntos === 51 || (f.puntos ?? 0) > 51 ? ' ¡Y con un AJILEY!' : ''}`;
+      else t = `${g.nombre} gana con ${f.puntos} puntos${mio !== undefined ? ` (tú tenías ${mio})` : ''}.${f.empate ? ' Empate: gana el que está más cerca de la mano.' : ''}`;
+      if (stats.manos + 1 === 10 || stats.manos + 1 === 30) t += ` Ya llevas ${stats.manos + 1} manos: ¡juegas como un veterano! Cuando quieras mesa de verdad, nos vemos en <a href="${raiz.dataset.betzue}">Betzue</a>.`;
+      decir('!' + t);
+    }
+
+    acciones.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('[data-repartir]') && !enCurso) jugarMano();
+    });
+    numEl.addEventListener('change', () => {
+      if (enCurso) return;
+      stats.fichas = yo().fichas;
+      crearMesa(Number(numEl.value));
+      pintar();
+    });
+    consejosEl.addEventListener('change', () => {
+      if (!consejosEl.checked) bocadillo.hidden = true;
+    });
+    pintar();
+  }
+</script>
+
+<style>
+  .sim {
+    margin: 1.4em 0 2em;
+  }
+  .sim__barra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 20px;
+    margin-bottom: 12px;
+    font-weight: 800;
+    color: var(--noche);
+    font-size: 0.95rem;
+  }
+  .sim__barra select {
+    margin-left: 6px;
+    font: inherit;
+    padding: 0.3em 0.5em;
+    border: 2px solid var(--noche);
+    border-radius: 10px;
+    background: #fff;
+  }
+  .sim__check {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+  .sim__check input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--tapete);
+  }
+  .sim__stats {
+    margin-left: auto;
+    color: var(--tinta-suave);
+    font-weight: 700;
+    font-size: 0.88rem;
+  }
+  .sim__mesa {
+    display: grid;
+    gap: 14px;
+    padding: clamp(14px, 3vw, 24px);
+    border-radius: 32px;
+    border: var(--borde-sticker);
+    box-shadow:
+      0 8px 0 var(--noche),
+      inset 0 0 0 9px #7a4a1e,
+      inset 0 0 0 11px rgb(0 0 0 / 0.25);
+    background:
+      radial-gradient(ellipse at 50% 40%, rgb(255 255 255 / 0.12), transparent 65%),
+      repeating-radial-gradient(circle at 30% 20%, rgb(0 0 0 / 0.025) 0 2px, transparent 2px 4px), var(--tapete);
+    color: #fff;
+  }
+  .sim__rivales {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 6px;
+  }
+  .sim__rivales :global(.sim__rival) {
+    flex: 1 1 140px;
+    max-width: 210px;
+    display: grid;
+    gap: 6px;
+    justify-items: center;
+    padding: 10px 8px;
+    border-radius: 16px;
+    background: rgb(0 0 0 / 0.18);
+    transition:
+      opacity 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  .sim__rivales :global(.es-fuera),
+  .sim__tu.es-fuera {
+    opacity: 0.45;
+  }
+  .sim__rivales :global(.es-turno),
+  .sim__tu.es-turno {
+    box-shadow: 0 0 0 3px var(--oro);
+  }
+  .sim__rivales :global(.es-ganador),
+  .sim__tu.es-ganador {
+    box-shadow:
+      0 0 0 3px var(--oro),
+      0 0 24px rgb(255 194 14 / 0.6);
+  }
+  .sim__rivales :global(.sim__rival-cabeza) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sim__rivales :global(.sim__rival-cabeza img),
+  .sim__rivales :global(.sim__inicial) {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--arena);
+    object-fit: contain;
+    border: 2px solid #fff;
+  }
+  .sim__rivales :global(.sim__inicial) {
+    display: grid;
+    place-items: center;
+    background: var(--noche);
+    color: var(--oro);
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    font-size: 1.2rem;
+  }
+  .sim__rivales :global(.sim__rival-cabeza strong) {
+    display: block;
+    line-height: 1.1;
+  }
+  .sim__rivales :global(.sim__rival-cabeza span) {
+    font-size: 0.8rem;
+    opacity: 0.85;
+  }
+  .sim__cartas {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    min-height: 40px;
+  }
+  .sim__cartas :global(.sim__carta) {
+    width: clamp(48px, 13vw, 78px);
+    padding: 0;
+    border: 0;
+    background: none;
+    transition: transform 0.15s ease;
+  }
+  .sim__cartas--rival :global(.sim__carta) {
+    width: clamp(22px, 5vw, 34px);
+  }
+  .sim__cartas :global(svg) {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 2px 0 rgb(0 0 0 / 0.25));
+  }
+  .sim__cartas :global(.es-suelta) {
+    opacity: 0.6;
+  }
+  .sim__cartas :global(.es-cuenta) {
+    transform: translateY(-6px);
+  }
+  .sim__cartas :global(.sim__carta--elegible) {
+    cursor: pointer;
+  }
+  .sim__cartas :global(.sim__carta--elegible:hover) {
+    transform: translateY(-4px);
+  }
+  .sim__cartas :global(.es-marcada) {
+    transform: translateY(10px) rotate(-4deg);
+    opacity: 0.5;
+  }
+  .sim__rivales :global(.sim__canto) {
+    font-size: 0.82rem;
+    font-weight: 900;
+    color: var(--oro);
+    min-height: 1.3em;
+  }
+  .sim__rivales :global(.sim__res) {
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    background: var(--oro);
+    color: var(--noche-900);
+    border-radius: 999px;
+    padding: 0 0.6em;
+  }
+  .sim__insignias {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-height: 1.4em;
+  }
+  .sim :global(.ins) {
+    font-size: 0.7rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    background: rgb(255 255 255 / 0.18);
+    border-radius: 999px;
+    padding: 0.1em 0.6em;
+  }
+  .sim :global(.ins--pie) {
+    background: var(--rojo);
+  }
+  .sim :global(.ins--mano) {
+    background: var(--caribe);
+  }
+  .sim__centro {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    text-align: center;
+  }
+  .sim__pote {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 4px 16px;
+    border-radius: 999px;
+    background: rgb(0 0 0 / 0.22);
+  }
+  .sim__pote strong {
+    font-family: var(--f-titulo);
+    font-size: 1.6rem;
+    color: var(--oro);
+  }
+  .sim__fase {
+    margin: 0;
+    font-weight: 800;
+    font-size: 0.95rem;
+  }
+  .sim__guaca {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    max-width: 560px;
+    padding: 10px 14px 10px 10px;
+    background: #fff;
+    color: var(--tinta);
+    border-radius: 18px;
+    border: 2px solid var(--noche);
+    text-align: left;
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+  .sim__guaca img {
+    width: 48px;
+    height: 48px;
+    flex: none;
+  }
+  .sim__guaca p {
+    margin: 0;
+  }
+  .sim__tu {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 18px;
+    background: rgb(255 194 14 / 0.12);
+  }
+  .sim__tu-cabeza {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+  .sim__tu-cabeza strong {
+    font-family: var(--f-titulo);
+    font-size: 1.2rem;
+  }
+  .sim__fichas {
+    font-weight: 800;
+    color: var(--oro);
+  }
+  .sim__puntos {
+    margin: 0;
+    font-weight: 900;
+    min-height: 1.4em;
+  }
+  .sim__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+  }
+  .sim__registro {
+    margin-top: 14px;
+    background: #fff;
+    border: 2px solid var(--linea);
+    border-radius: var(--radio-s);
+    padding: 8px 14px;
+    font-size: 0.92rem;
+  }
+  .sim__registro summary {
+    cursor: pointer;
+    font-weight: 800;
+    color: var(--noche);
+  }
+  .sim__registro ol {
+    margin: 8px 0 4px;
+    max-height: 220px;
+    overflow: auto;
+  }
+  .sim__pie {
+    font-size: 0.9rem;
+    color: var(--tinta-suave);
+    margin-top: 10px;
+  }
+</style>

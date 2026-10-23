@@ -1,0 +1,183 @@
+---
+// Distribución exacta de la puntuación de las manos repartidas (una sola serie: sin leyenda).
+// Columnas por puntuación; las de 41 o más en oro. Tooltip al pasar o tocar cada columna.
+import probs from '../data/probabilidades.json';
+
+const min = Math.min(...probs.distribucion.map((d) => d.puntos));
+const max = 51;
+const porPuntos = new Map(probs.distribucion.map((d) => [d.puntos, d]));
+const W = 720;
+const H = 300;
+const m = { t: 24, r: 12, b: 38, l: 44 };
+const iw = W - m.l - m.r;
+const ih = H - m.t - m.b;
+const n = max - min + 1;
+const paso = iw / n;
+const ancho = Math.max(4, paso - 2);
+const pMax = Math.max(...probs.distribucion.map((d) => d.p));
+const techo = Math.ceil((pMax * 100) / 5) * 5; // eje en %, múltiplo de 5
+const y = (p: number) => m.t + ih - (p * 100 * ih) / techo;
+const marcas = Array.from({ length: techo / 5 + 1 }, (_, i) => i * 5);
+const pct = (p: number) => (p * 100).toLocaleString('es-VE', { maximumFractionDigits: p < 0.001 ? 3 : 1 });
+const cols = Array.from({ length: n }, (_, i) => min + i);
+const etiquetaX = new Set([min, 20, 21, 30, 31, 41, 51]);
+const huecos = cols.filter((c) => !porPuntos.has(c));
+---
+<figure class="grafica" data-grafica>
+  <figcaption class="grafica__titulo">Puntos de la mano al repartir: probabilidad de cada puntuación</figcaption>
+  <div class="grafica__lienzo">
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Gráfica de barras: las puntuaciones más frecuentes son 20, 21, 30 y 31; 41 o más sale en menos del 1 % de las manos.">
+      {marcas.map((t) => (
+        <g>
+          <line x1={m.l} x2={W - m.r} y1={y(t / 100)} y2={y(t / 100)} class="grafica__rejilla" />
+          <text x={m.l - 8} y={y(t / 100) + 4} text-anchor="end" class="grafica__eje">{t} %</text>
+        </g>
+      ))}
+      {cols.map((pts, i) => {
+        const d = porPuntos.get(pts);
+        const x = m.l + i * paso + (paso - ancho) / 2;
+        const alto = d ? Math.max(d.p > 0 ? 1.5 : 0, m.t + ih - y(d.p)) : 0;
+        const r = Math.min(4, ancho / 2, alto);
+        return (
+          <g
+            class:list={['grafica__col', { 'es-alta': pts >= 41, 'es-vacia': !d }]}
+            data-puntos={pts}
+            data-p={d ? pct(d.p) : '0'}
+            data-manos={d ? d.manos.toLocaleString('es-VE') : '0'}
+            data-almenos={d ? pct(d.alMenos) : ''}
+          >
+            <rect class="grafica__hit" x={m.l + i * paso} y={m.t} width={paso} height={ih} />
+            {d && (
+              <path
+                class="grafica__barra"
+                d={`M${x} ${m.t + ih}V${m.t + ih - alto + r}q0 -${r} ${r} -${r}h${ancho - 2 * r}q${r} 0 ${r} ${r}V${m.t + ih}Z`}
+              />
+            )}
+            {etiquetaX.has(pts) && (
+              <text x={m.l + i * paso + paso / 2} y={H - m.b + 18} text-anchor="middle" class="grafica__eje">{pts}</text>
+            )}
+          </g>
+        );
+      })}
+      <line x1={m.l} x2={W - m.r} y1={m.t + ih} y2={m.t + ih} class="grafica__base" />
+      <text x={m.l + iw / 2} y={H - 4} text-anchor="middle" class="grafica__eje">Puntos de la mano</text>
+    </svg>
+    <div class="grafica__tip" data-tip hidden></div>
+  </div>
+  <p class="grafica__nota">
+    En oro, las manos de 41 o más: juntas suman solo el {pct(porPuntos.get(41)!.alMenos)} %. Los huecos ({huecos.join(', ')}) son
+    puntuaciones imposibles con los valores del ajiley.
+  </p>
+</figure>
+
+<script>
+  for (const fig of document.querySelectorAll<HTMLElement>('[data-grafica]')) {
+    const tip = fig.querySelector<HTMLElement>('[data-tip]')!;
+    const lienzo = fig.querySelector<HTMLElement>('.grafica__lienzo')!;
+    const mostrar = (g: SVGGElement) => {
+      const { puntos, p, manos, almenos } = g.dataset;
+      tip.innerHTML =
+        p === '0'
+          ? `<strong>${puntos} puntos</strong><span>Imposible con 5 cartas</span>`
+          : `<strong>${puntos} puntos</strong><span>${p} % de las manos</span><span>${manos} combinaciones</span><span>${almenos} % saca ${puntos} o más</span>`;
+      const r = g.getBoundingClientRect();
+      const base = lienzo.getBoundingClientRect();
+      tip.hidden = false;
+      const x = Math.min(Math.max(r.left - base.left + r.width / 2, 70), base.width - 70);
+      tip.style.left = `${x}px`;
+      fig.querySelectorAll('.es-activa').forEach((e) => e.classList.remove('es-activa'));
+      g.classList.add('es-activa');
+    };
+    fig.querySelectorAll<SVGGElement>('.grafica__col').forEach((g) => {
+      g.addEventListener('pointerenter', () => mostrar(g));
+      g.addEventListener('click', () => mostrar(g));
+    });
+    lienzo.addEventListener('pointerleave', () => {
+      tip.hidden = true;
+      fig.querySelectorAll('.es-activa').forEach((e) => e.classList.remove('es-activa'));
+    });
+  }
+</script>
+
+<style>
+  .grafica {
+    margin: 1.6em 0 2em;
+    padding: 16px 14px 10px;
+    background: #fff;
+    border: 2px solid var(--linea);
+    border-radius: var(--radio);
+  }
+  .grafica__titulo {
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    color: var(--noche);
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+  .grafica__lienzo {
+    position: relative;
+  }
+  .grafica svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .grafica__rejilla {
+    stroke: var(--linea);
+    stroke-width: 1;
+    stroke-dasharray: 2 4;
+  }
+  .grafica__base {
+    stroke: #cdbf9f;
+    stroke-width: 1.5;
+  }
+  .grafica__eje {
+    fill: var(--tinta-suave);
+    font-size: 12px;
+    font-family: var(--f-texto);
+    font-weight: 700;
+  }
+  .grafica__hit {
+    fill: transparent;
+    cursor: pointer;
+  }
+  .grafica__barra {
+    fill: var(--tapete);
+    transition: fill 0.12s ease;
+  }
+  .es-alta .grafica__barra {
+    fill: var(--oro-600);
+  }
+  .grafica__col.es-activa .grafica__barra {
+    fill: var(--noche);
+  }
+  .grafica__col.es-activa .grafica__hit {
+    fill: rgb(10 47 110 / 0.05);
+  }
+  .grafica__tip {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    display: grid;
+    gap: 1px;
+    padding: 8px 10px;
+    background: var(--noche);
+    color: #fff;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    line-height: 1.35;
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.4);
+  }
+  .grafica__tip :global(strong) {
+    color: var(--oro);
+    font-family: var(--f-titulo);
+    font-size: 1rem;
+  }
+  .grafica__nota {
+    font-size: 0.88rem;
+    color: var(--tinta-suave);
+    margin: 6px 0 4px;
+  }
+</style>

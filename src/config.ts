@@ -5,7 +5,7 @@ export const SITE = {
   name: 'El Ajiley',
   tagline: 'La guía del juego de cartas venezolano',
   description:
-    'Todo sobre el Ajiley, el juego de cartas venezolano con baraja española: reglas, puntuación, estrategia, vocabulario e historia. Practica gratis y aprende a jugar.',
+    'Todo sobre el ajiley, el juego de cartas venezolano con baraja española: reglas, puntuación, estrategia, vocabulario e historia. Practica gratis y aprende a jugar.',
   locale: 'es_VE',
   lang: 'es-VE',
   // Fecha de la última revisión editorial general del sitio.
@@ -23,14 +23,14 @@ export const BETZUE = {
   name: 'Betzue',
   url: 'https://betzue.com/',
   lema: '¡La suerte es venezolana!',
-  // Enlace a la mesa de Ajiley dentro de Betzue (con UTM para medir el tráfico de la guía).
+  // Enlace a la mesa de ajiley dentro de Betzue (con UTM para medir el tráfico de la guía).
   ajiley: (campaign = 'guia') => `https://betzue.com/?${utm(campaign)}`,
 };
 
 export const NAV = [
   { href: '/reglas/', label: 'Reglas' },
   { href: '/como-jugar/', label: 'Cómo jugar' },
-  { href: '/puntuacion/', label: 'Puntuación' },
+  { href: '/valor-de-las-cartas/', label: 'Puntuación' },
   { href: '/estrategia/', label: 'Estrategia' },
   { href: '/vocabulario/', label: 'Vocabulario' },
   { href: '/historia/', label: 'Historia' },
@@ -41,10 +41,10 @@ export const FOOTER_NAV = [
   {
     title: 'Aprende',
     links: [
-      { href: '/', label: 'Qué es el Ajiley' },
-      { href: '/reglas/', label: 'Reglas del Ajiley' },
+      { href: '/', label: 'Qué es el ajiley' },
+      { href: '/reglas/', label: 'Reglas del ajiley' },
       { href: '/como-jugar/', label: 'Cómo jugar paso a paso' },
-      { href: '/puntuacion/', label: 'Puntuación y valor de las cartas' },
+      { href: '/valor-de-las-cartas/', label: 'Puntuación y valor de las cartas' },
       { href: '/baraja-espanola/', label: 'La baraja española' },
     ],
   },
@@ -55,7 +55,7 @@ export const FOOTER_NAV = [
       { href: '/probabilidades/', label: 'Probabilidades' },
       { href: '/calculadora/', label: 'Calculadora de manos' },
       { href: '/practicar/', label: 'Practicar gratis' },
-      { href: '/jugar-online/', label: 'Jugar Ajiley online' },
+      { href: '/jugar-online/', label: 'Jugar ajiley online' },
     ],
   },
   {
@@ -64,7 +64,7 @@ export const FOOTER_NAV = [
       { href: '/historia/', label: 'Historia y origen' },
       { href: '/variantes/', label: 'Variantes' },
       { href: '/vocabulario/', label: 'Vocabulario' },
-      { href: '/ajiley-o-ajilei/', label: '¿Ajiley o ajilei?' },
+      { href: '/como-se-escribe/', label: '¿Ajiley o ajilei?' },
       { href: '/preguntas-frecuentes/', label: 'Preguntas frecuentes' },
     ],
   },

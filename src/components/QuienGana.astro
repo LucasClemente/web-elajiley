@@ -1,0 +1,210 @@
+---
+// Juego rápido "¿Quién gana?": dos manos, eliges la ganadora y se explica el porqué.
+---
+<div class="qg" data-qg>
+  <div class="qg__cabecera">
+    <strong>¿Quién gana?</strong>
+    <span class="qg__racha" data-racha>Racha: 0</span>
+  </div>
+  <div class="qg__manos">
+    <button type="button" class="qg__mano" data-eleccion="a">
+      <span class="qg__nombre">Mano A</span>
+      <span class="qg__cartas" data-cartas="a"></span>
+      <span class="qg__puntos" data-puntos="a"></span>
+    </button>
+    <span class="qg__vs" aria-hidden="true">vs</span>
+    <button type="button" class="qg__mano" data-eleccion="b">
+      <span class="qg__nombre">Mano B</span>
+      <span class="qg__cartas" data-cartas="b"></span>
+      <span class="qg__puntos" data-puntos="b"></span>
+    </button>
+  </div>
+  <button type="button" class="qg__empate" data-eleccion="empate">Empatan</button>
+  <p class="qg__veredicto" data-veredicto aria-live="polite">Toca la mano que crees que gana.</p>
+  <button type="button" class="boton boton--peque" data-siguiente hidden>Otra ronda</button>
+</div>
+
+<script>
+  import { baraja, barajar, puntuar, type Carta, type Resultado } from '../lib/ajiley';
+  import { svgNaipe } from '../lib/naipe';
+
+  for (const raiz of document.querySelectorAll<HTMLElement>('[data-qg]')) {
+    const $ = <T extends HTMLElement>(s: string) => raiz.querySelector<T>(s)!;
+    const veredicto = $('[data-veredicto]');
+    const siguiente = $<HTMLButtonElement>('[data-siguiente]');
+    const rachaEl = $('[data-racha]');
+    let racha = 0;
+    let mejorRacha = 0;
+    let ra: Resultado, rb: Resultado;
+    let resuelta = false;
+
+    const pintarMano = (lado: 'a' | 'b', mano: Carta[], r: Resultado) => {
+      $(`[data-cartas="${lado}"]`).innerHTML = mano
+        .map((c) => `<span class="qg__carta${r.cuentan.includes(c) ? ' cuenta' : ''}">${svgNaipe(c.n, c.palo)}</span>`)
+        .join('');
+      $(`[data-puntos="${lado}"]`).textContent = '';
+    };
+
+    const nueva = () => {
+      let a: Carta[], b: Carta[];
+      // Evita rondas aburridas: diferencia pequeña pero sin que salgan siempre empates.
+      do {
+        const mazo = barajar(baraja());
+        a = mazo.slice(0, 5);
+        b = mazo.slice(5, 10);
+        ra = puntuar(a);
+        rb = puntuar(b);
+      } while (Math.abs(ra.puntos - rb.puntos) > 9 && Math.random() < 0.7);
+      pintarMano('a', a, ra);
+      pintarMano('b', b, rb);
+      raiz.classList.remove('resuelta');
+      raiz.querySelectorAll('.gana, .elegida').forEach((e) => e.classList.remove('gana', 'elegida'));
+      veredicto.textContent = 'Toca la mano que crees que gana.';
+      siguiente.hidden = true;
+      resuelta = false;
+    };
+
+    raiz.addEventListener('click', (e) => {
+      const t = (e.target as HTMLElement).closest<HTMLElement>('[data-eleccion]');
+      if (t && !resuelta) {
+        resuelta = true;
+        const correcta = ra.puntos === rb.puntos ? 'empate' : ra.puntos > rb.puntos ? 'a' : 'b';
+        const acierto = t.dataset.eleccion === correcta;
+        t.classList.add('elegida');
+        if (correcta !== 'empate') $(`[data-eleccion="${correcta}"]`).classList.add('gana');
+        raiz.classList.add('resuelta');
+        $('[data-puntos="a"]').textContent = ra.ajiley ? '¡Ajiley! 51' : `${ra.puntos} en ${ra.palo}`;
+        $('[data-puntos="b"]').textContent = rb.ajiley ? '¡Ajiley! 51' : `${rb.puntos} en ${rb.palo}`;
+        racha = acierto ? racha + 1 : 0;
+        mejorRacha = Math.max(mejorRacha, racha);
+        rachaEl.textContent = `Racha: ${racha}${mejorRacha > racha ? ` · récord ${mejorRacha}` : ''}`;
+        const explica =
+          correcta === 'empate'
+            ? `Empate a ${ra.puntos}: en la mesa ganaría quien sea mano.`
+            : `Gana la mano ${correcta.toUpperCase()}: ${Math.max(ra.puntos, rb.puntos)} contra ${Math.min(ra.puntos, rb.puntos)}. Solo cuentan las cartas del mejor palo.`;
+        veredicto.textContent = `${acierto ? '¡Correcto! ' : 'Uy, no. '}${explica}`;
+        siguiente.hidden = false;
+        siguiente.focus();
+      } else if ((e.target as HTMLElement).closest('[data-siguiente]')) {
+        nueva();
+      }
+    });
+    nueva();
+  }
+</script>
+
+<style>
+  .qg {
+    margin: 1.8em 0;
+    padding: 18px 16px 20px;
+    background: #fff;
+    border: var(--borde-sticker);
+    border-radius: var(--radio);
+    box-shadow: 0 5px 0 var(--noche);
+    text-align: center;
+  }
+  .qg__cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+  }
+  .qg__cabecera strong {
+    font-family: var(--f-titulo);
+    font-size: 1.35rem;
+    color: var(--noche);
+  }
+  .qg__racha {
+    font-weight: 800;
+    color: var(--tapete);
+    font-size: 0.92rem;
+  }
+  .qg__manos {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 10px;
+    align-items: center;
+  }
+  .qg__vs {
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    color: var(--rojo);
+    font-size: 1.2rem;
+  }
+  .qg__mano {
+    display: grid;
+    gap: 8px;
+    padding: 12px 8px;
+    border: 2px solid var(--linea);
+    border-radius: var(--radio-s);
+    background: var(--tapete);
+    cursor: pointer;
+    color: #fff;
+    font: inherit;
+    transition:
+      transform 0.15s ease,
+      border-color 0.15s ease;
+  }
+  .qg__mano:hover {
+    transform: translateY(-2px);
+    border-color: var(--noche);
+  }
+  .qg__nombre {
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: var(--oro);
+  }
+  .qg__cartas {
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+  }
+  .qg__cartas :global(.qg__carta) {
+    width: clamp(30px, 6.5vw, 52px);
+  }
+  .qg__cartas :global(svg) {
+    width: 100%;
+    height: auto;
+  }
+  .resuelta .qg__cartas :global(.qg__carta:not(.cuenta)) {
+    opacity: 0.4;
+  }
+  .qg__puntos {
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    min-height: 1.4em;
+  }
+  .qg__mano.gana {
+    border-color: var(--oro);
+    box-shadow: 0 0 0 3px var(--oro);
+  }
+  .qg__mano.elegida:not(.gana) {
+    opacity: 0.75;
+  }
+  .qg__empate {
+    margin-top: 12px;
+    background: none;
+    border: 2px dashed var(--linea);
+    border-radius: 999px;
+    padding: 0.35em 1.1em;
+    font: inherit;
+    font-weight: 800;
+    color: var(--tinta-suave);
+    cursor: pointer;
+  }
+  .qg__empate.elegida {
+    border-style: solid;
+    border-color: var(--noche);
+  }
+  .qg__veredicto {
+    margin: 14px 0 10px;
+    font-weight: 700;
+  }
+  @media (max-width: 560px) {
+    .qg__manos {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

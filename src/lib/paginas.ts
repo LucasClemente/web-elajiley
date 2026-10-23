@@ -12,7 +12,7 @@ export interface Pagina {
 export const PAGINAS: Pagina[] = [
   {
     href: '/reglas/',
-    titulo: 'Reglas del Ajiley',
+    titulo: 'Reglas del ajiley',
     resumen: 'El reglamento completo: reparto, envites, descarte y quién gana la mano.',
     palo: 'oros',
   },
@@ -23,9 +23,9 @@ export const PAGINAS: Pagina[] = [
     palo: 'copas',
   },
   {
-    href: '/puntuacion/',
-    titulo: 'Puntuación y valor de las cartas',
-    resumen: 'Cuánto vale cada carta, cómo se cuenta la mano y qué es un ajiley de 51.',
+    href: '/valor-de-las-cartas/',
+    titulo: 'Valor de las cartas y puntuación',
+    resumen: 'Por qué el 2 vale más que el 7, cómo se cuenta la mano y qué es el ajiley de 51.',
     palo: 'espadas',
   },
   {
@@ -37,25 +37,25 @@ export const PAGINAS: Pagina[] = [
   {
     href: '/probabilidades/',
     titulo: 'Probabilidades',
-    resumen: 'Las cuentas reales: qué tan seguido sale cada mano y cuánto ayuda el descarte.',
+    resumen: 'Las 658.008 manos posibles, contadas una a una: qué tan seguido sale cada jugada.',
     palo: 'oros',
   },
   {
     href: '/vocabulario/',
-    titulo: 'Vocabulario del Ajiley',
+    titulo: 'Vocabulario del ajiley',
     resumen: 'Pie, mano, entrada, botar, pinta, ¡barajo! y todas las palabras de la mesa.',
     palo: 'copas',
   },
   {
     href: '/historia/',
     titulo: 'Historia y origen',
-    resumen: 'Del giley de los Siglos de Oro a las mesas venezolanas de hoy.',
+    resumen: 'Del giley español a las pulperías de los Andes y las mesas de hoy.',
     palo: 'espadas',
   },
   {
     href: '/variantes/',
     titulo: 'Variantes del juego',
-    resumen: 'El siete de oros comodín, las reglas de la casa y cómo cambian de una mesa a otra.',
+    resumen: 'El siete de oros comodín, el ajiley de 52 de los llanos y otras reglas de la casa.',
     palo: 'bastos',
   },
   {
@@ -66,8 +66,8 @@ export const PAGINAS: Pagina[] = [
   },
   {
     href: '/calculadora/',
-    titulo: 'Calculadora de manos',
-    resumen: 'Elige tus cinco cartas y mira al instante cuántos puntos tienes.',
+    titulo: 'Calculadora y asesor de descarte',
+    resumen: 'Elige tus cinco cartas: te dice cuántos puntos tienes y qué te conviene botar.',
     palo: 'copas',
   },
   {
@@ -78,13 +78,13 @@ export const PAGINAS: Pagina[] = [
   },
   {
     href: '/jugar-online/',
-    titulo: 'Jugar Ajiley online',
+    titulo: 'Jugar ajiley online',
     resumen: 'Qué mirar antes de jugar en internet y dónde hacerlo en Venezuela.',
     palo: 'bastos',
   },
   {
-    href: '/ajiley-o-ajilei/',
-    titulo: '¿Ajiley, ajilei o ajilé?',
+    href: '/como-se-escribe/',
+    titulo: '¿Ajiley, ajilei, ajilé o jiley?',
     resumen: 'Cómo se escribe y se pronuncia, según los diccionarios.',
     palo: 'oros',
   },
