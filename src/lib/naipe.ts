@@ -103,6 +103,16 @@ function lineaConCortes(y: number, cortes: number) {
   return d;
 }
 
+/** Solo el marco con las pintas, estirable a cualquier tamaño (para tarjetas con texto). */
+export function svgMarco(palo: Palo) {
+  const cortes = CORTES[palo];
+  return (
+    `<svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true">` +
+    `<path d="${lineaConCortes(6, cortes)}${lineaConCortes(144, cortes)}M5 7V143M95 7V143" fill="none" stroke="${COLOR_PALO[palo]}" ` +
+    `stroke-width="1.4" stroke-linecap="round" vector-effect="non-scaling-stroke" opacity=".8"/></svg>`
+  );
+}
+
 export function svgNaipe(numero: Numero, palo: Palo, opts: { titulo?: boolean } = {}) {
   const color = COLOR_PALO[palo];
   const cortes = CORTES[palo];

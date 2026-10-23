@@ -83,27 +83,31 @@ const letras = [...new Set(ordenados.map((t) => t.termino.replace(/^[¡¿]/, '')
 <style>
   .glosario__buscar {
     position: sticky;
-    top: 80px;
+    top: 96px;
     z-index: 5;
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 0 16px;
-    background: #fff;
-    border: var(--borde-sticker);
-    border-radius: 999px;
-    box-shadow: 0 4px 0 var(--noche);
-    color: var(--noche);
+    background: var(--naipe);
+    border-bottom: 2px solid var(--tinta);
+    box-shadow: var(--sombra-objeto);
+    color: var(--rojo);
   }
   .glosario__buscar input {
     flex: 1;
-    min-height: 52px;
+    min-height: 56px;
     border: 0;
     background: none;
-    font: inherit;
-    font-size: 1.05rem;
+    font-family: var(--f-mano);
+    font-weight: 600;
+    font-size: 1.5rem;
     color: var(--tinta);
     outline: none;
+  }
+  .glosario__buscar input::placeholder {
+    color: var(--tinta-suave);
+    opacity: 0.7;
   }
   .glosario__letras {
     display: flex;
@@ -116,10 +120,12 @@ const letras = [...new Set(ordenados.map((t) => t.termino.replace(/^[¡¿]/, '')
     place-items: center;
     width: 34px;
     height: 34px;
-    border-radius: 10px;
-    background: var(--tapete-100);
-    color: var(--tapete-700);
-    font-weight: 900;
+    border-radius: 3px;
+    background: var(--naipe);
+    box-shadow: var(--sombra);
+    color: var(--tinta);
+    font-family: var(--f-titulo);
+    font-weight: 800;
     text-decoration: none;
   }
   .glosario__letras a:hover {

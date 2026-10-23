@@ -191,10 +191,11 @@ import { PALOS, NUMEROS, svgNaipe } from '../lib/naipe';
   }
   .calc__mesa {
     background:
-      radial-gradient(circle at 30% 0%, rgb(255 255 255 / 0.08), transparent 55%), var(--tapete);
-    border: var(--borde-sticker);
-    border-radius: var(--radio);
-    box-shadow: 0 5px 0 var(--noche);
+      var(--fieltro),
+      radial-gradient(ellipse at 50% 30%, rgb(255 255 255 / 0.1), transparent 60%), var(--tapete);
+    border: 12px solid var(--madera);
+    border-image: linear-gradient(135deg, #8c5a2f, #5a3216 40%, #7a4a22 60%, #4e2a12) 12;
+    box-shadow: var(--sombra-objeto);
     padding: 20px 16px;
     text-align: center;
     color: #fff;
@@ -277,9 +278,9 @@ import { PALOS, NUMEROS, svgNaipe } from '../lib/naipe';
     margin-top: 18px;
     padding: 16px 18px;
     background: #fff;
-    border: var(--borde-sticker);
+    border: 1px solid rgb(31 26 20 / 0.15);
     border-radius: var(--radio);
-    box-shadow: 0 4px 0 var(--noche);
+    box-shadow: var(--sombra-objeto);
   }
   .calc__asesor-cabeza {
     display: flex;

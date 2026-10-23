@@ -1,20 +1,18 @@
 ---
-import { Picture, Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Mano from '../components/Mano.astro';
 import TarjetaPagina from '../components/TarjetaPagina.astro';
+import TarjetaBetzue from '../components/TarjetaBetzue.astro';
 import BandaPractica from '../components/BandaPractica.astro';
 import Faq from '../components/Faq.astro';
 import Repartidor from '../components/Repartidor.astro';
+import NotaMano from '../components/NotaMano.astro';
 import hero from '../assets/hero.jpg';
-import guaca from '../assets/marca/guaca.png';
 import { PAGINAS } from '../lib/paginas';
 import { SITE, BETZUE } from '../config';
 
-const aprende = ['/reglas/', '/como-jugar/', '/valor-de-las-cartas/', '/estrategia/', '/vocabulario/', '/historia/']
-  .map((h) => PAGINAS.find((p) => p.href === h))
-  .filter((p) => p !== undefined);
-const masTemas = ['/probabilidades/', '/variantes/', '/baraja-espanola/', '/como-se-escribe/', '/jugar-online/', '/preguntas-frecuentes/']
+const aprende = ['/reglas/', '/como-jugar/', '/valor-de-las-cartas/', '/estrategia/', '/vocabulario/', '/historia/', '/probabilidades/', '/variantes/']
   .map((h) => PAGINAS.find((p) => p.href === h))
   .filter((p) => p !== undefined);
 
@@ -70,111 +68,139 @@ const schema = [
   description="Todo sobre el ajiley, el juego de cartas venezolano con baraja española: reglas, puntuación, estrategia, vocabulario e historia. Practica gratis contra Guaca."
   schema={schema}
 >
+  <!-- PORTADA -->
   <section class="portada">
+    <span class="portada__51" aria-hidden="true">51</span>
     <div class="contenedor portada__fila">
       <div class="portada__texto">
-        <p class="antetitulo">La guía del juego de cartas venezolano</p>
-        <h1>Ajiley: aprende a jugarlo de principio a fin</h1>
+        <span class="antetitulo">la guía del juego de cartas venezolano</span>
+        <h1>El <em>ajiley</em>, de principio a fin.</h1>
         <p class="lead">
-          Reglas claras, la puntuación carta por carta, estrategia de verdad y la historia de un juego que se ha jugado en las mesas
-          venezolanas por generaciones. Todo en un solo sitio, y gratis.
+          Las reglas como se juegan en la mesa, la puntuación carta por carta, estrategia con números de verdad y la historia de un juego que
+          viene de las pulperías. Todo en un solo sitio.
         </p>
         <div class="portada__botones">
           <a href="/reglas/" class="boton">Ver las reglas</a>
-          <a href="/practicar/" class="boton boton--verde">Practicar gratis</a>
+          <a href="/practicar/" class="boton boton--claro">Practicar gratis</a>
         </div>
+        <p class="portada__betzue">
+          ¿Ya sabes jugar? <a href={BETZUE.ajiley('portada')}>Siéntate en la mesa de Betzue →</a>
+        </p>
       </div>
-      <Repartidor />
+      <div class="portada__mesa">
+        <NotaMano flecha="abajo" giro={-6} class="portada__nota">¡toca y reparte!</NotaMano>
+        <Repartidor />
+      </div>
     </div>
   </section>
 
-  <section class="seccion" aria-labelledby="que-es">
-    <div class="contenedor que-es">
-      <div class="prosa">
-        <h2 id="que-es">¿Qué es el ajiley?</h2>
-        <p>
-          <strong>El ajiley es un juego de cartas venezolano de envite y azar que se juega con la baraja española de 40 cartas.</strong>
+  <!-- QUÉ ES -->
+  <section class="seccion queEs" aria-labelledby="que-es">
+    <div class="contenedor queEs__fila">
+      <div class="prosa queEs__texto">
+        <h2 id="que-es" class="titulo-seccion"><span class="titulo-seccion__num">nº 1</span> ¿Qué es el ajiley?</h2>
+        <p class="capitular">
+          <strong>El ajiley es un juego de cartas venezolano de envite y azar que se juega con la baraja española de 40 cartas.</strong>{' '}
           Cada jugador recibe cinco cartas, bota las que no le sirven y recibe otras, y gana la mano quien sume más puntos con cartas de un
           mismo palo. La jugada soñada es el <em>ajiley</em>: el as y cuatro cartas de 10 del mismo palo, 51 puntos.
         </p>
         <p>
-          Tiene una rareza que desconcierta a los nuevos: el 2, el 3, el 4 y el 5 valen 10 puntos, como las figuras, mientras que el 7 y
-          el 6 valen solo lo que marcan. Se juega entre dos y cinco personas, se envita en varias rondas (paso, voy, no voy, subo) y se
-          presta para lo mejor de las mesas venezolanas: conversación, algo de faroleo y una buena dosis de suerte. El
-          <em>Diccionario de americanismos</em> lo recoge como venezolanismo, también escrito <em>ajilé</em> o <em>ajiléi</em>.
+          Tiene una rareza que desconcierta a los nuevos: el 2, el 3, el 4 y el 5 valen 10 puntos, como las figuras, mientras que el 7 y el 6
+          valen solo lo que marcan. Se juega entre dos y cinco personas, se envita en varias rondas (paso, voy, no voy, subo) y se presta para
+          lo mejor de las mesas venezolanas: conversación, algo de faroleo y una buena dosis de suerte. El <em>Diccionario de americanismos</em>{' '}
+          lo recoge como venezolanismo, también escrito <em>ajilé</em> o <em>ajiléi</em>.
         </p>
-        <p><a href="/reglas/">Lee el reglamento completo</a> o sigue con el resumen.</p>
       </div>
 
-      <aside class="ficha" aria-label="Ficha del juego">
-        <h3>Ficha del juego</h3>
+      <aside class="ficha cinta" aria-label="Ficha del juego">
+        <p class="ficha__titulo">Ficha del juego</p>
         <dl>
-          <div><dt>Tipo</dt><dd>Envite y azar</dd></div>
-          <div><dt>Jugadores</dt><dd>De 2 a 5</dd></div>
-          <div><dt>Baraja</dt><dd>Española de 40 cartas</dd></div>
-          <div><dt>Cartas por jugador</dt><dd>5</dd></div>
-          <div><dt>Descarte</dt><dd>Una sola vez</dd></div>
-          <div><dt>Valores</dt><dd>As 11 · 7 y 6 lo que marcan · resto 10</dd></div>
-          <div><dt>Jugada máxima</dt><dd>Ajiley: 51 puntos</dd></div>
-          <div><dt>Origen</dt><dd>Venezuela</dd></div>
+          <div><dt>Tipo</dt><dd>envite y azar</dd></div>
+          <div><dt>Jugadores</dt><dd>de 2 a 5</dd></div>
+          <div><dt>Baraja</dt><dd>española, 40 cartas</dd></div>
+          <div><dt>Cartas</dt><dd>5 por jugador</dd></div>
+          <div><dt>Descarte</dt><dd>una sola vez</dd></div>
+          <div><dt>Gana</dt><dd>el que más suma</dd></div>
+          <div><dt>Empate</dt><dd>gana la mano</dd></div>
+          <div><dt>Máximo</dt><dd>¡51, el ajiley!</dd></div>
         </dl>
       </aside>
     </div>
-  </section>
 
-  <section class="seccion seccion--arena" aria-labelledby="resumen">
-    <div class="contenedor">
-      <h2 id="resumen">El ajiley en un minuto</h2>
-      <ol class="minuto">
-        <li>
-          <strong>Se pone la entrada</strong>
-          <span>Cada jugador aporta su parte al pote antes de repartir.</span>
-        </li>
-        <li>
-          <strong>Dos cartas y a envitar</strong>
-          <span>El pie reparte dos cartas a cada uno y empieza la primera ronda: pasar, ir, subir o irse.</span>
-        </li>
-        <li>
-          <strong>Tres cartas más</strong>
-          <span>Se completan las cinco cartas, una a una, y se vuelve a envitar.</span>
-        </li>
-        <li>
-          <strong>Botar y pedir</strong>
-          <span>Cada jugador bota las cartas que no le sirven y recibe otras. Solo una vez.</span>
-        </li>
-        <li>
-          <strong>Se muestran las cartas</strong>
-          <span>Tras el último envite, gana quien sume más puntos en un mismo palo.</span>
-        </li>
-      </ol>
-      <Mano
-        titulo="La mano soñada: un ajiley de oros (11 + 10 + 10 + 10 + 10)"
-        cartas="1o 12o 11o 5o 2o"
-        resultado="¡Ajiley! 51 puntos"
-      />
-      <p class="centrado"><a href="/como-jugar/" class="boton boton--claro">Ver una mano completa, paso a paso</a></p>
+    <div class="contenedor reglaOro">
+      <NotaMano flecha="derecha" giro={-4} class="reglaOro__nota">la regla de oro</NotaMano>
+      <p class="rotulo reglaOro__rotulo">As 11 · siete 7 · seis 6 · <span>todo lo demás 10</span></p>
     </div>
   </section>
 
-  <section class="seccion" aria-labelledby="aprende">
+  <!-- EN UN MINUTO -->
+  <section class="seccion seccion--arena" aria-labelledby="minuto">
     <div class="contenedor">
-      <h2 id="aprende">Aprende el juego</h2>
-      <div class="rejilla">
-        {aprende.map((p) => <TarjetaPagina pagina={p} />)}
+      <h2 id="minuto" class="titulo-seccion"><span class="titulo-seccion__num">nº 2</span> El ajiley en un minuto</h2>
+      <ol class="minuto">
+        <li><strong>Se pone la entrada</strong><span>Cada jugador aporta su parte al pote antes de repartir.</span></li>
+        <li><strong>Dos cartas y a envitar</strong><span>El pie reparte dos cartas a cada uno: paso, voy, subo o no voy.</span></li>
+        <li><strong>Tres cartas más</strong><span>Se completan las cinco, una a una, y se vuelve a envitar.</span></li>
+        <li><strong>Botar y pedir</strong><span>Cada uno bota lo que no le sirve y recibe otras. Una sola vez.</span></li>
+        <li><strong>Se enseñan</strong><span>Último envite y gana quien más sume en un mismo palo.</span></li>
+      </ol>
+      <div class="minuto__mano">
+        <Mano titulo="La mano soñada: ajiley de oros" cartas="1o 12o 11o 5o 2o" resultado="11 + 10 + 10 + 10 + 10 = 51" />
+        <NotaMano flecha="izquierda" giro={4} class="minuto__nota">sí, ¡el 5 y el 2 valen 10!</NotaMano>
+      </div>
+      <p class="centrado"><a href="/como-jugar/" class="enlace-mano">ver una mano completa, paso a paso →</a></p>
+    </div>
+  </section>
+
+  <!-- APRENDE: NAIPES -->
+  <section class="seccion seccion--tapete" aria-labelledby="aprende">
+    <div class="contenedor">
+      <span class="antetitulo">elige una carta</span>
+      <h2 id="aprende">Todo el ajiley, en ocho cartas</h2>
+      <div class="baraja">
+        {aprende.map((p, i) => <TarjetaPagina pagina={p} i={i} />)}
       </div>
     </div>
   </section>
 
+  <!-- HERRAMIENTAS: FICHAS -->
+  <section class="seccion" aria-labelledby="herramientas">
+    <div class="contenedor">
+      <h2 id="herramientas" class="titulo-seccion"><span class="titulo-seccion__num">nº 3</span> Para practicar sin arriesgar nada</h2>
+      <div class="fichas">
+        <a class="ficha-casino" href="/practicar/" style="--f:var(--rojo)">
+          <span class="ficha-casino__disco" aria-hidden="true">vs</span>
+          <strong>Juega contra Guaca</strong>
+          <span>Manos completas con reglas venezolanas, rivales con personalidad y consejos en vivo.</span>
+        </a>
+        <a class="ficha-casino" href="/calculadora/" style="--f:var(--tapete-claro)">
+          <span class="ficha-casino__disco" aria-hidden="true">51</span>
+          <strong>Calculadora y asesor</strong>
+          <span>Tus puntos al instante y qué te conviene botar, con las cuentas exactas de las 32 opciones.</span>
+        </a>
+        <a class="ficha-casino" href="/valor-de-las-cartas/#ponte-a-prueba-quién-gana" style="--f:var(--caribe)">
+          <span class="ficha-casino__disco" aria-hidden="true">¿?</span>
+          <strong>¿Quién gana?</strong>
+          <span>Dos manos, una pregunta. Entrena el ojo hasta contar sin pensar.</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- LA MESA -->
   <section class="seccion seccion--arena" aria-labelledby="mesa">
     <div class="contenedor mesa">
-      <Picture
-        src={hero}
-        formats={['avif', 'webp']}
-        widths={[480, 760, 1100, 1500]}
-        sizes="(max-width: 900px) 100vw, 620px"
-        alt="Mesa de ajiley sobre tapete verde al atardecer: una mano con el as, el rey, el caballo, la sota y el siete de oros (48 puntos), fichas, café y tequeños"
-        loading="lazy"
-      />
+      <figure class="polaroid cinta">
+        <Picture
+          src={hero}
+          formats={['avif', 'webp']}
+          widths={[480, 760, 1100]}
+          sizes="(max-width: 900px) 92vw, 560px"
+          alt="Mesa de ajiley sobre tapete verde al atardecer: una mano con el as, el rey, el caballo, la sota y el siete de oros (48 puntos), fichas, café y tequeños"
+          loading="lazy"
+        />
+        <figcaption>48 puntos… ¡casi ajiley! (ese 7 de oros…)</figcaption>
+      </figure>
       <div class="prosa">
         <h2 id="mesa">Un juego de mesa, de patio y de familia</h2>
         <p>
@@ -183,43 +209,37 @@ const schema = [
           ponerse de acuerdo antes de repartir.
         </p>
         <p>
-          En esta guía explicamos la forma más extendida de jugarlo, señalamos las <a href="/variantes/">variantes</a> que te puedes
-          encontrar y te damos las palabras de la mesa, del <em>pie</em> a la <em>mano</em> pasando por el <em>¡barajo!</em>, en nuestro
-          <a href="/vocabulario/"> vocabulario</a>.
+          En esta guía explicamos la forma más extendida de jugarlo, señalamos las <a href="/variantes/">variantes</a> que te puedes encontrar
+          y te damos las palabras de la mesa, del <em>pie</em> a la <em>mano</em> pasando por el <em>¡barajo!</em>, en nuestro{' '}
+          <a href="/vocabulario/">vocabulario</a>. Y si te pica la curiosidad, la <a href="/historia/">historia del ajiley</a> va de las
+          pulperías de Niquitao al celular.
         </p>
       </div>
     </div>
   </section>
 
-  <section class="seccion seccion--tapete" aria-labelledby="herramientas">
-    <div class="contenedor herramientas">
-      <div>
-        <h2 id="herramientas">Practica sin arriesgar nada</h2>
+  <!-- BETZUE -->
+  <section class="seccion" aria-label="Betzue">
+    <div class="contenedor betzueInicio">
+      <div class="prosa">
+        <span class="antetitulo">¿ya te sabes las reglas?</span>
+        <h2>De la guía a la <em>mesa de verdad</em></h2>
         <p>
-          Guaca reparte, tú decides. Juega manos completas con las reglas venezolanas en el simulador, o usa la calculadora para saber al
-          instante cuántos puntos vale cualquier mano. Todo gratis, sin registro y sin dinero.
+          Cuando quieras jugar contra personas y no contra Guaca, el ajiley venezolano también se juega en línea. En{' '}
+          <a href={BETZUE.ajiley('inicio-texto')}>Betzue</a> tienes mesa de ajiley con las reglas de siempre, desde el celular y con recargas
+          por Pago Móvil. Antes de jugar con dinero, repasa <a href="/jugar-online/">qué mirar en una plataforma</a> y nuestros consejos de{' '}
+          <a href="/juego-responsable/">juego responsable</a>.
         </p>
-        <div class="portada__botones">
-          <a href="/practicar/" class="boton">Jugar contra Guaca</a>
-          <a href="/calculadora/" class="boton boton--claro">Abrir la calculadora</a>
-        </div>
       </div>
-      <Image src={guaca} alt="Guaca, la guacamaya, enseñando un abanico de cartas de oros" width={300} densities={[1, 2]} loading="lazy" />
+      <TarjetaBetzue campana="inicio" />
     </div>
   </section>
 
-  <section class="seccion" aria-labelledby="mas">
-    <div class="contenedor">
-      <h2 id="mas">Más sobre el ajiley</h2>
-      <div class="rejilla">
-        {masTemas.map((p) => <TarjetaPagina pagina={p} />)}
-      </div>
-    </div>
-  </section>
-
+  <!-- FAQ -->
   <section class="seccion seccion--arena">
-    <div class="contenedor prosa faq-inicio">
+    <div class="contenedor faqInicio">
       <Faq preguntas={preguntas} />
+      <p><a href="/preguntas-frecuentes/" class="enlace-mano">todas las preguntas →</a></p>
     </div>
   </section>
 
@@ -227,60 +247,93 @@ const schema = [
 </Base>
 
 <style>
+  /* Portada */
   .portada {
-    padding-block: clamp(28px, 5vw, 64px);
-    background:
-      radial-gradient(circle at 85% 10%, rgb(255 194 14 / 0.25), transparent 40%),
-      radial-gradient(circle at 0% 100%, rgb(11 107 69 / 0.14), transparent 45%);
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(36px, 6vw, 84px) clamp(48px, 7vw, 96px);
+  }
+  .portada__51 {
+    position: absolute;
+    right: -2vw;
+    top: 50%;
+    transform: translateY(-46%) rotate(-8deg);
+    font-family: var(--f-titulo);
+    font-weight: 900;
+    font-variation-settings: 'SOFT' 100, 'WONK' 1;
+    font-size: clamp(16rem, 40vw, 40rem);
+    line-height: 0.8;
+    color: transparent;
+    -webkit-text-stroke: 2px rgb(200 16 46 / 0.13);
+    pointer-events: none;
+    user-select: none;
   }
   .portada__fila {
+    position: relative;
     display: grid;
-    grid-template-columns: 1fr 1.05fr;
-    gap: clamp(24px, 4vw, 56px);
+    grid-template-columns: 1fr 1.02fr;
+    gap: clamp(28px, 5vw, 64px);
     align-items: center;
   }
   .portada h1 {
-    font-size: clamp(2.3rem, 1.5rem + 3.4vw, 4rem);
+    font-size: clamp(2.9rem, 1.6rem + 5.4vw, 6rem);
+    line-height: 0.95;
+    margin-bottom: 0.35em;
   }
   .portada__botones {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    margin-top: 1.2em;
+    margin-top: 1.4em;
   }
-  .mesa {
-    display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: clamp(24px, 4vw, 56px);
-    align-items: center;
+  .portada__betzue {
+    margin: 1.1em 0 0;
+    font-weight: 800;
+    font-size: 0.98rem;
   }
-  .mesa :global(img) {
-    width: 100%;
-    height: auto;
-    border-radius: 24px;
-    border: var(--borde-sticker);
-    box-shadow: 0 8px 0 var(--noche);
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    object-position: 78% 50%;
-    rotate: -1.5deg;
+  .portada__mesa {
+    position: relative;
+    padding-top: 40px;
+  }
+  .portada__mesa :global(.portada__nota) {
+    position: absolute;
+    top: -6px;
+    right: 14%;
+    z-index: 2;
   }
 
-  .que-es {
+  /* Qué es */
+  .queEs__fila {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 340px;
-    gap: clamp(24px, 5vw, 64px);
+    grid-template-columns: minmax(0, 1fr) 330px;
+    gap: clamp(28px, 6vw, 88px);
     align-items: start;
   }
-  .ficha {
-    background: #fff;
-    border: var(--borde-sticker);
-    border-radius: var(--radio);
-    box-shadow: 0 5px 0 var(--noche);
-    padding: 22px 22px 14px;
+  .capitular::first-letter {
+    float: left;
+    font-family: var(--f-titulo);
+    font-weight: 900;
+    font-variation-settings: 'SOFT' 100, 'WONK' 1;
+    font-size: 4.6em;
+    line-height: 0.8;
+    margin: 0.06em 0.1em 0 0;
+    color: var(--rojo);
   }
-  .ficha h3 {
-    margin-bottom: 0.6em;
+  .ficha {
+    margin-top: 18px;
+    padding: 22px 22px 14px 54px;
+    background:
+      linear-gradient(90deg, transparent 38px, rgb(200 16 46 / 0.45) 38px, rgb(200 16 46 / 0.45) 40px, transparent 40px),
+      repeating-linear-gradient(transparent 0 33px, rgb(0 87 184 / 0.2) 33px 34px),
+      var(--naipe);
+    box-shadow: var(--sombra-objeto);
+    transform: rotate(1.6deg);
+  }
+  .ficha__titulo {
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    font-size: 1.3rem;
+    margin: 0 0 4px;
   }
   .ficha dl {
     margin: 0;
@@ -288,112 +341,248 @@ const schema = [
   .ficha dl > div {
     display: flex;
     justify-content: space-between;
-    gap: 12px;
-    padding: 9px 0;
-    border-top: 1px dashed var(--linea);
+    align-items: baseline;
+    gap: 10px;
+    height: 34px;
   }
   .ficha dt {
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     color: var(--tinta-suave);
-    font-weight: 700;
   }
   .ficha dd {
     margin: 0;
-    font-weight: 800;
-    text-align: right;
+    font-family: var(--f-mano);
+    font-size: 1.45rem;
+    font-weight: 600;
     color: var(--noche);
+    text-align: right;
+    line-height: 1;
+  }
+  .reglaOro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px 22px;
+    margin-top: clamp(40px, 6vw, 72px);
+  }
+  .reglaOro__rotulo {
+    margin: 0;
+    font-size: clamp(1.4rem, 0.9rem + 2.4vw, 2.6rem);
+    transform: rotate(-1deg);
+    text-align: center;
+  }
+  .reglaOro__rotulo span {
+    color: #fff;
   }
 
+  /* En un minuto */
   .minuto {
     list-style: none;
     counter-reset: m;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 14px;
+    gap: 0;
     padding: 0;
-    margin: 0 0 8px;
+    margin: 12px 0 28px;
+    border-top: 1.5px solid var(--tinta);
   }
   .minuto li {
     counter-increment: m;
-    background: #fff;
-    border: 2px solid var(--linea);
-    border-radius: var(--radio);
-    padding: 16px;
     display: grid;
-    gap: 4px;
     align-content: start;
+    gap: 6px;
+    padding: 18px 18px 6px 0;
+    border-right: 1px solid var(--linea);
+    margin-right: 18px;
+  }
+  .minuto li:last-child {
+    border-right: 0;
+    margin-right: 0;
   }
   .minuto li::before {
     content: counter(m);
-    display: grid;
-    place-items: center;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: var(--oro);
-    border: 2px solid var(--noche);
     font-family: var(--f-titulo);
-    font-weight: 800;
-    color: var(--noche);
-    margin-bottom: 6px;
+    font-weight: 900;
+    font-variation-settings: 'SOFT' 100, 'WONK' 1;
+    font-size: 3.4rem;
+    line-height: 0.9;
+    color: var(--rojo);
   }
   .minuto strong {
     font-family: var(--f-titulo);
-    color: var(--noche);
-    font-size: 1.12rem;
-    line-height: 1.2;
+    font-weight: 700;
+    font-size: 1.2rem;
+    line-height: 1.15;
   }
   .minuto span {
     font-size: 0.95rem;
     color: var(--tinta-suave);
     line-height: 1.5;
   }
+  .minuto__mano {
+    position: relative;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .minuto__mano :global(.minuto__nota) {
+    position: absolute;
+    right: -190px;
+    top: 42%;
+  }
   .centrado {
     text-align: center;
   }
 
-  .herramientas {
+  /* Fichas de casino */
+  .fichas {
     display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 32px;
-    align-items: center;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(20px, 3vw, 36px);
+    margin-top: 18px;
   }
-  .herramientas p {
-    max-width: 58ch;
-    font-size: 1.08rem;
+  .ficha-casino {
+    display: grid;
+    justify-items: start;
+    gap: 8px;
+    color: var(--tinta);
+    text-decoration: none;
   }
-  .herramientas :global(img) {
-    width: clamp(160px, 22vw, 280px);
+  .ficha-casino__disco {
+    display: grid;
+    place-items: center;
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    margin-bottom: 8px;
+    font-family: var(--f-titulo);
+    font-weight: 900;
+    font-size: 1.9rem;
+    color: #fff;
+    background:
+      radial-gradient(circle, var(--f) 0 44%, #fff 44% 47%, var(--f) 47% 100%);
+    box-shadow:
+      inset 0 0 0 7px var(--f),
+      inset 0 0 0 9px rgb(255 255 255 / 0.9),
+      0 6px 0 rgb(0 0 0 / 0.25),
+      0 12px 18px -6px rgb(0 0 0 / 0.35);
+    position: relative;
+    transition: transform 0.3s cubic-bezier(0.3, 1.4, 0.5, 1);
   }
-  .faq-inicio {
-    margin-inline: auto;
+  .ficha-casino__disco::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: repeating-conic-gradient(rgb(255 255 255 / 0.95) 0 12deg, transparent 12deg 45deg);
+    -webkit-mask: radial-gradient(circle, transparent 0 60%, #000 61% 100%);
+    mask: radial-gradient(circle, transparent 0 60%, #000 61% 100%);
+  }
+  .ficha-casino:hover .ficha-casino__disco {
+    transform: translateY(-6px) rotate(40deg);
+  }
+  .ficha-casino strong {
+    font-family: var(--f-titulo);
+    font-size: 1.45rem;
+    font-weight: 750;
+    line-height: 1.1;
+  }
+  .ficha-casino span:last-child {
+    color: var(--tinta-suave);
   }
 
+  /* La mesa: foto con cinta */
+  .mesa {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(28px, 5vw, 72px);
+    align-items: center;
+  }
+  .polaroid {
+    margin: 0;
+    padding: 14px 14px 18px;
+    background: #fff;
+    box-shadow: var(--sombra-objeto);
+    transform: rotate(-2.5deg);
+  }
+  .polaroid :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    object-position: 78% 50%;
+  }
+  .polaroid figcaption {
+    margin-top: 10px;
+    font-family: var(--f-mano);
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--noche);
+  }
+
+  /* Betzue */
+  .betzueInicio {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: center;
+  }
+
+  .faqInicio {
+    max-width: 820px;
+  }
+
+  @media (max-width: 1240px) {
+    .minuto__mano :global(.minuto__nota) {
+      position: static;
+      display: flex;
+      justify-content: center;
+      margin-top: -6px;
+    }
+  }
   @media (max-width: 1000px) {
     .minuto {
       grid-template-columns: repeat(2, 1fr);
+      border-top: 0;
+    }
+    .minuto li {
+      border-right: 0;
+      border-top: 1.5px solid var(--tinta);
     }
   }
   @media (max-width: 900px) {
     .portada__fila,
+    .queEs__fila,
     .mesa,
-    .que-es {
+    .betzueInicio {
       grid-template-columns: 1fr;
     }
-    .herramientas {
+    .fichas {
       grid-template-columns: 1fr;
-      text-align: center;
     }
-    .herramientas :global(img) {
-      margin-inline: auto;
-      order: -1;
+    .portada__51 {
+      top: 30%;
+      right: -12vw;
     }
-    .herramientas .portada__botones {
-      justify-content: center;
+    .ficha {
+      max-width: 420px;
     }
   }
   @media (max-width: 520px) {
     .minuto {
       grid-template-columns: 1fr;
+    }
+    .minuto li {
+      grid-template-columns: auto 1fr;
+      column-gap: 14px;
+      margin-right: 0;
+    }
+    .minuto li::before {
+      grid-row: span 2;
     }
   }
 </style>

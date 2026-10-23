@@ -1,63 +1,119 @@
 ---
+// Una sección de la guía dibujada como naipe español: índice en las esquinas,
+// pinta en el marco y el título donde iría la figura.
 import type { Pagina } from '../lib/paginas';
+import { svgMarco, COLOR_PALO, NUMEROS } from '../lib/naipe';
 
 interface Props {
   pagina: Pagina;
+  /** Posición en la mano (define el número de la carta). */
+  i?: number;
 }
-const { pagina } = Astro.props;
+const { pagina, i = 0 } = Astro.props;
+const n = NUMEROS[i % NUMEROS.length];
+const color = COLOR_PALO[pagina.palo];
 ---
-<a href={pagina.href} class="tarjeta-pagina">
-  <svg class="tarjeta-pagina__palo" viewBox="0 0 40 40" aria-hidden="true"><use href={`#p-${pagina.palo}`} width="40" height="40"></use></svg>
-  <span class="tarjeta-pagina__titulo">{pagina.titulo}</span>
-  <span class="tarjeta-pagina__resumen">{pagina.resumen}</span>
-  <span class="tarjeta-pagina__flecha" aria-hidden="true">→</span>
+<a href={pagina.href} class="carta-guia" style={`--c:${color}`}>
+  <span class="carta-guia__marco" set:html={svgMarco(pagina.palo)} />
+  <span class="carta-guia__indice" aria-hidden="true">
+    {n}
+    <svg viewBox="0 0 40 40"><use href={`#p-${pagina.palo}`} width="40" height="40"></use></svg>
+  </span>
+  <svg class="carta-guia__pip" viewBox="0 0 40 40" aria-hidden="true"><use href={`#p-${pagina.palo}`} width="40" height="40"></use></svg>
+  <span class="carta-guia__titulo">{pagina.titulo}</span>
+  <span class="carta-guia__resumen">{pagina.resumen}</span>
+  <span class="carta-guia__indice carta-guia__indice--abajo" aria-hidden="true">
+    {n}
+    <svg viewBox="0 0 40 40"><use href={`#p-${pagina.palo}`} width="40" height="40"></use></svg>
+  </span>
 </a>
 
 <style>
-  .tarjeta-pagina {
+  .carta-guia {
     position: relative;
-    display: grid;
-    gap: 6px;
-    align-content: start;
-    padding: 20px 20px 22px;
-    background: #fff;
-    border: 2px solid var(--linea);
-    border-radius: var(--radio);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    min-height: 290px;
+    padding: 44px 24px 46px;
+    background:
+      radial-gradient(ellipse at 50% 40%, #fffef9, transparent 70%),
+      var(--naipe);
+    border-radius: 12px;
+    border: 1px solid rgb(31 26 20 / 0.18);
     color: var(--tinta);
     text-decoration: none;
+    box-shadow: var(--sombra-objeto);
     transition:
-      transform 0.15s ease,
-      border-color 0.15s ease,
-      box-shadow 0.15s ease;
+      transform 0.25s cubic-bezier(0.3, 1.4, 0.5, 1),
+      box-shadow 0.25s ease;
   }
-  .tarjeta-pagina:hover {
-    transform: translateY(-3px);
-    border-color: var(--noche);
-    box-shadow: 0 5px 0 var(--noche);
+  .carta-guia:hover,
+  .carta-guia:focus-visible {
+    transform: translateY(-10px) rotate(0deg) !important;
+    box-shadow:
+      0 2px 2px rgb(30 20 10 / 0.12),
+      0 26px 40px -14px rgb(30 20 10 / 0.5);
+    z-index: 2;
   }
-  .tarjeta-pagina__palo {
-    width: 36px;
-    height: 36px;
-    margin-bottom: 4px;
+  .carta-guia__marco {
+    position: absolute;
+    inset: 8px;
+    pointer-events: none;
   }
-  .tarjeta-pagina__titulo {
+  .carta-guia__marco :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+  .carta-guia__indice {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    display: grid;
+    justify-items: center;
     font-family: var(--f-titulo);
     font-weight: 800;
-    color: var(--noche);
-    font-size: 1.2rem;
-    line-height: 1.2;
+    font-size: 1.35rem;
+    line-height: 1;
+    color: var(--c);
   }
-  .tarjeta-pagina__resumen {
+  .carta-guia__indice svg {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+  }
+  .carta-guia__indice--abajo {
+    top: auto;
+    left: auto;
+    bottom: 14px;
+    right: 16px;
+    transform: rotate(180deg);
+  }
+  .carta-guia__pip {
+    width: 54px;
+    height: 54px;
+    margin-bottom: 4px;
+  }
+  .carta-guia__titulo {
+    font-family: var(--f-titulo);
+    font-weight: 750;
+    font-size: 1.32rem;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .carta-guia__resumen {
+    font-size: 0.92rem;
+    line-height: 1.45;
     color: var(--tinta-suave);
-    font-size: 0.95rem;
-    line-height: 1.5;
+    text-wrap: pretty;
   }
-  .tarjeta-pagina__flecha {
-    position: absolute;
-    right: 18px;
-    top: 18px;
-    font-weight: 900;
-    color: var(--tapete);
-    font-size: 1.2rem;
+  @media (max-width: 520px) {
+    .carta-guia {
+      min-height: 0;
+      padding: 40px 18px 42px;
+    }
   }
 </style>

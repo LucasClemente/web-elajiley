@@ -3,8 +3,10 @@
 import Base from './Base.astro';
 import TarjetaPagina from '../components/TarjetaPagina.astro';
 import BandaPractica from '../components/BandaPractica.astro';
-import { SITE } from '../config';
+import RotuloBetzue from '../components/RotuloBetzue.astro';
+import { SITE, BETZUE, BETZUE_CTA } from '../config';
 import { pagina } from '../lib/paginas';
+import { COLOR_PALO, type Palo } from '../lib/naipe';
 
 interface Faq {
   q: string;
@@ -40,6 +42,8 @@ const actualizado = fm.actualizado ?? publicado;
 const h2 = headings.filter((h) => h.depth === 2);
 const mostrarIndice = (fm.indice ?? true) && h2.length >= 3;
 const relacionados = (fm.relacionados ?? []).map(pagina).filter((p) => p !== undefined);
+const palo: Palo = pagina(path)?.palo ?? 'oros';
+const conBetzue = path in BETZUE_CTA;
 
 const fecha = (iso: string) =>
   new Date(`${iso}T12:00:00`).toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -79,8 +83,9 @@ if (fm.faq?.length) {
   schema={schema}
   migas={[{ name: fm.miga, href: path }]}
 >
-  <article class:list={['articulo', { 'articulo--completo': fm.completo }]}>
+  <article class:list={['articulo', { 'articulo--completo': fm.completo }]} style={`--c:${COLOR_PALO[palo]}`}>
     <header class="articulo__cabecera">
+      <svg class="articulo__palo-fondo" viewBox="0 0 40 40" aria-hidden="true"><use href={`#p-${palo}`} width="40" height="40"></use></svg>
       <div class="contenedor">
         <nav class="migas" aria-label="Migas de pan">
           <ol>
@@ -88,12 +93,23 @@ if (fm.faq?.length) {
             <li aria-current="page">{fm.miga}</li>
           </ol>
         </nav>
-        {fm.etiqueta && <span class="etiqueta">{fm.etiqueta}</span>}
+        {fm.etiqueta && (
+          <span class="etiqueta">
+            <svg viewBox="0 0 40 40" aria-hidden="true"><use href={`#p-${palo}`} width="40" height="40"></use></svg>
+            {fm.etiqueta}
+          </span>
+        )}
         <h1>{fm.title}</h1>
         {fm.lead && <p class="lead articulo__lead">{fm.lead}</p>}
         <p class="articulo__meta">
-          Por la redacción de El Ajiley · Actualizado el <time datetime={actualizado}>{fecha(actualizado)}</time>
-          {fm.minutos && <> · {fm.minutos} min de lectura</>}
+          Por la redacción de El Ajiley <span aria-hidden="true">·</span> Actualizado el{' '}
+          <time datetime={actualizado}>{fecha(actualizado)}</time>
+          {fm.minutos && (
+            <>
+              <span aria-hidden="true"> · </span>
+              {fm.minutos} min de lectura
+            </>
+          )}
         </p>
       </div>
     </header>
@@ -113,6 +129,8 @@ if (fm.faq?.length) {
           </details>
         )}
         <slot />
+
+        {conBetzue && <RotuloBetzue ruta={path} />}
 
         {fm.faq?.length && (
           <section class="faq" aria-labelledby="preguntas">
@@ -140,20 +158,22 @@ if (fm.faq?.length) {
             </ol>
           </nav>
         )}
-        <div class="lateral__practica">
-          <strong>¿Lo probamos?</strong>
-          <p>Juega una mano de práctica contra Guaca. Gratis y sin registro.</p>
-          <a href="/practicar/" class="boton boton--peque">Practicar ahora</a>
+        <div class="lateral__mesa sobre-tapete">
+          <strong>¿Una mano?</strong>
+          <p>Practica gratis contra Guaca, o juega de verdad en Betzue.</p>
+          <a href="/practicar/" class="boton boton--oro boton--peque">Practicar gratis</a>
+          <a href={BETZUE.ajiley(`lateral-${path.replace(/\//g, '')}`)} class="lateral__betzue">Jugar en Betzue →</a>
         </div>
       </aside>
     </div>
 
     {relacionados.length > 0 && (
-      <section class="seccion seccion--arena" aria-labelledby="sigue">
+      <section class="seccion seccion--tapete" aria-labelledby="sigue">
         <div class="contenedor">
-          <h2 id="sigue">Sigue aprendiendo</h2>
-          <div class="rejilla">
-            {relacionados.map((p) => <TarjetaPagina pagina={p} />)}
+          <span class="antetitulo">Sigue aprendiendo</span>
+          <h2 id="sigue">Otra carta de la baraja</h2>
+          <div class="baraja">
+            {relacionados.map((p, i) => <TarjetaPagina pagina={p} i={i} />)}
           </div>
         </div>
       </section>
@@ -164,22 +184,37 @@ if (fm.faq?.length) {
 
 <style>
   .articulo__cabecera {
-    padding-block: clamp(28px, 5vw, 56px) clamp(20px, 3vw, 32px);
-    background:
-      radial-gradient(circle at 90% -20%, rgb(255 194 14 / 0.22), transparent 45%),
-      radial-gradient(circle at 0% 120%, rgb(11 107 69 / 0.12), transparent 45%);
-    border-bottom: 2px dashed var(--linea);
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(30px, 5vw, 64px) clamp(26px, 4vw, 44px);
+    border-bottom: 1px solid var(--linea);
+  }
+  .articulo__palo-fondo {
+    position: absolute;
+    right: -60px;
+    top: -40px;
+    width: clamp(220px, 32vw, 420px);
+    height: auto;
+    opacity: 0.09;
+    transform: rotate(14deg);
+    pointer-events: none;
+  }
+  .articulo__cabecera .etiqueta {
+    margin-bottom: 0.6em;
   }
   .articulo__cabecera h1 {
-    max-width: 22ch;
-    margin-top: 0.35em;
+    max-width: 18ch;
   }
   .articulo__lead {
-    max-width: 62ch;
+    max-width: 58ch;
+    margin-bottom: 1em;
   }
   .articulo__meta {
     color: var(--tinta-suave);
-    font-size: 0.92rem;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     margin: 0;
   }
   .migas ol {
@@ -188,21 +223,23 @@ if (fm.faq?.length) {
     gap: 6px;
     list-style: none;
     padding: 0;
-    margin: 0 0 14px;
-    font-size: 0.9rem;
+    margin: 0 0 18px;
+    font-size: 0.88rem;
+    color: var(--tinta-suave);
+  }
+  .migas a {
     color: var(--tinta-suave);
   }
   .migas li + li::before {
-    content: '›';
+    content: '/';
     margin-right: 6px;
-    color: var(--oro-600);
-    font-weight: 900;
+    color: var(--rojo);
   }
   .articulo__cuerpo {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 280px;
-    gap: clamp(28px, 5vw, 64px);
-    padding-block: clamp(28px, 5vw, 48px) clamp(48px, 7vw, 80px);
+    grid-template-columns: minmax(0, 1fr) 290px;
+    gap: clamp(28px, 5vw, 72px);
+    padding-block: clamp(32px, 5vw, 56px) clamp(56px, 8vw, 96px);
     align-items: start;
   }
   .articulo--completo .articulo__cuerpo {
@@ -211,83 +248,102 @@ if (fm.faq?.length) {
   .articulo--completo .prosa {
     max-width: none;
   }
-  .articulo--completo .prosa > :global(:where(p, ul, ol, h2, h3, blockquote, .nota, .faq, .resumen)) {
+  .articulo--completo .prosa > :global(:where(p, ul, ol, h2, h3, blockquote, .nota, .faq, .resumen, .rotulo-betzue)) {
     max-width: var(--ancho-prosa);
   }
   .articulo__lateral {
     position: sticky;
-    top: 92px;
+    top: 104px;
     display: grid;
-    gap: 18px;
+    gap: 22px;
   }
+
+  /* Índice: hoja de libreta */
   .indice {
-    background: #fff;
-    border: 2px solid var(--linea);
-    border-radius: var(--radio);
-    padding: 16px 18px;
-    font-size: 0.93rem;
+    padding: 16px 18px 12px 46px;
+    background:
+      linear-gradient(90deg, transparent 32px, rgb(200 16 46 / 0.4) 32px, rgb(200 16 46 / 0.4) 34px, transparent 34px),
+      repeating-linear-gradient(transparent 0 27px, rgb(0 87 184 / 0.15) 27px 28px),
+      var(--naipe);
+    box-shadow: var(--sombra-objeto);
+    font-size: 0.92rem;
+    line-height: 28px;
+    transform: rotate(0.6deg);
   }
   .indice strong,
   .indice summary {
-    font-family: var(--f-titulo);
-    font-weight: 800;
-    color: var(--noche);
-    font-size: 1.05rem;
+    font-family: var(--f-mano);
+    font-weight: 700;
+    color: var(--rojo);
+    font-size: 1.5rem;
   }
   .indice ol {
-    margin: 8px 0 0;
-    padding-left: 1.2em;
-    display: grid;
-    gap: 4px;
+    margin: 2px 0 0;
+    padding-left: 1.1em;
+  }
+  .indice li::marker {
+    font-family: var(--f-titulo);
+    color: var(--tinta-suave);
   }
   .indice a {
     color: var(--tinta);
     text-decoration: none;
   }
   .indice a:hover {
-    color: var(--caribe);
+    color: var(--rojo);
     text-decoration: underline;
   }
   .indice--movil {
     display: none;
-    margin-bottom: 1.5em;
+    margin-bottom: 1.8em;
+    transform: none;
   }
   .indice--movil summary {
     cursor: pointer;
   }
-  .lateral__practica {
-    background: var(--tapete);
-    color: #e9f6ef;
-    border: var(--borde-sticker);
-    border-radius: var(--radio);
-    padding: 18px;
-    box-shadow: 0 4px 0 var(--noche);
+
+  .lateral__mesa {
+    display: grid;
+    gap: 10px;
+    justify-items: start;
+    padding: 20px;
+    border: 10px solid var(--madera);
+    border-image: linear-gradient(135deg, #8c5a2f, #5a3216 40%, #7a4a22 60%, #4e2a12) 10;
+    box-shadow: var(--sombra-objeto);
   }
-  .lateral__practica strong {
-    font-family: var(--f-titulo);
-    color: #fff;
-    font-size: 1.2rem;
+  .lateral__mesa strong {
+    font-family: var(--f-mano);
+    color: var(--oro);
+    font-size: 1.7rem;
+    line-height: 1;
   }
-  .lateral__practica p {
-    margin: 0.3em 0 0.9em;
+  .lateral__mesa p {
+    margin: 0;
     font-size: 0.95rem;
   }
+  .lateral__betzue {
+    font-weight: 900;
+    font-size: 0.92rem;
+  }
 
+  /* Preguntas: fichas de cartulina */
   .faq {
-    margin-top: 2.5em;
+    margin-top: 2.8em;
   }
   .faq__item {
-    background: #fff;
-    border: 2px solid var(--linea);
-    border-radius: var(--radio-s);
+    background: var(--naipe);
+    box-shadow: var(--sombra);
     margin-bottom: 10px;
     padding: 0 1.1em;
+    border-left: 4px solid var(--c, var(--rojo));
   }
   .faq__item summary {
     cursor: pointer;
-    padding: 0.9em 0;
-    font-weight: 800;
-    color: var(--noche);
+    padding: 0.95em 0;
+    font-family: var(--f-titulo);
+    font-weight: 650;
+    font-size: 1.12rem;
+    color: var(--tinta);
     list-style: none;
     display: flex;
     justify-content: space-between;
@@ -298,19 +354,19 @@ if (fm.faq?.length) {
   }
   .faq__item summary::after {
     content: '+';
-    font-family: var(--f-titulo);
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     line-height: 1;
-    color: var(--tapete);
+    color: var(--rojo);
+    transition: transform 0.2s ease;
   }
   .faq__item[open] summary::after {
-    content: '–';
+    transform: rotate(45deg);
   }
   .faq__item p {
     margin: 0 0 1em;
   }
 
-  @media (max-width: 960px) {
+  @media (max-width: 980px) {
     .articulo__cuerpo {
       grid-template-columns: minmax(0, 1fr);
     }

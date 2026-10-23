@@ -30,22 +30,24 @@ const lista = cartas
 
 <style>
   .mano {
-    margin: 1.6em 0;
-    padding: 18px 16px 16px;
+    margin: 1.8em 0 2em;
+    padding: 20px 16px 18px;
     background:
-      radial-gradient(circle at 30% 0%, rgb(255 255 255 / 0.08), transparent 55%),
+      var(--fieltro),
+      radial-gradient(ellipse at 50% 30%, rgb(255 255 255 / 0.1), transparent 65%),
       var(--tapete);
-    border: var(--borde-sticker);
-    border-radius: var(--radio);
-    box-shadow: 0 5px 0 var(--noche);
+    border: 10px solid var(--madera);
+    border-image: linear-gradient(135deg, #8c5a2f, #5a3216 40%, #7a4a22 60%, #4e2a12) 10;
+    box-shadow: var(--sombra-objeto);
     text-align: center;
   }
   .mano__titulo {
-    font-family: var(--f-titulo);
-    font-weight: 800;
-    color: #fff;
-    font-size: 1.05rem;
-    margin-bottom: 10px;
+    font-family: var(--f-mano);
+    font-weight: 700;
+    color: var(--oro);
+    font-size: 1.45rem;
+    line-height: 1.1;
+    margin-bottom: 12px;
   }
   .mano__cartas {
     display: flex;
@@ -53,14 +55,23 @@ const lista = cartas
     gap: clamp(4px, 1.5vw, 10px);
     flex-wrap: wrap;
   }
+  .mano__cartas > :global(.naipe:nth-child(odd)) {
+    rotate: -2deg;
+  }
+  .mano__cartas > :global(.naipe:nth-child(even)) {
+    rotate: 1.5deg;
+  }
   .mano__resultado {
     display: inline-block;
-    margin: 14px 0 0;
-    padding: 0.25em 0.9em;
-    border-radius: 999px;
-    background: var(--oro);
-    color: var(--noche-900);
-    font-weight: 900;
-    border: 2px solid var(--noche);
+    margin: 16px 0 0;
+    padding: 0.15em 0.9em 0.2em;
+    background: var(--naipe);
+    color: var(--tinta);
+    font-family: var(--f-mano);
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.2;
+    transform: rotate(-1.5deg);
+    box-shadow: 0 3px 6px rgb(0 0 0 / 0.3);
   }
 </style>

@@ -24,11 +24,12 @@ const { palo = 'copas' } = Astro.props;
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     gap: 8px;
-    margin: 1.4em 0 1.8em;
-    padding: 14px 10px;
-    background: #fff;
-    border: 2px solid var(--linea);
-    border-radius: var(--radio);
+    margin: 1.6em 0 2em;
+    padding: 16px 12px 12px;
+    background: var(--naipe);
+    box-shadow: var(--sombra-objeto);
+    border-top: 3px double var(--tinta);
+    border-bottom: 3px double var(--tinta);
   }
   .valores__item {
     display: grid;
@@ -46,23 +47,27 @@ const { palo = 'copas' } = Astro.props;
     font-weight: 700;
   }
   .valores__puntos {
-    font-family: var(--f-titulo);
-    font-weight: 800;
-    font-size: 1.25rem;
+    font-family: var(--f-mano);
+    font-weight: 700;
+    font-size: 1.9rem;
     line-height: 1;
-    min-width: 2em;
-    padding: 0.2em 0.35em 0.1em;
-    border-radius: 8px;
-    background: var(--arena);
-    color: var(--noche);
+    color: var(--tinta-suave);
   }
   .valores__item--diez .valores__puntos {
-    background: var(--tapete-100);
-    color: var(--tapete-700);
+    color: var(--tapete);
   }
   .valores__item--as .valores__puntos {
-    background: var(--oro);
-    color: var(--noche-900);
+    color: var(--rojo);
+    position: relative;
+  }
+  /* Círculo a mano alrededor del 11 */
+  .valores__item--as .valores__puntos::after {
+    content: '';
+    position: absolute;
+    inset: -6px -9px -4px;
+    border: 2px solid var(--rojo);
+    border-radius: 50% 45% 55% 48%;
+    transform: rotate(-8deg);
   }
   @media (max-width: 720px) {
     .valores {

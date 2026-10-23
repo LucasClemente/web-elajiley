@@ -1,0 +1,70 @@
+---
+// Anotación escrita a mano con flecha, como las que se hacen en la libreta de la mesa.
+interface Props {
+  /** Hacia dónde apunta la flecha. */
+  flecha?: 'izquierda' | 'derecha' | 'abajo' | 'arriba' | 'ninguna';
+  giro?: number;
+  color?: 'rojo' | 'oro' | 'tinta' | 'blanco';
+  class?: string;
+}
+const { flecha = 'abajo', giro = -3, color = 'rojo', class: clase } = Astro.props;
+const FLECHAS: Record<string, string> = {
+  abajo: 'M10 4C30 10 44 28 40 58M40 58 30 46M40 58 49 45',
+  derecha: 'M4 30C24 8 50 6 74 22M74 22 60 22M74 22 69 9',
+  izquierda: 'M76 30C56 8 30 6 6 22M6 22 20 22M6 22 11 9',
+  arriba: 'M40 60C24 50 16 32 22 6M22 6 12 18M22 6 33 16',
+};
+---
+<span class:list={['nota-mano', `nota-mano--${color}`, `nota-mano--${flecha}`, clase]} style={`--giro:${giro}deg`}>
+  <span class="nota-mano__texto"><slot /></span>
+  {flecha !== 'ninguna' && (
+    <svg class="nota-mano__flecha" viewBox="0 0 80 64" aria-hidden="true">
+      <path d={FLECHAS[flecha]} fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  )}
+</span>
+
+<style>
+  .nota-mano {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 4px;
+    font-family: var(--f-mano);
+    font-weight: 700;
+    font-size: clamp(1.3rem, 1.15rem + 0.5vw, 1.6rem);
+    line-height: 1.05;
+    transform: rotate(var(--giro));
+  }
+  .nota-mano--rojo {
+    color: var(--rojo);
+  }
+  .nota-mano--oro {
+    color: var(--oro);
+  }
+  .nota-mano--tinta {
+    color: var(--tinta);
+  }
+  .nota-mano--blanco {
+    color: #fff;
+  }
+  .nota-mano--abajo,
+  .nota-mano--arriba {
+    flex-direction: column;
+    align-items: center;
+  }
+  .nota-mano--arriba {
+    flex-direction: column-reverse;
+  }
+  .nota-mano--izquierda {
+    flex-direction: row-reverse;
+  }
+  .nota-mano__flecha {
+    width: 64px;
+    height: auto;
+    flex: none;
+  }
+  .nota-mano--abajo .nota-mano__flecha,
+  .nota-mano--arriba .nota-mano__flecha {
+    width: 46px;
+  }
+</style>

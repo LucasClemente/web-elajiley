@@ -131,10 +131,11 @@ const cartas = (s = '') =>
   }
   .guia__mesa {
     padding: 16px;
-    border-radius: var(--radio);
-    border: var(--borde-sticker);
-    box-shadow: 0 5px 0 var(--noche);
+    border: 12px solid var(--madera);
+    border-image: linear-gradient(135deg, #8c5a2f, #5a3216 40%, #7a4a22 60%, #4e2a12) 12;
+    box-shadow: var(--sombra-objeto);
     background:
+      var(--fieltro),
       radial-gradient(ellipse at 50% 30%, rgb(255 255 255 / 0.1), transparent 60%), var(--tapete);
     color: #fff;
   }

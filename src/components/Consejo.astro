@@ -1,16 +1,16 @@
 ---
-// "El consejo de Guaca": la guacamaya de Betzue aparece como tutora en los artículos.
+// "Guaca dice": la guacamaya de Betzue da consejos en un bocadillo de cómic.
 import { Image } from 'astro:assets';
 import guaca from '../assets/marca/guaca.png';
 
 interface Props {
   titulo?: string;
 }
-const { titulo = 'El consejo de Guaca' } = Astro.props;
+const { titulo = 'Guaca dice:' } = Astro.props;
 ---
 <aside class="consejo">
-  <Image src={guaca} alt="" width={84} height={84} densities={[1, 2]} class="consejo__guaca" loading="lazy" />
-  <div class="consejo__texto">
+  <Image src={guaca} alt="" width={110} height={110} densities={[1, 2]} class="consejo__guaca" loading="lazy" />
+  <div class="consejo__bocadillo">
     <strong class="consejo__titulo">{titulo}</strong>
     <slot />
   </div>
@@ -19,36 +19,57 @@ const { titulo = 'El consejo de Guaca' } = Astro.props;
 <style>
   .consejo {
     display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 14px;
-    align-items: start;
-    margin: 1.8em 0;
-    padding: 16px 18px 16px 12px;
-    background: var(--rojo-100);
-    border: 2px solid #f6c3cd;
-    border-radius: var(--radio);
+    grid-template-columns: 96px 1fr;
+    gap: 18px;
+    align-items: end;
+    margin: 2em 0;
   }
   .consejo__guaca {
-    width: 72px;
-    height: 72px;
+    width: 96px;
+    height: 96px;
     object-fit: contain;
-    margin-top: -4px;
+    filter: drop-shadow(0 6px 6px rgb(30 20 10 / 0.25));
+  }
+  .consejo__bocadillo {
+    position: relative;
+    padding: 16px 20px 14px;
+    background: #fff;
+    border: 2px solid var(--tinta);
+    border-radius: 22px 22px 22px 4px;
+    box-shadow: 4px 5px 0 rgb(31 26 20 / 0.12);
+  }
+  .consejo__bocadillo::before {
+    content: '';
+    position: absolute;
+    left: -14px;
+    bottom: 12px;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-left: 2px solid var(--tinta);
+    border-bottom: 2px solid var(--tinta);
+    transform: skewY(-35deg);
   }
   .consejo__titulo {
     display: block;
-    font-family: var(--f-titulo);
-    font-weight: 800;
-    color: var(--rojo-700);
-    font-size: 1.1rem;
-    margin-bottom: 0.15em;
+    font-family: var(--f-mano);
+    font-weight: 700;
+    color: var(--rojo);
+    font-size: 1.55rem;
+    line-height: 1;
+    margin-bottom: 0.2em;
   }
-  .consejo__texto :global(p:last-child) {
+  .consejo__bocadillo :global(p:last-child) {
     margin-bottom: 0;
   }
   @media (max-width: 480px) {
+    .consejo {
+      grid-template-columns: 64px 1fr;
+      gap: 12px;
+    }
     .consejo__guaca {
-      width: 56px;
-      height: 56px;
+      width: 64px;
+      height: 64px;
     }
   }
 </style>

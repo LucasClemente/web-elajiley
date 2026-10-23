@@ -1,6 +1,5 @@
 ---
 // Bloque de preguntas frecuentes para páginas .astro (los MDX lo traen en la plantilla).
-// El JSON-LD FAQPage lo añade la página con faqSchema().
 interface Props {
   preguntas: { q: string; a: string }[];
   titulo?: string;
@@ -20,17 +19,19 @@ const { preguntas, titulo = 'Preguntas frecuentes', id = 'preguntas' } = Astro.p
 
 <style>
   .faq__item {
-    background: #fff;
-    border: 2px solid var(--linea);
-    border-radius: var(--radio-s);
+    background: var(--naipe);
+    box-shadow: var(--sombra);
     margin-bottom: 10px;
     padding: 0 1.1em;
+    border-left: 4px solid var(--rojo);
   }
   .faq__item summary {
     cursor: pointer;
-    padding: 0.9em 0;
-    font-weight: 800;
-    color: var(--noche);
+    padding: 0.95em 0;
+    font-family: var(--f-titulo);
+    font-weight: 650;
+    font-size: 1.12rem;
+    color: var(--tinta);
     list-style: none;
     display: flex;
     justify-content: space-between;
@@ -41,13 +42,13 @@ const { preguntas, titulo = 'Preguntas frecuentes', id = 'preguntas' } = Astro.p
   }
   .faq__item summary::after {
     content: '+';
-    font-family: var(--f-titulo);
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     line-height: 1;
-    color: var(--tapete);
+    color: var(--rojo);
+    transition: transform 0.2s ease;
   }
   .faq__item[open] summary::after {
-    content: '–';
+    transform: rotate(45deg);
   }
   .faq__item p {
     margin: 0 0 1em;

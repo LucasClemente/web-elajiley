@@ -20,8 +20,8 @@ const destacadas = ['/reglas/', '/como-jugar/', '/valor-de-las-cartas/', '/pract
       <h1>¡Barajo! Esta mano no vale</h1>
       <p class="lead">La página que buscas no existe o cambió de sitio. Se reparte de nuevo: elige por dónde seguir.</p>
       <p><a href="/" class="boton">Volver al inicio</a></p>
-      <div class="rejilla">
-        {destacadas.map((p) => <TarjetaPagina pagina={p} />)}
+      <div class="baraja">
+        {destacadas.map((p, i) => <TarjetaPagina pagina={p} i={i} />)}
       </div>
     </div>
   </section>

@@ -1,63 +1,100 @@
 ---
-// Banda final común: invita a practicar gratis y, con un enlace secundario, a la mesa de Betzue.
+// Banda final común: practicar gratis contra Guaca o pasar a la mesa de Betzue.
 import { Image } from 'astro:assets';
 import guaca from '../assets/marca/guaca.png';
+import Naipe from './Naipe.astro';
 import { BETZUE } from '../config';
 ---
-<section class="banda seccion--tapete" aria-labelledby="banda-titulo">
+<section class="banda sobre-tapete" aria-labelledby="banda-titulo">
   <div class="contenedor banda__fila">
-    <Image src={guaca} alt="Guaca, la guacamaya, con un abanico de cartas de oros" width={220} densities={[1, 2]} loading="lazy" class="banda__guaca" />
-    <div>
-      <h2 id="banda-titulo">¿Te atreves con una mano?</h2>
+    <div class="banda__texto">
+      <span class="antetitulo">¿Te sientas?</span>
+      <h2 id="banda-titulo">La mejor forma de aprender es <em>jugando</em>.</h2>
       <p>
-        Practica contra Guaca con las reglas venezolanas, sin registrarte y sin dinero. Cuando te sientas listo, tienes mesa de ajiley
-        en <a href={BETZUE.ajiley('banda')}>Betzue</a>.
+        Practica gratis contra Guaca con las reglas venezolanas: sin registro y sin dinero. Y cuando te sientas listo, la mesa de ajiley
+        de verdad te espera en <a href={BETZUE.ajiley('banda')}>Betzue</a>.
       </p>
       <div class="banda__botones">
-        <a href="/practicar/" class="boton">Practicar gratis</a>
-        <a href="/reglas/" class="boton boton--claro">Repasar las reglas</a>
+        <a href="/practicar/" class="boton boton--oro">Practicar gratis</a>
+        <a href={BETZUE.ajiley('banda-boton')} class="boton boton--betzue">Jugar en Betzue</a>
       </div>
+    </div>
+    <div class="banda__escena" aria-hidden="true">
+      <div class="banda__cartas">
+        <Naipe n={1} palo="copas" tam="l" />
+        <Naipe n={12} palo="copas" tam="l" />
+        <Naipe n={5} palo="copas" tam="l" />
+      </div>
+      <Image src={guaca} alt="" width={240} densities={[1, 2]} loading="lazy" class="banda__guaca" />
     </div>
   </div>
 </section>
 
 <style>
   .banda {
-    padding-block: clamp(40px, 6vw, 72px);
+    padding-block: clamp(56px, 8vw, 96px);
   }
   .banda__fila {
     display: grid;
-    grid-template-columns: auto 1fr;
-    gap: clamp(20px, 4vw, 48px);
+    grid-template-columns: 1.2fr 1fr;
+    gap: clamp(24px, 4vw, 56px);
     align-items: center;
   }
-  .banda__guaca {
-    width: clamp(120px, 18vw, 200px);
-    height: auto;
-  }
   .banda h2 {
-    margin-bottom: 0.3em;
+    margin-bottom: 0.35em;
+  }
+  .banda h2 em {
+    color: var(--oro);
   }
   .banda p {
-    max-width: 56ch;
-    font-size: 1.08rem;
+    max-width: 52ch;
+    font-size: 1.1rem;
   }
   .banda__botones {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    margin-top: 8px;
+    margin-top: 10px;
   }
-  @media (max-width: 600px) {
+  .banda__escena {
+    position: relative;
+    min-height: 260px;
+  }
+  .banda__cartas {
+    position: absolute;
+    left: 6%;
+    top: 20px;
+    display: flex;
+  }
+  .banda__cartas > :global(.naipe) {
+    margin-right: -34px;
+  }
+  .banda__cartas > :global(.naipe:nth-child(1)) {
+    rotate: -14deg;
+    translate: 0 18px;
+  }
+  .banda__cartas > :global(.naipe:nth-child(2)) {
+    rotate: -2deg;
+  }
+  .banda__cartas > :global(.naipe:nth-child(3)) {
+    rotate: 11deg;
+    translate: 0 14px;
+  }
+  .banda__guaca {
+    position: absolute;
+    right: 0;
+    bottom: -20px;
+    width: clamp(150px, 20vw, 230px);
+    height: auto;
+    filter: drop-shadow(0 10px 12px rgb(0 0 0 / 0.35));
+  }
+  @media (max-width: 800px) {
     .banda__fila {
       grid-template-columns: 1fr;
-      text-align: center;
     }
-    .banda__guaca {
-      margin-inline: auto;
-    }
-    .banda__botones {
-      justify-content: center;
+    .banda__escena {
+      min-height: 210px;
+      order: -1;
     }
   }
 </style>

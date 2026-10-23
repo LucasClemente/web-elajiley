@@ -102,17 +102,44 @@ import { svgDorso } from '../lib/naipe';
   }
   .repartidor__mesa {
     position: relative;
-    padding: clamp(22px, 4vw, 34px) 14px 22px;
-    border-radius: 28px;
-    border: var(--borde-sticker);
+    padding: clamp(30px, 5vw, 46px) 18px 30px;
+    border-radius: 999px / 160px;
+    border: 16px solid #6b3e1d;
     box-shadow:
-      0 8px 0 var(--noche),
-      inset 0 0 0 8px rgb(122 74 30 / 0.95),
-      inset 0 0 0 10px rgb(0 0 0 / 0.25);
+      inset 0 0 0 2px rgb(255 255 255 / 0.08),
+      inset 0 10px 30px rgb(0 0 0 / 0.45),
+      0 0 0 2px #4e2a12,
+      0 24px 40px -18px rgb(30 20 10 / 0.6);
     background:
-      radial-gradient(ellipse at 50% 35%, rgb(255 255 255 / 0.12), transparent 60%),
-      repeating-radial-gradient(circle at 20% 30%, rgb(0 0 0 / 0.025) 0 2px, transparent 2px 4px), var(--tapete);
+      var(--fieltro),
+      radial-gradient(ellipse at 50% 38%, rgb(255 255 255 / 0.13), transparent 62%),
+      var(--tapete);
     overflow: hidden;
+  }
+  /* Fichas apiladas sobre el tapete */
+  .repartidor__mesa::before,
+  .repartidor__mesa::after {
+    content: '';
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--ficha) 0 46%, #fff 46% 52%, var(--ficha) 52%);
+    box-shadow:
+      0 4px 0 color-mix(in srgb, var(--ficha) 70%, #000),
+      0 8px 0 #fff,
+      0 9px 0 color-mix(in srgb, var(--ficha) 70%, #000),
+      0 14px 10px rgb(0 0 0 / 0.35);
+  }
+  .repartidor__mesa::before {
+    --ficha: #c8102e;
+    left: 9%;
+    bottom: 22%;
+  }
+  .repartidor__mesa::after {
+    --ficha: #0057b8;
+    right: 10%;
+    top: 18%;
   }
   .repartidor__cartas {
     display: flex;

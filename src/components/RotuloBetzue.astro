@@ -1,0 +1,86 @@
+---
+// Llamada a Betzue con aspecto de rótulo de pulpería. Texto y anclaje cambian según la página.
+import { Image } from 'astro:assets';
+import guaca from '../assets/marca/guaca.png';
+import { BETZUE, BETZUE_CTA } from '../config';
+
+interface Props {
+  ruta?: string;
+}
+const ruta = Astro.props.ruta ?? Astro.url.pathname;
+const cta = BETZUE_CTA[ruta] ?? { titulo: '¿Listo para una mesa de verdad?', texto: 'El ajiley de siempre, desde tu celular.', ancla: 'Juega en Betzue' };
+const campana = ruta.replace(/\//g, '') || 'inicio';
+---
+<aside class="rotulo-betzue" aria-label="Betzue">
+  <div class="rotulo-betzue__panel">
+    <span class="rotulo-betzue__mano">{cta.titulo}</span>
+    <p class="rotulo-betzue__texto">{cta.texto}</p>
+    <a class="boton boton--oro rotulo-betzue__boton" href={BETZUE.ajiley(campana)}>{cta.ancla} →</a>
+    <p class="rotulo-betzue__pie">Betzue · {BETZUE.lema} · +18, juega con responsabilidad</p>
+  </div>
+  <Image src={guaca} alt="Guaca, la guacamaya de Betzue" width={150} densities={[1, 2]} loading="lazy" class="rotulo-betzue__guaca" />
+</aside>
+
+<style>
+  .rotulo-betzue {
+    position: relative;
+    margin: 2.6em 0 1.6em;
+    padding-right: 90px;
+  }
+  .rotulo-betzue__panel {
+    position: relative;
+    padding: 22px 24px 18px;
+    color: #fff;
+    border-radius: 5px;
+    background:
+      var(--grano),
+      radial-gradient(circle at 100% 0%, rgb(242 183 5 / 0.28), transparent 50%),
+      #0057b8;
+    box-shadow:
+      inset 0 0 0 3px rgb(242 183 5 / 0.9),
+      inset 0 0 0 6px #0057b8,
+      inset 0 0 0 7px rgb(255 255 255 / 0.4),
+      var(--sombra-objeto);
+    transform: rotate(-0.7deg);
+  }
+  .rotulo-betzue__mano {
+    display: block;
+    font-family: var(--f-titulo);
+    font-weight: 850;
+    font-variation-settings: 'SOFT' 100, 'WONK' 1;
+    font-size: clamp(1.45rem, 1.2rem + 1vw, 1.95rem);
+    line-height: 1.1;
+    color: var(--oro);
+    text-shadow: 2px 2px 0 rgb(0 0 0 / 0.25);
+  }
+  .rotulo-betzue__texto {
+    margin: 0.3em 0 0.9em;
+    font-size: 1.05rem;
+  }
+  .rotulo-betzue__pie {
+    margin: 0.9em 0 0;
+    font-size: 0.8rem;
+    opacity: 0.85;
+  }
+  .rotulo-betzue__guaca {
+    position: absolute;
+    right: -6px;
+    bottom: -18px;
+    width: 140px;
+    height: auto;
+    transform: rotate(6deg);
+    filter: drop-shadow(0 6px 8px rgb(0 0 0 / 0.25));
+  }
+  @media (max-width: 560px) {
+    .rotulo-betzue {
+      padding-right: 0;
+      padding-top: 70px;
+    }
+    .rotulo-betzue__guaca {
+      top: -6px;
+      bottom: auto;
+      right: 8px;
+      width: 104px;
+    }
+  }
+</style>

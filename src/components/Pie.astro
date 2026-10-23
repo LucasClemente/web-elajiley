@@ -1,20 +1,30 @@
 ---
 import { Image } from 'astro:assets';
 import emblema from '../assets/marca/emblema.png';
+import guaca from '../assets/marca/guaca.png';
 import { FOOTER_NAV, SITE, BETZUE } from '../config';
 ---
-<footer class="pie">
+<footer class="pie sobre-tapete">
   <div class="contenedor">
+    <div class="pie__betzue">
+      <Image src={guaca} alt="Guaca, la guacamaya de Betzue" width={120} densities={[1, 2]} loading="lazy" class="pie__guaca" />
+      <div>
+        <p class="pie__betzue-mano">Esta guía la reparte</p>
+        <p class="pie__betzue-marca">Betzue <span>{BETZUE.lema}</span></p>
+        <p class="pie__betzue-texto">
+          La plataforma venezolana de juegos: ajiley, dominó, animalitos, ruleta y más, desde el celular y con recargas por Pago Móvil.
+        </p>
+      </div>
+      <a class="boton boton--oro" href={BETZUE.ajiley('pie')}>Jugar en Betzue →</a>
+    </div>
+
     <div class="pie__grid">
       <div class="pie__marca">
         <a href="/" class="pie__logo" aria-label="El Ajiley, inicio">
           <Image src={emblema} alt="" width={64} height={64} densities={[1, 2]} loading="lazy" />
           <span>El Ajiley</span>
         </a>
-        <p>{SITE.tagline}. Reglas, puntuación, estrategia e historia del juego de envite con baraja española que se juega en toda Venezuela.</p>
-        <p class="pie__apoyo">
-          Una guía hecha con el apoyo de <a href={BETZUE.ajiley('pie')}>Betzue</a>. {BETZUE.lema}
-        </p>
+        <p>{SITE.tagline}. Reglas, cuentas, palabras e historia del juego de envite con baraja española que se juega en toda Venezuela.</p>
       </div>
 
       {FOOTER_NAV.map((col) => (
@@ -32,34 +42,83 @@ import { FOOTER_NAV, SITE, BETZUE } from '../config';
     </div>
 
     <div class="pie__legal">
-      <span class="pie__edad" aria-label="Solo mayores de 18 años">+18</span>
+      <span class="pie__sello" aria-label="Solo mayores de 18 años">+18</span>
       <p>
         El juego con dinero es solo para mayores de 18 años. Juega con responsabilidad: es un entretenimiento, no una forma de ganar
         dinero. <a href="/juego-responsable/">Más información</a>.
       </p>
-      <p class="pie__copy">© 2026 {SITE.name} · elajiley.com</p>
+      <p class="pie__copy">© 2026 {SITE.name} · con el apoyo de <a href={BETZUE.ajiley('pie-legal')}>Betzue</a></p>
     </div>
   </div>
 </footer>
 
 <style>
   .pie {
-    background:
-      radial-gradient(circle at 10% 0%, rgb(255 255 255 / 0.05), transparent 40%), var(--tapete-900);
-    color: #cfe6da;
-    padding-block: 56px 28px;
+    position: relative;
+    padding-block: 0 26px;
+    margin-top: 0;
+    border-top: 14px solid var(--madera);
+    border-image: linear-gradient(90deg, #5a3216, #8c5a2f 30%, #6b3e1d 55%, #8c5a2f 80%, #4e2a12) 14;
     font-size: 0.95rem;
   }
   .pie a {
     color: #fff;
-    text-decoration-color: rgb(255 255 255 / 0.3);
   }
-  .pie a:hover {
+  .pie__betzue {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 24px;
+    align-items: center;
+    margin: -1px 0 48px;
+    padding: 26px 28px;
+    background: var(--grano), #0057b8;
+    border-radius: 0 0 8px 8px;
+    box-shadow:
+      inset 0 0 0 3px rgb(242 183 5 / 0.85),
+      0 14px 28px -14px rgb(0 0 0 / 0.6);
+  }
+  .pie__guaca {
+    width: 100px;
+    height: auto;
+    margin: -46px 0 -18px;
+    transform: rotate(-6deg);
+    filter: drop-shadow(0 6px 8px rgb(0 0 0 / 0.35));
+  }
+  .pie__betzue-mano {
+    margin: 0;
+    font-family: var(--f-mano);
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+  }
+  .pie__betzue-marca {
+    margin: 0.05em 0 0.25em;
+    font-family: var(--f-titulo);
+    font-weight: 900;
+    font-variation-settings: 'SOFT' 100, 'WONK' 1;
+    font-size: clamp(2rem, 1.5rem + 2vw, 2.8rem);
+    line-height: 1;
     color: var(--oro);
+    text-shadow: 2px 3px 0 #a50e26;
+  }
+  .pie__betzue-marca span {
+    font-family: var(--f-texto);
+    font-size: 1rem;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: none;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .pie__betzue-texto {
+    margin: 0;
+    color: #e3eefb;
+    max-width: 52ch;
   }
   .pie__grid {
     display: grid;
-    grid-template-columns: 1.6fr repeat(4, 1fr);
+    grid-template-columns: 1.5fr repeat(4, 1fr);
     gap: 32px;
   }
   .pie__logo {
@@ -67,26 +126,29 @@ import { FOOTER_NAV, SITE, BETZUE } from '../config';
     align-items: center;
     gap: 10px;
     text-decoration: none;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
   .pie__logo img {
-    width: 56px;
-    height: 56px;
+    width: 54px;
+    height: 54px;
   }
   .pie__logo span {
     font-family: var(--f-titulo);
-    font-weight: 800;
-    font-size: 1.7rem;
+    font-weight: 850;
+    font-variation-settings: 'SOFT' 100, 'WONK' 1;
+    font-size: 1.9rem;
     color: var(--oro);
   }
-  .pie__apoyo {
-    color: #fff;
-    font-weight: 700;
+  .pie__marca p {
+    color: #cfe3d6;
   }
   .pie__col h2 {
-    font-size: 1.05rem;
-    color: var(--oro);
-    margin-bottom: 0.6em;
+    font-family: var(--f-mano);
+    font-weight: 700;
+    font-size: 1.55rem;
+    color: var(--oro) !important;
+    margin-bottom: 0.3em;
+    letter-spacing: 0;
   }
   .pie__col ul {
     list-style: none;
@@ -97,37 +159,40 @@ import { FOOTER_NAV, SITE, BETZUE } from '../config';
   }
   .pie__col a {
     text-decoration: none;
-    color: #e6f3ec;
+    color: #eaf3ec;
   }
   .pie__col a:hover {
     text-decoration: underline;
+    color: #fff;
   }
   .pie__legal {
-    margin-top: 40px;
+    margin-top: 44px;
     padding-top: 22px;
-    border-top: 1px solid rgb(255 255 255 / 0.14);
+    border-top: 1px dashed rgb(255 255 255 / 0.25);
     display: grid;
     grid-template-columns: auto 1fr auto;
-    gap: 16px;
+    gap: 18px;
     align-items: center;
+    color: #cfe3d6;
   }
   .pie__legal p {
     margin: 0;
   }
-  .pie__edad {
+  .pie__sello {
     display: grid;
     place-items: center;
-    width: 46px;
-    height: 46px;
+    width: 54px;
+    height: 54px;
     border-radius: 50%;
-    border: 3px solid var(--rojo);
-    color: #fff;
+    border: 2.5px solid #ff6b6b;
+    box-shadow: inset 0 0 0 3px var(--tapete), inset 0 0 0 4.5px #ff6b6b;
+    color: #ff8a8a;
+    font-family: var(--f-titulo);
     font-weight: 900;
-    font-size: 0.95rem;
-    background: rgb(228 0 43 / 0.25);
+    font-size: 1.05rem;
+    transform: rotate(-12deg);
   }
   .pie__copy {
-    color: #9fc4b1;
     white-space: nowrap;
   }
   @media (max-width: 960px) {
@@ -137,6 +202,13 @@ import { FOOTER_NAV, SITE, BETZUE } from '../config';
     .pie__marca {
       grid-column: 1 / -1;
     }
+    .pie__betzue {
+      grid-template-columns: auto 1fr;
+    }
+    .pie__betzue .boton {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
   }
   @media (max-width: 640px) {
     .pie__legal {
@@ -144,6 +216,21 @@ import { FOOTER_NAV, SITE, BETZUE } from '../config';
     }
     .pie__copy {
       grid-column: 1 / -1;
+      white-space: normal;
+    }
+    .pie__betzue {
+      grid-template-columns: 1fr;
+      padding-top: 50px;
+    }
+    .pie__guaca {
+      position: absolute;
+      right: 12px;
+      margin: 0;
+      top: -30px;
+      width: 84px;
+    }
+    .pie__betzue {
+      position: relative;
     }
   }
 </style>

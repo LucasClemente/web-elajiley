@@ -1,65 +1,92 @@
 ---
-// Tarjeta de Betzue para la página de juego online. Única pieza "comercial" explícita del sitio.
+// Bloque de Betzue: rótulo azul con marco dorado y Guaca asomándose.
+import { Image } from 'astro:assets';
+import guaca from '../assets/marca/guaca.png';
 import { BETZUE } from '../config';
 
 interface Props {
   campana?: string;
+  titulo?: string;
 }
-const { campana = 'jugar-online' } = Astro.props;
+const { campana = 'jugar-online', titulo = 'Juega ajiley de verdad en Betzue' } = Astro.props;
 ---
 <aside class="betzue" aria-label="Jugar ajiley en Betzue">
-  <div class="betzue__cabeza">
-    <span class="betzue__marca">Betzue</span>
-    <span class="betzue__lema">{BETZUE.lema}</span>
-  </div>
+  <Image src={guaca} alt="Guaca, la guacamaya de Betzue" width={190} densities={[1, 2]} loading="lazy" class="betzue__guaca" />
+  <span class="betzue__mano">{BETZUE.lema}</span>
+  <p class="betzue__titulo">{titulo}</p>
   <ul class="betzue__lista">
     <li>Mesa de ajiley con las reglas venezolanas, desde el celular</li>
     <li>También dominó, animalitos, ruleta y más</li>
     <li>Recargas por Pago Móvil</li>
   </ul>
-  <a class="boton betzue__boton" href={BETZUE.ajiley(campana)}>Ir a la mesa de ajiley</a>
+  <a class="boton boton--oro" href={BETZUE.ajiley(campana)}>Ir a la mesa de ajiley →</a>
   <p class="betzue__aviso">+18 · Juega con responsabilidad</p>
 </aside>
 
 <style>
   .betzue {
-    margin: 1.8em 0;
-    padding: 22px 22px 18px;
-    border-radius: var(--radio);
-    border: var(--borde-sticker);
-    box-shadow: 0 6px 0 var(--noche);
+    position: relative;
+    margin: 2em 0;
+    padding: 26px 26px 20px;
+    padding-right: min(200px, 30%);
+    border-radius: 5px;
     color: #fff;
     background:
-      radial-gradient(circle at 100% 0%, rgb(255 194 14 / 0.3), transparent 45%),
-      radial-gradient(circle at 0% 100%, rgb(228 0 43 / 0.35), transparent 50%), #0057b8;
+      var(--grano),
+      radial-gradient(circle at 100% 0%, rgb(242 183 5 / 0.28), transparent 50%),
+      radial-gradient(circle at 0% 100%, rgb(200 16 46 / 0.35), transparent 55%),
+      #0057b8;
+    box-shadow:
+      inset 0 0 0 3px rgb(242 183 5 / 0.9),
+      inset 0 0 0 6px #0057b8,
+      inset 0 0 0 7px rgb(255 255 255 / 0.4),
+      var(--sombra-objeto);
   }
-  .betzue__cabeza {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 6px 14px;
+  .betzue__guaca {
+    position: absolute;
+    right: 8px;
+    bottom: -10px;
+    width: min(180px, 28%);
+    height: auto;
+    filter: drop-shadow(0 8px 10px rgb(0 0 0 / 0.35));
   }
-  .betzue__marca {
+  .betzue__mano {
+    font-family: var(--f-mano);
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #fff;
+  }
+  .betzue__titulo {
+    margin: 0.05em 0 0.4em;
     font-family: var(--f-titulo);
-    font-weight: 800;
-    font-size: 2rem;
+    font-weight: 900;
+    font-variation-settings: 'SOFT' 100, 'WONK' 1;
+    font-size: clamp(1.7rem, 1.3rem + 1.6vw, 2.4rem);
+    line-height: 1.05;
     color: var(--oro);
-    letter-spacing: 0.02em;
-    text-shadow: 0 2px 0 var(--rojo-700);
-  }
-  .betzue__lema {
-    font-weight: 800;
+    text-shadow: 2px 3px 0 #a50e26;
   }
   .betzue__lista {
-    margin: 10px 0 16px !important;
-    padding-left: 1.2em !important;
+    margin: 0 0 18px !important;
+    padding-left: 1.1em !important;
   }
   .betzue__lista li::marker {
     color: var(--oro) !important;
   }
   .betzue__aviso {
-    margin: 10px 0 0;
-    font-size: 0.85rem;
+    margin: 12px 0 0;
+    font-size: 0.82rem;
     opacity: 0.85;
+  }
+  @media (max-width: 560px) {
+    .betzue {
+      padding-right: 22px;
+      padding-top: 96px;
+    }
+    .betzue__guaca {
+      top: -16px;
+      bottom: auto;
+      width: 110px;
+    }
   }
 </style>
