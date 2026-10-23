@@ -89,6 +89,12 @@ export const PAGINAS: Pagina[] = [
     palo: 'oros',
   },
   {
+    href: '/guias/',
+    titulo: 'Guías y artículos',
+    resumen: 'Trucos, errores de principiante, el comodín, las apuestas y curiosidades de la mesa.',
+    palo: 'bastos',
+  },
+  {
     href: '/preguntas-frecuentes/',
     titulo: 'Preguntas frecuentes',
     resumen: 'Respuestas rápidas a las dudas más comunes sobre el juego.',

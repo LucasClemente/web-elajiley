@@ -1,0 +1,103 @@
+---
+title: Cómo funcionan las apuestas en el ajiley
+seoTitle: "Apuestas en el ajiley: entrada, pote y subidas"
+description: "Cómo se apuesta en el ajiley: la entrada, el pote, las tres rondas de envite y qué es paso, voy, no voy y subo. Con una mano de ejemplo ficha a ficha."
+resumen: "La entrada, el pote y las voces de la mesa, con una mano contada ficha a ficha."
+lead: "Contar los puntos es la mitad del ajiley; la otra mitad es el envite. Te explicamos cómo se arma el pote, qué puedes hacer en cada turno y cuándo vale la pena pagar, con una mano de ejemplo seguida ficha a ficha."
+miga: Cómo funcionan las apuestas
+categoria: Para empezar
+palo: copas
+mano: "1c 3c 12c 6e 10o"
+publicado: "2026-10-23"
+relacionados: ['/reglas/', '/vocabulario/', '/estrategia/']
+faq:
+  - q: ¿Cómo se apuesta en el ajiley?
+    a: Todos ponen la entrada en el pote y luego hay tres rondas de envite. En cada turno puedes pasar (si nadie ha apostado), apostar, ir (igualar), subir o no ir (retirarte). Gana el pote quien más sume al final, o el último que quede en la mesa.
+  - q: ¿Qué significa "voy" en el ajiley?
+    a: Que igualas la apuesta que hay sobre la mesa y sigues en la mano. "No voy" es retirarse, y "subo" es igualar y apostar más.
+  - q: ¿Se puede pasar después de una apuesta?
+    a: No. Solo se puede pasar mientras nadie haya apostado en esa ronda. Una vez que alguien apuesta, hay que ir, subir o retirarse.
+---
+import Mano from '../../components/Mano.astro';
+import Consejo from '../../components/Consejo.astro';
+
+## El pote nace con la entrada
+
+Antes de que salga una sola carta, **cada jugador pone la entrada** en el centro de la mesa. Ese montón es el pote, y crece con cada apuesta hasta que alguien se lo lleva. Quien no pone la entrada no recibe cartas.
+
+Cuánto es la entrada lo decide cada mesa. Para aprender, lo más cómodo es contar en fichas (o frijoles): una ficha de entrada y apuestas pequeñas.
+
+## Las voces de la mesa
+
+En cada ronda de envite habla primero **la mano** (el jugador a la derecha del que reparte) y el turno sigue hacia la derecha. Estas son las opciones:
+
+<div class="tabla">
+  <table>
+    <thead><tr><th>Voz</th><th>Cuándo se puede</th><th>Qué haces</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Paso</strong></td><td>Solo si nadie ha apostado en esta ronda</td><td>No pones nada y sigues en juego</td></tr>
+      <tr><td><strong>Apuesto</strong></td><td>Si nadie ha apostado todavía</td><td>Pones fichas en el pote; desde ahí nadie puede pasar</td></tr>
+      <tr><td><strong>Voy</strong></td><td>Cuando hay una apuesta</td><td>Igualas lo apostado y sigues</td></tr>
+      <tr><td><strong>Subo</strong></td><td>Cuando hay una apuesta</td><td>Igualas y apuestas más; los demás tendrán que igualarte</td></tr>
+      <tr><td><strong>No voy</strong></td><td>Siempre</td><td>Te retiras y pierdes lo que ya pusiste</td></tr>
+    </tbody>
+  </table>
+</div>
+
+Una ronda termina cuando **todos los que siguen en juego han puesto lo mismo**, o cuando todos pasan. Y si en cualquier momento todos se retiran menos uno, ese se lleva el pote sin enseñar sus cartas. Todas las palabras de la mesa están en el [vocabulario](/vocabulario/).
+
+## Una mano, ficha a ficha
+
+Juegan cuatro: **Luis** (la mano), **Ana**, **Pedro** y **Rosa**, que reparte (es el pie). La entrada es de una ficha.
+
+<div class="tabla">
+  <table>
+    <thead><tr><th>Momento</th><th>Qué pasa</th><th>Pote</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Entrada</strong></td><td>Los cuatro ponen 1 ficha</td><td>4</td></tr>
+      <tr><td><strong>Primera ronda</strong> (2 cartas)</td><td>Luis pasa. Ana apuesta 2. Pedro va (2). Rosa no va. Luis va (2).</td><td>10</td></tr>
+      <tr><td><strong>Segunda ronda</strong> (5 cartas)</td><td>Luis pasa. Ana apuesta 2. Pedro sube: iguala y sube 2 más (pone 4). Luis no va. Ana va: pone las 2 que le faltan.</td><td>18</td></tr>
+      <tr><td><strong>Descarte</strong></td><td>Ana bota 2 cartas. Pedro bota 1.</td><td>18</td></tr>
+      <tr><td><strong>Última ronda</strong></td><td>Ana habla primero (Luis ya no está) y pasa. Pedro apuesta 4. Ana va (4).</td><td>26</td></tr>
+      <tr><td><strong>Se enseñan</strong></td><td>Ana tiene 31 en copas. Pedro, 37 en bastos.</td><td>Pedro se lleva 26</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<Mano titulo="La mano de Ana: 31 en copas" cartas="1c 3c 12c 6e 10o" apagar={[3, 4]} resultado="11 + 10 + 10 = 31" />
+
+<Mano titulo="La mano de Pedro: 37 en bastos" cartas="12b 11b 7b 2b 5e" apagar={[4]} resultado="10 + 10 + 7 + 10 = 37" />
+
+Las cuentas finales: Pedro puso 11 fichas y se llevó 26, así que gana 15. Ana puso 11 y las pierde. Luis pierde 3 (la entrada y su apuesta de la primera ronda) y Rosa, solo la entrada. Fíjate en la pista que dio Pedro: **botó una sola carta y luego apostó**. Casi siempre eso significa cuatro del mismo palo. Ana fue a ver las cartas con 31; si hubiera leído la mesa, quizá se habría ahorrado las últimas 4 fichas.
+
+## ¿Vale la pena ir? La cuenta del pote
+
+La pregunta que más dinero ahorra en el ajiley es: **¿cuánto pongo y cuánto puedo ganar?** Divide lo que te piden entre el pote que habría si vas (lo que hay más lo que pones). Ese número es la proporción de veces que necesitas ganar para que ir compense.
+
+- Hay 20 fichas en el pote y te piden 2: 2 ÷ 22, más o menos **una de cada once**. Con casi cualquier mano razonable, compensa.
+- Hay 4 fichas y te piden 2: 2 ÷ 6, **una de cada tres**. Necesitas una mano buena de verdad.
+
+En la mano de ejemplo, Ana tenía que poner 4 para un pote de 26 (4 ÷ 26, una de cada seis y media). Con 31 contra alguien que botó una carta, es probable que no gane ni una de cada seis. Las referencias de qué es una buena mano están en [estrategia](/estrategia/).
+
+<Consejo>
+  <p>Subir no es solo para las manos buenas. A veces sirve para que se retire quien te podría ganar con suerte. Pero úsalo con cabeza: un farol que nadie se cree sale caro.</p>
+</Consejo>
+
+## Topes y costumbres de la casa
+
+Cada mesa pone sus límites. Las costumbres más frecuentes son:
+
+- **Apuestas de cantidad fija por ronda.** Por ejemplo, 2 fichas en las dos primeras rondas y 4 en la última. Es lo que usamos en nuestro [simulador](/practicar/), que además permite como mucho dos subidas por ronda.
+- **Un tope de subidas** para que la mano no se vaya de las manos.
+- **Un tope por noche**: cuánto puede perder cada uno como mucho.
+
+Lo importante es acordarlo antes de repartir. Tienes la lista completa de lo que conviene hablar en [las reglas](/reglas/#lo-que-conviene-acordar-antes-de-repartir).
+
+## Buenas costumbres en la mesa
+
+- **Habla en tu turno**, ni antes ni después. Decir "voy" antes de tiempo da información a los demás.
+- **Pon las fichas delante de ti** al apostar y júntalas con el pote al cerrar la ronda: así nadie discute cuánto puso cada uno.
+- **Si te retiras, bota tus cartas boca abajo** y no las enseñes: la información también es parte del juego.
+- **No enseñes cartas a mitad de mano**, ni siquiera a quien ya se retiró.
+
+Y lo más importante: si se juega con dinero, que sean cantidades que no duelan y solo entre mayores de 18 años. El envite es parte de la gracia del ajiley, no el objetivo. Más en [juego responsable](/juego-responsable/).

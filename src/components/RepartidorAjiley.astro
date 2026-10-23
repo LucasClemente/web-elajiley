@@ -1,0 +1,163 @@
+---
+// Reparte uno de los 140 ajileys posibles (el as y cuatro de las siete cartas de 10 de un palo)
+// y dice cuál es en la lista ordenada. Sin JavaScript se ve el primero de oros.
+import Naipe from './Naipe.astro';
+import { PALOS } from '../lib/naipe';
+---
+<figure class="rep" data-rep>
+  <div class="rep__palos" role="group" aria-label="Palo del ajiley">
+    {PALOS.map((p, i) => (
+      <button type="button" data-palo={p} aria-pressed={i === 0 ? 'true' : 'false'}>
+        <svg viewBox="0 0 40 40" aria-hidden="true"><use href={`#p-${p}`} width="40" height="40"></use></svg>
+        {p[0].toUpperCase() + p.slice(1)}
+      </button>
+    ))}
+  </div>
+  <div class="rep__cartas" data-cartas aria-hidden="true">
+    <Naipe n={1} palo="oros" />
+    <Naipe n={2} palo="oros" />
+    <Naipe n={3} palo="oros" />
+    <Naipe n={4} palo="oros" />
+    <Naipe n={5} palo="oros" />
+  </div>
+  <figcaption class="rep__pie">
+    <span class="rep__num" data-num aria-live="polite">Ajiley nº 1 de 140: as, dos, tres, cuatro y cinco de oros</span>
+    <span class="rep__suma">11 + 10 + 10 + 10 + 10 = <b>51</b></span>
+  </figcaption>
+  <button type="button" class="boton boton--oro boton--peque" data-repartir>Repartir otro ajiley</button>
+</figure>
+
+<script>
+  import { svgNaipe, NOMBRE_NUMERO, PALOS, type Numero, type Palo } from '../lib/naipe';
+
+  const DIEZ: Numero[] = [2, 3, 4, 5, 10, 11, 12];
+  // Las 35 formas de elegir cuatro de las siete cartas de 10, en orden.
+  const COMBOS: Numero[][] = [];
+  for (let a = 0; a < 7; a++)
+    for (let b = a + 1; b < 7; b++)
+      for (let c = b + 1; c < 7; c++) for (let d = c + 1; d < 7; d++) COMBOS.push([DIEZ[a], DIEZ[b], DIEZ[c], DIEZ[d]]);
+
+  const nombre = (n: Numero) => NOMBRE_NUMERO[n].toLowerCase();
+  const lista = (xs: string[]) => `${xs.slice(0, -1).join(', ')} y ${xs.at(-1)}`;
+
+  for (const rep of document.querySelectorAll<HTMLElement>('[data-rep]')) {
+    const cartas = rep.querySelector<HTMLElement>('[data-cartas]')!;
+    const num = rep.querySelector<HTMLElement>('[data-num]')!;
+    const botones = [...rep.querySelectorAll<HTMLButtonElement>('[data-palo]')];
+    let palo: Palo = 'oros';
+    let actual = 0;
+
+    const pintar = (i: number) => {
+      actual = i;
+      const nums: Numero[] = [1, ...COMBOS[i]];
+      cartas.innerHTML = nums.map((n) => `<span class="naipe naipe--m">${svgNaipe(n, palo)}</span>`).join('');
+      const global = PALOS.indexOf(palo) * 35 + i + 1;
+      num.textContent = `Ajiley nº ${global} de 140: ${lista(nums.map(nombre))} de ${palo}`;
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        [...cartas.children].forEach((c, k) =>
+          (c as HTMLElement).animate(
+            [
+              { opacity: 0, transform: 'translateY(-40px) rotate(-12deg) scale(0.9)' },
+              { opacity: 1, transform: 'none' },
+            ],
+            { duration: 520, delay: k * 70, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'backwards' },
+          ),
+        );
+      }
+    };
+
+    rep.querySelector('[data-repartir]')?.addEventListener('click', () => {
+      let i = actual;
+      while (i === actual) i = Math.floor(Math.random() * COMBOS.length);
+      pintar(i);
+    });
+    for (const b of botones) {
+      b.addEventListener('click', () => {
+        palo = b.dataset.palo as Palo;
+        botones.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        pintar(actual);
+      });
+    }
+  }
+</script>
+
+<style>
+  .rep {
+    display: grid;
+    justify-items: center;
+    gap: 16px;
+    margin: 2em 0 2.2em;
+    padding: 22px 16px 24px;
+    border-radius: 24px;
+    background:
+      var(--fieltro),
+      radial-gradient(ellipse at 50% 20%, rgb(64 200 135 / 0.28), transparent 65%), var(--tapete-900);
+    box-shadow:
+      inset 0 0 0 1px rgb(242 193 78 / 0.2),
+      0 24px 50px -30px rgb(0 0 0 / 0.8);
+  }
+  .rep__palos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+  }
+  .rep__palos button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 38px;
+    padding: 0.35em 0.9em;
+    border: 1px solid rgb(255 255 255 / 0.18);
+    border-radius: 999px;
+    background: rgb(0 0 0 / 0.2);
+    color: #fff;
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .rep__palos svg {
+    width: 16px;
+    height: 16px;
+  }
+  .rep__palos button[aria-pressed='true'] {
+    background: #fffaf0;
+    border-color: transparent;
+    color: var(--tinta-oscura);
+  }
+  .rep__cartas {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    min-height: 130px;
+  }
+  .rep__pie {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    text-align: center;
+  }
+  .rep__num {
+    color: #e8efe9;
+    font-weight: 700;
+    max-width: 44ch;
+    text-wrap: balance;
+  }
+  .rep__suma {
+    padding: 0.35em 1em;
+    border-radius: 999px;
+    background: var(--lamina);
+    color: var(--tinta-oscura);
+    font-weight: 900;
+  }
+  @media (max-width: 520px) {
+    .rep__cartas {
+      gap: 4px;
+      min-height: 0;
+    }
+    .rep__cartas :global(.naipe) {
+      --ancho-naipe: 58px;
+    }
+  }
+</style>

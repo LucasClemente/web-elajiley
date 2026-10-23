@@ -4,6 +4,7 @@ import { SITE, BETZUE, INDEXAR } from '../config';
 import Cabecera from '../components/Cabecera.astro';
 import Pie from '../components/Pie.astro';
 import SpritePalos from '../components/SpritePalos.astro';
+import AvisoBetzue from '../components/AvisoBetzue.astro';
 import logoCompleto from '../assets/marca/logo-completo.png';
 import { getImage } from 'astro:assets';
 
@@ -142,6 +143,7 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
       <slot />
     </main>
     <Pie />
+    <AvisoBetzue />
     <script>
       import '../scripts/motion';
     </script>

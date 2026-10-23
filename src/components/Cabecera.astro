@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/marca/logo-cabecera.png';
+import guacaCara from '../assets/marca/guaca-cara.png';
 import { NAV, BETZUE } from '../config';
 
 const actual = Astro.url.pathname;
@@ -27,6 +28,7 @@ const activo = (href: string) => (href === '/' ? actual === '/' : actual.startsW
     <div class="cabecera__acciones">
       <a href="/practicar/" class="cabecera__practicar">Practicar gratis</a>
       <a href={BETZUE.ajiley('cabecera')} class="boton boton--betzue boton--peque cabecera__betzue">
+        <span class="boton__guaca" aria-hidden="true"><Image src={guacaCara} alt="" width={36} height={36} densities={[1, 2]} loading="eager" /></span>
         Jugar en <b>Betzue</b>
       </a>
       <button class="cabecera__menu" type="button" aria-expanded="false" aria-controls="menu-principal" data-boton-menu>
@@ -233,7 +235,7 @@ const activo = (href: string) => (href === '/' ? actual === '/' : actual.startsW
     }
     .cabecera__betzue {
       font-size: 0.72rem;
-      padding-inline: 0.9em;
+      padding-inline: 0.3em 0.9em;
     }
     .cabecera__acciones {
       gap: 4px;

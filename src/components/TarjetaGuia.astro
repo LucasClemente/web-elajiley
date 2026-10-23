@@ -1,0 +1,224 @@
+---
+// Tarjeta de una guía: un abanico de cartas sobre el tapete y el titular debajo.
+// Toda la tarjeta es clicable (el enlace del título se estira sobre ella).
+import Naipe from './Naipe.astro';
+import { COLOR_PALO, type Numero, type Palo } from '../lib/naipe';
+import { urlGuia, minutosDe, fechaLarga, type Guia } from '../lib/guias';
+
+interface Props {
+  guia: Guia;
+  destacada?: boolean;
+}
+const { guia, destacada = false } = Astro.props;
+const d = guia.data;
+const PALO: Record<string, Palo> = { o: 'oros', c: 'copas', e: 'espadas', b: 'bastos' };
+const cartas = d.mano
+  .trim()
+  .split(/\s+/)
+  .map((c) => ({ n: Number(c.slice(0, -1)) as Numero, palo: PALO[c.slice(-1)] }));
+const centro = (cartas.length - 1) / 2;
+---
+<article
+  class:list={['tguia', { 'tguia--destacada': destacada }]}
+  data-categoria={d.categoria}
+  style={`--c:${COLOR_PALO[d.palo]}`}
+  data-revelar
+>
+  <div class="tguia__mesa" aria-hidden="true">
+    <div class="tguia__abanico">
+      {cartas.map((c, i) => (
+        <span class="tguia__naipe" style={`--i:${i - centro}`}>
+          <Naipe n={c.n} palo={c.palo} tam="s" />
+        </span>
+      ))}
+    </div>
+  </div>
+  <div class="tguia__texto">
+    <span class="tguia__cat">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><use href={`#p-${d.palo}`} width="40" height="40"></use></svg>
+      {d.categoria}
+    </span>
+    <h3 class="tguia__titulo"><a href={urlGuia(guia)}>{d.title}</a></h3>
+    <p class="tguia__resumen">{d.resumen}</p>
+    <p class="tguia__meta">
+      {minutosDe(guia)} min de lectura <span aria-hidden="true">·</span> <time datetime={d.publicado}>{fechaLarga(d.publicado)}</time>
+    </p>
+  </div>
+</article>
+
+<style>
+  .tguia {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    border-radius: 22px;
+    overflow: hidden;
+    background: var(--superficie);
+    border: 1px solid var(--superficie-borde);
+    transition:
+      translate 0.5s var(--ease),
+      border-color 0.4s ease,
+      box-shadow 0.5s var(--ease);
+  }
+  .tguia:hover,
+  .tguia:focus-within {
+    translate: 0 -6px;
+    border-color: rgb(242 193 78 / 0.45);
+    box-shadow: 0 34px 50px -28px rgb(0 0 0 / 0.85);
+  }
+  .tguia__mesa {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: 172px;
+    padding-top: 18px;
+    background:
+      var(--fieltro),
+      radial-gradient(ellipse at 50% 35%, rgb(64 200 135 / 0.3), transparent 70%),
+      var(--tapete-900);
+    border-bottom: 1px solid rgb(242 193 78 / 0.18);
+    overflow: hidden;
+  }
+  /* Un toque del color del palo en el tapete */
+  .tguia__mesa::before {
+    content: '';
+    position: absolute;
+    inset: auto -20% -60% -20%;
+    height: 80%;
+    background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--c) 45%, transparent), transparent 65%);
+    opacity: 0.55;
+  }
+  .tguia__abanico {
+    --w: 58px;
+    position: relative;
+    width: var(--w);
+    height: calc(var(--w) * 1.55);
+  }
+  .tguia__naipe {
+    position: absolute;
+    inset: 0;
+    transform-origin: 50% 150%;
+    rotate: calc(var(--i) * 9deg);
+    translate: calc(var(--i) * 12px) 0;
+    transition:
+      rotate 0.55s var(--ease),
+      translate 0.55s var(--ease);
+  }
+  .tguia__naipe :global(.naipe) {
+    --ancho-naipe: var(--w);
+  }
+  .tguia:hover .tguia__naipe,
+  .tguia:focus-within .tguia__naipe {
+    rotate: calc(var(--i) * 15deg);
+    translate: calc(var(--i) * 20px) -8px;
+  }
+  .tguia__texto {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px 22px 22px;
+  }
+  .tguia__cat {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--oro);
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .tguia__cat svg {
+    width: 15px;
+    height: 15px;
+  }
+  .tguia__titulo {
+    margin: 0;
+    font-size: 1.32rem;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+  .tguia__titulo a {
+    color: #fff8ea;
+    text-decoration: none;
+  }
+  .tguia__titulo a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+  .tguia__titulo a:focus-visible {
+    outline: none;
+  }
+  .tguia:has(a:focus-visible) {
+    outline: 3px solid var(--oro);
+    outline-offset: 3px;
+  }
+  .tguia__resumen {
+    margin: 0;
+    color: var(--tinta-suave);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+  .tguia__meta {
+    margin: auto 0 0;
+    padding-top: 6px;
+    color: rgb(232 239 233 / 0.55);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* Destacada: ocupa dos columnas, cartas grandes a la izquierda */
+  .tguia--destacada {
+    grid-column: span 2;
+    grid-template-rows: none;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .tguia--destacada .tguia__mesa {
+    height: auto;
+    min-height: 300px;
+    padding-top: 30px;
+    border-bottom: 0;
+    border-right: 1px solid rgb(242 193 78 / 0.18);
+  }
+  .tguia--destacada .tguia__abanico {
+    --w: 86px;
+  }
+  .tguia--destacada .tguia__naipe {
+    translate: calc(var(--i) * 18px) 0;
+  }
+  .tguia--destacada:hover .tguia__naipe {
+    translate: calc(var(--i) * 30px) -10px;
+  }
+  .tguia--destacada .tguia__texto {
+    justify-content: center;
+    padding: clamp(24px, 4vw, 44px);
+  }
+  .tguia--destacada .tguia__titulo {
+    font-size: clamp(1.6rem, 1.2rem + 1.3vw, 2.25rem);
+  }
+  .tguia--destacada .tguia__resumen {
+    font-size: 1.05rem;
+  }
+  .tguia--destacada .tguia__meta {
+    margin-top: 10px;
+  }
+  @media (max-width: 760px) {
+    .tguia--destacada {
+      grid-column: auto;
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .tguia--destacada .tguia__mesa {
+      min-height: 210px;
+      border-right: 0;
+      border-bottom: 1px solid rgb(242 193 78 / 0.18);
+    }
+    .tguia--destacada .tguia__abanico {
+      --w: 70px;
+    }
+  }
+</style>

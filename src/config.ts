@@ -51,6 +51,7 @@ export const NAV = [
   { href: '/como-jugar/', label: 'Cómo jugar' },
   { href: '/valor-de-las-cartas/', label: 'Puntuación' },
   { href: '/estrategia/', label: 'Estrategia' },
+  { href: '/guias/', label: 'Guías' },
   { href: '/vocabulario/', label: 'Vocabulario' },
   { href: '/historia/', label: 'Historia' },
   { href: '/jugar-online/', label: 'Jugar online' },
@@ -80,6 +81,7 @@ export const FOOTER_NAV = [
   {
     title: 'Conoce',
     links: [
+      { href: '/guias/', label: 'Guías y artículos' },
       { href: '/historia/', label: 'Historia y origen' },
       { href: '/variantes/', label: 'Variantes' },
       { href: '/vocabulario/', label: 'Vocabulario' },

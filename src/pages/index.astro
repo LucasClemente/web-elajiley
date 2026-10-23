@@ -10,10 +10,14 @@ import TarjetaPagina from '../components/TarjetaPagina.astro';
 import TarjetaBetzue from '../components/TarjetaBetzue.astro';
 import BandaPractica from '../components/BandaPractica.astro';
 import Faq from '../components/Faq.astro';
+import TarjetaGuia from '../components/TarjetaGuia.astro';
 import hero from '../assets/hero.jpg';
 import guaca from '../assets/marca/guaca.png';
 import { PAGINAS } from '../lib/paginas';
+import { guiasPublicadas } from '../lib/guias';
 import { SITE, BETZUE } from '../config';
+
+const ultimas = (await guiasPublicadas()).slice(0, 3);
 
 const aprende = ['/reglas/', '/como-jugar/', '/valor-de-las-cartas/', '/estrategia/', '/vocabulario/', '/historia/', '/probabilidades/', '/variantes/']
   .map((h) => PAGINAS.find((p) => p.href === h))
@@ -202,6 +206,22 @@ const schema = [
     </div>
   </section>
 
+  <!-- GUÍAS -->
+  <section class="seccion" aria-labelledby="guias-inicio">
+    <div class="contenedor">
+      <div class="aprende__cabeza">
+        <div>
+          <span class="antetitulo">Guías</span>
+          <h2 id="guias-inicio">Más allá <em>del reglamento</em></h2>
+        </div>
+        <a href="/guias/" class="enlace-flecha">Ver todas las guías</a>
+      </div>
+      <div class="guiasInicio">
+        {ultimas.map((g) => <TarjetaGuia guia={g} />)}
+      </div>
+    </div>
+  </section>
+
   <!-- BETZUE -->
   <section class="seccion betzueInicio" aria-label="Betzue">
     <div class="contenedor betzueInicio__fila">
@@ -352,6 +372,18 @@ const schema = [
   }
   .aprende__cabeza h2 {
     margin: 0;
+  }
+
+  /* Guías */
+  .guiasInicio {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(16px, 2.4vw, 28px);
+  }
+  @media (max-width: 960px) {
+    .guiasInicio {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 
   /* Herramientas */

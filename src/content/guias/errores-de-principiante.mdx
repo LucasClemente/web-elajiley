@@ -1,0 +1,93 @@
+---
+title: Diez errores de principiante en el ajiley (y cómo evitarlos)
+seoTitle: "10 errores de principiante en el ajiley"
+description: "Los diez errores más comunes al empezar a jugar ajiley: sumar palos distintos, creer que el siete es alto, aferrarse al as, ir a todas… Y cómo evitarlos."
+resumen: "Sumar palos distintos, aferrarse al as, ir a todas… y cómo dejar de hacerlo."
+lead: "Todos hemos perdido una mano por contar mal o por enamorarnos de un as. Estos son los diez tropiezos que más se repiten en las mesas de ajiley, explicados con cartas y con la forma de evitarlos."
+miga: Errores de principiante
+categoria: Para empezar
+palo: espadas
+mano: "7e 1c 12b 6o 3e"
+publicado: "2026-10-23"
+destacada: true
+relacionados: ['/estrategia/', '/reglas/']
+faq:
+  - q: ¿Cuál es el error más común al empezar a jugar ajiley?
+    a: Sumar cartas de palos distintos. En el ajiley solo cuenta el palo que más te suma; el resto de cartas no vale nada.
+  - q: ¿Hay que quedarse siempre con el as?
+    a: No. Un as solo vale 11. Si tienes dos o más cartas de otro palo, casi siempre conviene botarlo para buscar ese palo.
+  - q: ¿Conviene ir a todas las manos?
+    a: No. La mano mediana vale 21 puntos y la mayoría de las manos son flojas. Ir a todas es la forma más rápida de vaciar el pote propio.
+---
+import Mano from '../../components/Mano.astro';
+import Consejo from '../../components/Consejo.astro';
+
+## 1. Sumar cartas de palos distintos
+
+Es el clásico de la primera noche. Tienes el as de oros, el rey de copas y el caballo de bastos y cantas "¡31!". Pues no: **en el ajiley solo cuenta tu mejor palo**. Las demás cartas no suman nada.
+
+<Mano titulo="Esto no son 31 puntos" cartas="1o 12c 11b 6e 7o" apagar={[1, 2, 3]} resultado="Mejor palo: oros, as + siete = 18" />
+
+**Cómo evitarlo:** antes de contar, ordena la mano por palos y suma solo el grupo que más vale. Con cinco cartas y cuatro palos, siempre tendrás al menos dos del mismo.
+
+## 2. Creer que el siete es una carta alta
+
+Si vienes de otros juegos de baraja española, el siete parece una carta buena. En el ajiley es al revés: **el 2, el 3, el 4 y el 5 valen 10**, y el siete vale solo 7. Un dos de copas le gana a un siete de copas.
+
+**Cómo evitarlo:** memoriza la regla de oro: as 11, siete 7, seis 6 y todo lo demás 10. Si dudas, repasa [el valor de las cartas](/valor-de-las-cartas/) o usa nuestro [truco para contar en dos segundos](/guias/contar-puntos-rapido/).
+
+## 3. Pensar que cinco del mismo palo es siempre un ajiley
+
+Cinco cartas del mismo palo es una mano estupenda, pero **el ajiley exige el as y cuatro cartas de 10**. Si entre las cinco hay un siete o un seis, la mano suma menos.
+
+<Mano titulo="Cinco copas, pero no es ajiley" cartas="1c 12c 11c 7c 2c" resultado="11 + 10 + 10 + 7 + 10 = 48" />
+
+**Cómo evitarlo:** usa la cuenta rápida. Cinco cartas son 50; si hay as, 51; si hay siete, réstale 3. Las [140 formas de hacer un ajiley](/guias/las-140-formas-de-hacer-ajiley/) no llevan ni sietes ni seises.
+
+## 4. Aferrarse al as solitario
+
+El as es la carta que más vale, y por eso cuesta tanto botarlo. Pero **un as solo suma 11**, mientras que dos cartas de 10 de otro palo ya suman 20 y tienen más formas de crecer.
+
+<Mano titulo="Bota el as de oros" cartas="1o 12c 11c 6b 7e" apagar={[0, 3, 4]} resultado="Botando as, seis y siete: 26,7 de media (guardando el as: 25,0)" />
+
+**Cómo evitarlo:** si tienes dos o más cartas de otro palo, juega ese palo y bota lo demás, as incluido. Lo explicamos con números en [estrategia](/estrategia/).
+
+## 5. Botar el siete o el seis de tu palo de cuatro
+
+Tienes cuatro copas, una de ellas el siete, y una carta suelta. La tentación es botar el siete y la suelta para buscar dos cartas mejores. Mal negocio: **la media baja de 38,6 a 33,3 puntos**.
+
+**Cómo evitarlo:** con cuatro cartas del mismo palo, bota solo la carta suelta. El siete y el seis son flojos, pero mientras sean de tu palo, suman.
+
+## 6. Ir a todas las manos
+
+La mano mediana del ajiley vale **21 puntos**: la mitad de las manos que te reparten están por debajo. Si vas a todas, pagas muchas entradas y apuestas con manos que casi nunca ganan.
+
+**Cómo evitarlo:** acostúmbrate a retirarte. Con menos de 30 puntos después del descarte, ve solo si nadie apuesta o si cuesta muy poco ver las cartas. Retirarse a tiempo también es jugar bien.
+
+## 7. Olvidar que la mano gana los empates
+
+Dos jugadores con 41: ¿quién se lleva el pote? **El que esté más cerca de la mano** (el jugador a la derecha del que reparte). Mucha gente lo olvida y se lleva un disgusto, o deja pasar una apuesta que tenía ganada.
+
+**Cómo evitarlo:** antes de cada mano, fíjate en quién es la mano. Si eres tú, los empates juegan a tu favor y puedes apostar con más confianza.
+
+## 8. No mirar cuántas cartas bota cada rival
+
+El descarte es la única información que te da la mesa, y es oro puro. Quien bota una sola carta casi siempre tiene cuatro del mismo palo (entre 33 y 41 puntos). Quien bota tres está buscando.
+
+**Cómo evitarlo:** mientras los demás botan, deja tus cartas quietas y cuenta las de ellos. Cruza ese número con cómo apuestan después.
+
+## 9. Apostar sin mirar el pote
+
+No es lo mismo pagar 2 fichas para ver las cartas cuando en el pote hay 20 que cuando hay 4. En el primer caso, con ganar una de cada once veces ya compensa; en el segundo necesitas ganar una de cada tres.
+
+**Cómo evitarlo:** antes de ir, compara lo que pones con lo que puedes ganar. Te lo explicamos con una mano de ejemplo en [cómo funcionan las apuestas](/guias/apuestas-del-ajiley/).
+
+## 10. No acordar las reglas antes de repartir
+
+¿El siete de oros es comodín? ¿Cuántas cartas se pueden botar? ¿Qué pasa si todos pasan? Cada mesa tiene sus costumbres, y descubrirlas a mitad de una mano con el pote lleno es la receta de una discusión.
+
+**Cómo evitarlo:** pregunta antes de la primera mano. Tienes la lista de lo que conviene acordar en [las reglas](/reglas/) y todo sobre el comodín en [el siete de oros comodín](/guias/siete-de-oros-comodin/).
+
+<Consejo titulo="Y uno de regalo:">
+  <p>Jugar sin un tope. Decide antes de sentarte cuánto vas a jugar y a qué hora te levantas, y cúmplelo aunque vayas ganando. El ajiley es un entretenimiento, no una forma de ganar dinero. Más en <a href="/juego-responsable/">juego responsable</a>.</p>
+</Consejo>

@@ -2,6 +2,7 @@
 // Banda final común: practicar gratis contra Guaca o pasar a la mesa de Betzue.
 import { Image } from 'astro:assets';
 import guaca from '../assets/marca/guaca.png';
+import guacaCara from '../assets/marca/guaca-cara.png';
 import Naipe from './Naipe.astro';
 import { BETZUE } from '../config';
 ---
@@ -16,7 +17,10 @@ import { BETZUE } from '../config';
       </p>
       <div class="banda__botones">
         <a href="/practicar/" class="boton boton--oro">Practicar gratis</a>
-        <a href={BETZUE.ajiley('banda-boton')} class="boton boton--betzue">Jugar en Betzue</a>
+        <a href={BETZUE.ajiley('banda-boton')} class="boton boton--betzue">
+          <span class="boton__guaca" aria-hidden="true"><Image src={guacaCara} alt="" width={40} height={40} densities={[1, 2]} loading="lazy" /></span>
+          Jugar en Betzue
+        </a>
       </div>
     </div>
     <div class="banda__escena" aria-hidden="true">

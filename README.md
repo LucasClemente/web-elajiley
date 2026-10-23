@@ -30,11 +30,26 @@ Host, usuario, puerto y carpeta se pueden cambiar con `SSH_HOST`, `SSH_USER`, `S
 | `src/lib/simulador.ts` | Motor del simulador y comportamiento de los rivales |
 | `src/lib/naipe.ts` | Dibujo SVG de los naipes de la baraja española |
 | `src/pages/*.mdx` | Páginas de contenido (frontmatter: title, seoTitle, description, faq…) |
+| `src/content/guias/*.mdx` | Guías (tipo blog), publicadas en `/guias/<archivo>/` |
 | `src/config.ts` | Datos del sitio, menú y enlaces a Betzue (con UTM) |
 | `src/data/probabilidades.json` | Probabilidades exactas (se regeneran con `node scripts/probabilidades.ts`) |
 | `brand/` | Prompts y originales de Gemini para logo, Guaca e ilustraciones |
 | `scripts/gemini-image.mjs` | Genera imágenes con la API de Gemini (`GEMINI_API_KEY`) |
 | `scripts/build-brand.mjs` | Favicons, iconos e imagen para compartir a partir de `brand/raw` |
+
+## Añadir una guía
+
+Crea un `.mdx` en `src/content/guias/` (el nombre del archivo es la URL) copiando el frontmatter de otra guía.
+El esquema está en `src/content.config.ts` y la compilación falla si algo no cuadra (por ejemplo, una
+`description` de más de 160 caracteres). Campos principales:
+
+- `categoria`: Para empezar, En la mesa, Estrategia o Curiosidades (filtros de `/guias/`).
+- `mano`: cinco cartas para la tarjeta del listado, en notación corta (`"1o 12o 5o 3o 2o"`).
+- `resumen`: texto corto de la tarjeta; `description`: la meta descripción para Google.
+- `destacada: true` la pone en grande en `/guias/`; `borrador: true` la oculta.
+- `relacionados`: páginas fijas para "Sigue aprendiendo"; se completan solas con otras guías.
+
+La guía aparece sola en `/guias/`, en la portada (las tres más recientes), en el sitemap y en `llms.txt`.
 
 ## Reglas que usa la guía
 

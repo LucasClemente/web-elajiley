@@ -1,0 +1,297 @@
+---
+// Portada de las guías: todas las guías con filtro por categoría y, debajo, lo esencial del sitio.
+import Base from '../../layouts/Base.astro';
+import TarjetaGuia from '../../components/TarjetaGuia.astro';
+import TarjetaPagina from '../../components/TarjetaPagina.astro';
+import BandaPractica from '../../components/BandaPractica.astro';
+import Naipe from '../../components/Naipe.astro';
+import { guiasPublicadas, urlGuia, CATEGORIAS } from '../../lib/guias';
+import { PAGINAS } from '../../lib/paginas';
+import { SITE } from '../../config';
+
+const guias = await guiasPublicadas();
+const destacada = guias.find((g) => g.data.destacada) ?? guias[0];
+const resto = guias.filter((g) => g !== destacada);
+const categorias = CATEGORIAS.map((c) => ({ nombre: c, total: guias.filter((g) => g.data.categoria === c).length })).filter(
+  (c) => c.total > 0,
+);
+const esenciales = ['/reglas/', '/como-jugar/', '/valor-de-las-cartas/', '/estrategia/']
+  .map((h) => PAGINAS.find((p) => p.href === h))
+  .filter((p) => p !== undefined);
+
+const titulo = 'Guías de ajiley: trucos, consejos y curiosidades';
+const descripcion =
+  'Guías de ajiley para jugar mejor: cómo contar los puntos, errores de principiante, el siete de oros comodín, las apuestas y curiosidades del juego venezolano.';
+const url = `${SITE.url}/guias/`;
+const schema = [
+  {
+    '@type': 'CollectionPage',
+    '@id': `${url}#pagina`,
+    url,
+    name: titulo,
+    description: descripcion,
+    inLanguage: SITE.lang,
+    isPartOf: { '@id': `${SITE.url}/#sitio` },
+    about: { '@id': `${SITE.url}/#juego` },
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: guias.map((g, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        url: new URL(urlGuia(g), SITE.url).href,
+        name: g.data.title,
+      })),
+    },
+  },
+];
+---
+<Base title={titulo} description={descripcion} schema={schema} migas={[{ name: 'Guías', href: '/guias/' }]}>
+  <header class="gcab oscuro">
+    <div class="contenedor gcab__fila">
+      <div class="gcab__texto">
+        <nav class="migas" aria-label="Migas de pan">
+          <ol>
+            <li><a href="/">Inicio</a></li>
+            <li aria-current="page">Guías</li>
+          </ol>
+        </nav>
+        <span class="antetitulo">Después de las reglas</span>
+        <h1>Guías de <em>ajiley</em></h1>
+        <p class="lead">
+          Trucos para contar sin pensar, los errores que todos cometimos al empezar, las cuentas del comodín y las historias de la mesa. Lo
+          que se aprende después del reglamento, explicado con calma y con números de verdad.
+        </p>
+      </div>
+      <div class="gcab__mazo" aria-hidden="true" data-parallax="0.08">
+        <span style="--i:-2"><Naipe n={2} palo="oros" tam="l" /></span>
+        <span style="--i:-1"><Naipe n={5} palo="oros" tam="l" /></span>
+        <span style="--i:0"><Naipe n={1} palo="oros" tam="l" /></span>
+        <span style="--i:1"><Naipe n={11} palo="oros" tam="l" /></span>
+        <span style="--i:2"><Naipe n={12} palo="oros" tam="l" /></span>
+      </div>
+    </div>
+  </header>
+
+  <section class="seccion glista" aria-labelledby="todas">
+    <div class="contenedor">
+      <div class="glista__cabeza">
+        <h2 id="todas">Todas las guías</h2>
+        <div class="glista__filtros" role="group" aria-label="Filtrar por tema" data-filtros>
+          <button type="button" aria-pressed="true" data-cat="">Todas <span>{guias.length}</span></button>
+          {categorias.map((c) => (
+            <button type="button" aria-pressed="false" data-cat={c.nombre}>
+              {c.nombre} <span>{c.total}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      <div class="glista__grid" data-grid>
+        {destacada && <TarjetaGuia guia={destacada} destacada />}
+        {resto.map((g) => <TarjetaGuia guia={g} />)}
+      </div>
+      <p class="glista__vacio" data-vacio hidden>Pronto habrá guías de este tema.</p>
+    </div>
+  </section>
+
+  <section class="seccion seccion--tapete" aria-labelledby="esencial">
+    <div class="contenedor">
+      <span class="antetitulo">¿Empiezas de cero?</span>
+      <h2 id="esencial">Primero, <em>lo esencial</em></h2>
+      <p class="lead gesencial__lead">Si todavía no has jugado nunca, estas cuatro cartas te sientan a la mesa en media hora.</p>
+      <div class="baraja">
+        {esenciales.map((p, i) => <TarjetaPagina pagina={p} i={i} />)}
+      </div>
+    </div>
+  </section>
+
+  <BandaPractica />
+</Base>
+
+<script>
+  // Filtro por tema. Sin JavaScript se ven todas.
+  const filtros = document.querySelector<HTMLElement>('[data-filtros]');
+  const tarjetas = [...document.querySelectorAll<HTMLElement>('[data-grid] .tguia')];
+  const vacio = document.querySelector<HTMLElement>('[data-vacio]');
+  filtros?.addEventListener('click', (e) => {
+    const boton = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-cat]');
+    if (!boton) return;
+    const cat = boton.dataset.cat ?? '';
+    filtros.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === boton)));
+    let visibles = 0;
+    for (const t of tarjetas) {
+      const ver = !cat || t.dataset.categoria === cat;
+      t.hidden = !ver;
+      if (ver) {
+        visibles++;
+        t.animate([{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }], {
+          duration: 450,
+          delay: visibles * 50,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          fill: 'backwards',
+        });
+      }
+    }
+    if (vacio) vacio.hidden = visibles > 0;
+  });
+</script>
+
+<style>
+  .gcab {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(44px, 7vw, 96px) clamp(48px, 7vw, 96px);
+  }
+  .gcab__fila {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: clamp(24px, 5vw, 64px);
+    align-items: center;
+  }
+  .gcab h1 {
+    font-size: clamp(2.8rem, 1.6rem + 5vw, 5.6rem);
+    margin-bottom: 0.25em;
+  }
+  .gcab .lead {
+    max-width: 54ch;
+  }
+  .gcab .migas ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 22px;
+    font-size: 0.86rem;
+    color: rgb(232 239 233 / 0.6);
+  }
+  .gcab .migas a {
+    color: rgb(232 239 233 / 0.75);
+  }
+  .gcab .migas li + li::before {
+    content: '/';
+    margin-right: 6px;
+    color: var(--oro);
+  }
+  /* Abanico de cartas: el ajiley de oros */
+  .gcab__mazo {
+    position: relative;
+    height: 260px;
+    display: grid;
+    place-items: end center;
+  }
+  .gcab__mazo span {
+    position: absolute;
+    bottom: 20px;
+    transform-origin: 50% 160%;
+    rotate: calc(var(--i) * 11deg);
+    translate: calc(var(--i) * 22px) calc(var(--i) * var(--i) * 3px);
+    animation: abanico 6s var(--ease) infinite alternate;
+  }
+  @keyframes abanico {
+    from {
+      rotate: calc(var(--i) * 9deg);
+    }
+    to {
+      rotate: calc(var(--i) * 13deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gcab__mazo span {
+      animation: none;
+    }
+  }
+
+  .glista {
+    padding-top: clamp(40px, 6vw, 72px);
+  }
+  .glista__cabeza {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px 32px;
+    margin-bottom: 28px;
+  }
+  .glista__cabeza h2 {
+    margin: 0;
+    font-size: clamp(1.8rem, 1.3rem + 1.6vw, 2.6rem);
+  }
+  .glista__filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .glista__filtros button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0.45em 1em;
+    border: 1px solid var(--superficie-borde);
+    border-radius: 999px;
+    background: var(--superficie);
+    color: var(--tinta);
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition:
+      background 0.25s ease,
+      border-color 0.25s ease,
+      color 0.25s ease;
+  }
+  .glista__filtros button span {
+    display: grid;
+    place-items: center;
+    min-width: 1.6em;
+    height: 1.6em;
+    padding: 0 0.4em;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.1);
+    font-size: 0.78rem;
+  }
+  .glista__filtros button:hover {
+    border-color: rgb(242 193 78 / 0.5);
+  }
+  .glista__filtros button[aria-pressed='true'] {
+    background: var(--lamina);
+    border-color: transparent;
+    color: var(--tinta-oscura);
+  }
+  .glista__filtros button[aria-pressed='true'] span {
+    background: rgb(0 0 0 / 0.14);
+  }
+  .glista__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(16px, 2.4vw, 28px);
+  }
+  .glista__vacio {
+    color: var(--tinta-suave);
+  }
+  .gesencial__lead {
+    max-width: 52ch;
+    margin-bottom: 1.6em;
+  }
+
+  @media (max-width: 1000px) {
+    .glista__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 760px) {
+    .gcab__fila {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .gcab__mazo {
+      height: 190px;
+      order: -1;
+    }
+    .gcab__mazo :global(.naipe) {
+      --ancho-naipe: 84px;
+    }
+    .glista__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

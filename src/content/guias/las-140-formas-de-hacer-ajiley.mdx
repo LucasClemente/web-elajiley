@@ -1,0 +1,86 @@
+---
+title: Las 140 formas de hacer un ajiley de 51
+seoTitle: "Las 140 formas de hacer un ajiley de 51"
+description: "¿Cuántos ajileys de 51 caben en la baraja? Exactamente 140. De dónde sale la cifra, cada cuánto aparece y qué probabilidad hay de completarlo al botar."
+resumen: "De dónde sale la cifra, cada cuánto aparece y cuántas veces se completa al botar."
+lead: "El ajiley es la jugada que todos quieren ver servida. Contamos todas las formas de hacerlo (son exactamente 140), cada cuánto aparece y qué probabilidad tienes de completarlo con el descarte."
+miga: Las 140 formas de hacer ajiley
+categoria: Curiosidades
+palo: copas
+mano: "1c 12c 11c 10c 5c"
+publicado: "2026-10-23"
+relacionados: ['/probabilidades/', '/valor-de-las-cartas/']
+faq:
+  - q: ¿Cuántas combinaciones de ajiley hay?
+    a: Hay 140. En cada uno de los cuatro palos hay 35 formas de acompañar al as con cuatro de las siete cartas que valen 10 (el 2, el 3, el 4, el 5, la sota, el caballo y el rey).
+  - q: ¿Cada cuánto sale un ajiley?
+    a: Recién repartido, en una de cada 4.700 manos, más o menos. Con el descarte aparece algo más a menudo, pero sigue siendo un acontecimiento.
+  - q: ¿Cinco cartas del mismo palo son siempre un ajiley?
+    a: No. Solo si son el as y cuatro cartas de 10. Si entre ellas hay un siete o un seis, la mano suma menos de 51.
+---
+import Mano from '../../components/Mano.astro';
+import Consejo from '../../components/Consejo.astro';
+import RepartidorAjiley from '../../components/RepartidorAjiley.astro';
+
+## La receta del ajiley
+
+Un ajiley siempre se arma igual: **el as y cuatro cartas que valgan 10, todas del mismo palo**. Once más cuarenta, cincuenta y uno. No hay otra forma de llegar a 51, porque el as es la única carta que vale más de 10 y en cada palo hay un solo as.
+
+Lo que sí cambia son las cuatro compañeras. En cada palo hay **siete cartas que valen 10**: el 2, el 3, el 4, el 5, la sota, el caballo y el rey. El siete y el seis no sirven para el ajiley: valen lo que marcan y bajan la cuenta.
+
+Pruébalo tú mismo: elige un palo y reparte.
+
+<RepartidorAjiley />
+
+## De dónde sale el 140
+
+El as está fijo, así que todo se reduce a una pregunta: **¿de cuántas formas puedo elegir cuatro cartas entre las siete que valen 10?** La respuesta es 35. Si quieres comprobarlo a mano: hay 7 × 6 × 5 × 4 = 840 maneras de sacarlas en orden, pero como el orden da igual, se divide entre las 24 formas de ordenar cuatro cartas. 840 ÷ 24 = 35.
+
+<div class="tabla">
+  <table>
+    <thead><tr><th>Palo</th><th>Ajileys posibles</th><th>Ejemplo</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Oros</strong></td><td>35</td><td>As, 2, 3, 4 y 5 de oros</td></tr>
+      <tr><td><strong>Copas</strong></td><td>35</td><td>As, rey, caballo, sota y 5 de copas</td></tr>
+      <tr><td><strong>Espadas</strong></td><td>35</td><td>As, rey, caballo, 5 y 2 de espadas</td></tr>
+      <tr><td><strong>Bastos</strong></td><td>35</td><td>As, rey, 4, 3 y 2 de bastos</td></tr>
+      <tr><td><strong>Total</strong></td><td><strong>140</strong></td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+Por eso no existe un ajiley "mejor" que otro: el de as, rey, caballo, sota y dos vale exactamente lo mismo que el de as, dos, tres, cuatro y cinco. Y como cada palo tiene un solo as, en la misma mesa solo pueden coincidir ajileys de palos distintos. Si pasa, se aplica la regla de siempre: **gana la mano**.
+
+## Cada cuánto aparece
+
+Una baraja de 40 cartas permite 658.008 manos distintas de cinco cartas. De ellas, 140 son ajiley: **una de cada 4.700**, o un 0,021 %. Dicho de otra forma, en una mesa de cuatro que juegue cien manos en una noche se reparten 400 manos, así que harían falta unas doce noches para ver un ajiley servido de entrada.
+
+Para hacerse una idea de lo raro que es: en el póker, sacar cuatro cartas iguales de entrada pasa una vez de cada 4.165 manos. El ajiley servido es incluso un poco más escaso. Comparamos los dos juegos en [ajiley y póker](/guias/ajiley-y-poker/).
+
+## Cuándo se completa al botar
+
+El ajiley de verdad casi nunca llega servido: se construye con el descarte. Estas son las situaciones más comunes y sus números exactos. En todas, quedan **35 cartas que no ves**, y cualquiera de ellas puede ser la que te dé el pie.
+
+<Mano titulo="As y tres cartas de 10 (41): bota la carta suelta" cartas="1b 12b 3b 10b 6e" apagar={[4]} resultado="Te quedan 4 cartas de 10 de bastos entre 35: ajiley el 11 % de las veces" />
+
+Es la mejor posición posible: con cuatro cartas ya tienes 41, el techo de las manos de cuatro. Al botar la suelta, cualquiera de las cuatro cartas de 10 de bastos que quedan te da el ajiley: **4 de cada 35, un 11,4 %**, una de cada nueve veces. Y si te llega el siete o el seis de bastos, también subes (48 o 47).
+
+<Mano titulo="Cuatro cartas de 10 (40): solo el as completa el ajiley" cartas="12o 11o 5o 2o 7c" apagar={[4]} resultado="Un solo as en 35 cartas: ajiley el 2,9 % de las veces" />
+
+Aquí solo sirve **una carta**, el as de oros: un 2,9 %, una de cada 35 veces. No te preocupes: cualquier otra carta de oros también te sube a 50, 47 o 46, así que botar la suelta sigue siendo lo correcto.
+
+<Mano titulo="As y dos cartas de 10 (31): botas dos y necesitas dos" cartas="1e 4e 11e 6b 7c" apagar={[3, 4]} resultado="Que las dos sean de 10 de espadas: 1,7 %, una de cada sesenta veces" />
+
+Con tres cartas del palo, el ajiley ya es una lotería: necesitas que las dos cartas que lleguen sean de 10 y de tu palo. Quedan cinco de esas entre 35 cartas, y la probabilidad es de **10 entre 595, un 1,7 %**. Vale la pena botar las dos sueltas por todo lo que puedes mejorar, no por el ajiley.
+
+<Consejo>
+  <p>No rompas una buena mano por perseguir el ajiley. Si tienes 41, ya solo te gana una mano de cinco cartas del mismo palo (o un 41 de alguien más cerca de la mano). El ajiley es el premio gordo, pero el 41 gana muchísimas manos.</p>
+</Consejo>
+
+## ¿Y con comodín?
+
+Cuando el siete de oros es comodín (en la mesa de cinco, según la regla más extendida), vale 10 y se suma a cualquier palo. Así, **el as, el comodín y tres cartas de 10 del mismo palo** también hacen 51, y el número de ajileys posibles se duplica: 280 de 658.008 manos, uno de cada 2.350. En la versión llanera, donde el comodín vale 11, el as y el comodín con tres cartas de 10 suman 52, y esa pasa a ser la jugada máxima. Todo el detalle en [el siete de oros comodín](/guias/siete-de-oros-comodin/).
+
+## Con ajiley en la mano
+
+Si tienes un ajiley de 51 sin comodines en la mesa, **solo puedes perder si otro jugador tiene otro ajiley y está más cerca de la mano que tú**. Es tan improbable que, en la práctica, la única pregunta es cuánto puedes ganar. Ahí entra la cabeza fría: si subes demasiado fuerte, los demás se retiran y el pote se queda pequeño. Cómo se apuesta y cuándo subir lo contamos en [las apuestas del ajiley](/guias/apuestas-del-ajiley/).

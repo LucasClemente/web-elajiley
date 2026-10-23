@@ -5,8 +5,9 @@ import TarjetaPagina from '../components/TarjetaPagina.astro';
 import BandaPractica from '../components/BandaPractica.astro';
 import RotuloBetzue from '../components/RotuloBetzue.astro';
 import { SITE, BETZUE, BETZUE_CTA } from '../config';
-import { pagina } from '../lib/paginas';
+import { pagina, type Pagina } from '../lib/paginas';
 import { COLOR_PALO, type Palo } from '../lib/naipe';
+import type { Miga } from './Base.astro';
 
 interface Faq {
   q: string;
@@ -28,10 +29,15 @@ interface Frontmatter {
   indice?: boolean;
   /** Página de herramienta: sin columna lateral y con el contenido a todo el ancho. */
   completo?: boolean;
+  /** Sección a la que pertenece (p. ej. Guías), para las migas de pan. */
+  padre?: Miga;
+  palo?: Palo;
 }
 interface Props {
   frontmatter: Frontmatter;
   headings?: { depth: number; slug: string; text: string }[];
+  /** Tarjetas de "Sigue aprendiendo" ya resueltas (las guías no están en PAGINAS). */
+  relacionados?: Pagina[];
 }
 
 const { frontmatter: fm, headings = [] } = Astro.props;
@@ -41,9 +47,10 @@ const publicado = fm.publicado ?? SITE.updated;
 const actualizado = fm.actualizado ?? publicado;
 const h2 = headings.filter((h) => h.depth === 2);
 const mostrarIndice = (fm.indice ?? true) && h2.length >= 3;
-const relacionados = (fm.relacionados ?? []).map(pagina).filter((p) => p !== undefined);
-const palo: Palo = pagina(path)?.palo ?? 'oros';
-const conBetzue = path in BETZUE_CTA;
+const relacionados = Astro.props.relacionados ?? (fm.relacionados ?? []).map(pagina).filter((p) => p !== undefined);
+const palo: Palo = fm.palo ?? pagina(path)?.palo ?? 'oros';
+const conBetzue = path in BETZUE_CTA || path.startsWith('/guias/');
+const migas: Miga[] = [...(fm.padre ? [fm.padre] : []), { name: fm.miga, href: path }];
 
 const fecha = (iso: string) =>
   new Date(`${iso}T12:00:00`).toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -58,6 +65,7 @@ const schema: Record<string, unknown>[] = [
     datePublished: publicado,
     dateModified: actualizado,
     mainEntityOfPage: url,
+    ...(fm.etiqueta && { articleSection: fm.etiqueta }),
     image: new URL('/compartir.jpg', SITE.url).href,
     author: { '@id': `${SITE.url}/#organizacion` },
     publisher: { '@id': `${SITE.url}/#organizacion` },
@@ -81,7 +89,7 @@ if (fm.faq?.length) {
   description={fm.description}
   type="article"
   schema={schema}
-  migas={[{ name: fm.miga, href: path }]}
+  migas={migas}
 >
   <article class:list={['articulo', { 'articulo--completo': fm.completo }]} style={`--c:${COLOR_PALO[palo]}`}>
     <header class="articulo__cabecera oscuro">
@@ -90,6 +98,7 @@ if (fm.faq?.length) {
         <nav class="migas" aria-label="Migas de pan">
           <ol>
             <li><a href="/">Inicio</a></li>
+            {fm.padre && <li><a href={fm.padre.href}>{fm.padre.name}</a></li>}
             <li aria-current="page">{fm.miga}</li>
           </ol>
         </nav>

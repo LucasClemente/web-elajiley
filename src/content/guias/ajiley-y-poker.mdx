@@ -1,0 +1,103 @@
+---
+title: "Ajiley y póker: en qué se parecen y en qué no"
+seoTitle: "Ajiley y póker: parecidos y diferencias"
+description: "¿El ajiley es un póker venezolano? Comparamos baraja, manos, descarte, apuestas y probabilidades: lo que sabes del póker te sirve, pero no todo."
+resumen: "Baraja, manos, descarte y probabilidades: lo que sabes del póker te sirve, pero no todo."
+lead: "Cinco cartas, envites, un descarte y faroles: a primera vista, el ajiley parece un póker con baraja española. Se parecen, sí, pero se juegan con una lógica distinta. Si vienes del póker, esto es lo que tienes que olvidar."
+miga: Ajiley y póker
+categoria: Curiosidades
+palo: bastos
+mano: "1b 12b 11b 10b 2b"
+publicado: "2026-10-23"
+relacionados: ['/reglas/', '/historia/']
+faq:
+  - q: ¿El ajiley es lo mismo que el póker?
+    a: No. Comparten las cinco cartas, el envite, el descarte y los faroles, pero en el ajiley no hay parejas ni escaleras; solo se suman los puntos de las cartas de un mismo palo.
+  - q: ¿Qué es más difícil de sacar, un ajiley o un póker?
+    a: El ajiley servido sale en una de cada 4.700 manos; cuatro cartas iguales en el póker de cinco cartas, en una de cada 4.165. Son parecidos, pero el ajiley es un poco más raro.
+  - q: ¿Las parejas valen algo en el ajiley?
+    a: No. Tres reyes de palos distintos valen lo mismo que un rey solo, 10 puntos, porque solo cuentan las cartas del mismo palo.
+---
+import Mano from '../../components/Mano.astro';
+import Consejo from '../../components/Consejo.astro';
+
+## Lo que tienen en común
+
+El ajiley y el póker son primos lejanos: los dos son **juegos de envite**, de esos en los que no gana necesariamente la mejor mano, sino quien se queda en la mesa hasta el final. Y el parecido es todavía mayor con el póker de descarte clásico, el de cinco cartas tapadas:
+
+- **Cinco cartas por jugador**, que nadie más ve.
+- **Un solo descarte**: botas las que no te sirven y recibes otras tantas.
+- **Rondas de apuestas** en las que se pasa, se iguala, se sube o se abandona.
+- **Faroles**: se puede ganar sin tener la mejor mano, si los demás se retiran.
+- **Leer a los rivales**: cuántas cartas botan, cómo apuestan, cuánto tardan.
+
+Hasta aquí, quien sabe jugar póker se sienta en una mesa de ajiley y entiende la mecánica en una mano. El problema empieza cuando hay que contar.
+
+## Las grandes diferencias
+
+<div class="tabla">
+  <table>
+    <thead><tr><th></th><th>Ajiley</th><th>Póker de descarte</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Baraja</strong></td><td>Española de 40 cartas</td><td>Francesa de 52 cartas</td></tr>
+      <tr><td><strong>Qué vale una mano</strong></td><td>La suma de las cartas de un mismo palo</td><td>Combinaciones: pareja, trío, escalera, color…</td></tr>
+      <tr><td><strong>Parejas y tríos</strong></td><td>No valen nada</td><td>Son la base del juego</td></tr>
+      <tr><td><strong>Reparto</strong></td><td>Dos cartas, envite, y tres más</td><td>Las cinco de una vez</td></tr>
+      <tr><td><strong>Rondas de envite</strong></td><td>Tres</td><td>Dos (antes y después del descarte)</td></tr>
+      <tr><td><strong>Empates</strong></td><td>Gana la mano</td><td>Se reparte el pote</td></tr>
+      <tr><td><strong>Jugada máxima</strong></td><td>Ajiley: as y cuatro de 10 del mismo palo (51)</td><td>Escalera real de color</td></tr>
+    </tbody>
+  </table>
+</div>
+
+## Las parejas no valen nada
+
+Es lo que más desconcierta a quien viene del póker. En el ajiley **solo cuentan las cartas del mismo palo**, así que tres reyes de palos distintos no son un trío: son tres cartas que, por separado, valen 10.
+
+<Mano titulo="En el póker, trío de reyes. En el ajiley, 20 puntos" cartas="12o 12c 12e 1b 5o" apagar={[1, 2, 3]} resultado="Lo único que suma es el rey y el cinco de oros: 20" />
+
+Al revés también pasa: una mano que en el póker sería basura (cinco cartas sueltas sin pareja) puede ser una joya en el ajiley si son del mismo palo y valen 10. Y otra rareza que conviene grabarse: **el 2, el 3, el 4 y el 5 valen lo mismo que el rey**, mientras que el siete y el seis valen menos. No hay cartas "altas" y "bajas" como en el póker. Lo explicamos en [el valor de las cartas](/valor-de-las-cartas/).
+
+## El reparto en dos tiempos
+
+En el póker de descarte recibes tus cinco cartas de golpe. En el ajiley **recibes dos, se envita, y luego llegan las otras tres una a una**, con otra ronda de envite antes de botar. Esa primera ronda con dos cartas no existe en el póker y cambia mucho el juego: se apuesta casi a ciegas, y es donde más se nota quién es prudente y quién se lanza. Todo el orden de una mano está en [las reglas](/reglas/).
+
+## Los empates los gana la mano
+
+En el póker, dos manos iguales se reparten el pote. En el ajiley no se reparte nada: **gana el jugador mano**, el que está a la derecha del que reparte, o el que esté más cerca de él. Como los empates son bastante frecuentes (las manos de 40 y 41 abundan entre las buenas), ser mano es una ventaja real que el póker no tiene.
+
+## Probabilidades: ¿qué es más raro?
+
+Aquí van las cuentas de las manos recién repartidas, antes de botar. Las del ajiley las calculamos sobre las 658.008 manos posibles con la baraja de 40; las del póker son las clásicas sobre las 2.598.960 manos con la baraja de 52.
+
+<div class="tabla">
+  <table>
+    <thead><tr><th>Jugada</th><th>Juego</th><th>Sale una de cada…</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Cinco del mismo palo</strong></td><td>Ajiley (cualquier suma)</td><td>653 manos</td></tr>
+      <tr><td><strong>Color</strong> (cinco del mismo palo, sin escalera)</td><td>Póker</td><td>509 manos</td></tr>
+      <tr><td><strong>Póker</strong> (cuatro iguales)</td><td>Póker</td><td>4.165 manos</td></tr>
+      <tr><td><strong>Ajiley de 51</strong></td><td>Ajiley</td><td>4.700 manos</td></tr>
+      <tr><td><strong>Escalera de color</strong> (sin la real)</td><td>Póker</td><td>72.193 manos</td></tr>
+      <tr><td><strong>Escalera real</strong></td><td>Póker</td><td>649.740 manos</td></tr>
+    </tbody>
+  </table>
+</div>
+
+El ajiley servido es, más o menos, tan raro como un póker de cuatro iguales en el póker. Y es bastante menos raro que la escalera real, que es la jugada imposible de verdad. Si te gustan estos números, en [probabilidades](/probabilidades/) tienes todas las del ajiley, y en [las 140 formas de hacer un ajiley](/guias/las-140-formas-de-hacer-ajiley/) cuántas veces se completa al botar.
+
+## Si vienes del póker: cinco ajustes
+
+1. **Olvida las parejas.** Ordena la mano por palos, no por números.
+2. **El siete y el seis son cartas flojas.** El dos vale más que el siete.
+3. **Botar el as es normal.** Un as solitario vale 11; dos cartas de 10 del mismo palo, 20.
+4. **El descarte habla más que en el póker.** Quien bota una carta casi siempre tiene cuatro del mismo palo. Es la pista más fiable de la mesa.
+5. **Ser mano vale.** Los empates se los lleva la mano, así que el orden en la mesa importa más que en el póker.
+
+<Consejo>
+  <p>Lo que sí te llevas intacto del póker: pensar en el pote antes de pagar, no ir a todas las manos y saber retirarte a tiempo. Eso sirve en cualquier juego de envite.</p>
+</Consejo>
+
+## Un parentesco antiguo
+
+Los dos pertenecen a la gran familia de los juegos de envite, en los que se apuesta por la propia mano y se puede farolear, pero por ramas distintas. El pariente más cercano del ajiley es el **giley español**: cuatro cartas, baraja de 28 y jugada máxima de 41. El ajiley es, en esencia, un giley con una carta más y una baraja más grande. Cómo llegó a Venezuela no está documentado; te contamos lo que se sabe en [historia y origen](/historia/).

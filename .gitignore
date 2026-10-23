@@ -152,3 +152,6 @@ vite.config.ts.timestamp-*
 # Bocetos descartados de Gemini
 brand/raw/descartes/
 
+
+# Capturas de revisión visual
+.capturas/

@@ -413,6 +413,55 @@ strong {
   font-size: 0.85rem;
   padding: 0.6em 1.2em;
 }
+/* Cara de Guaca dentro de los botones de Betzue; picotea cada tanto para llamar la atención */
+.boton:has(> .boton__guaca) {
+  padding-left: 0.35em;
+}
+.boton__guaca {
+  flex: none;
+  width: 2.35em;
+  height: 2.35em;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #fff;
+  box-shadow:
+    0 0 0 2px var(--oro),
+    0 3px 8px rgb(0 0 0 / 0.35);
+}
+.boton__guaca img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: 40% 85%;
+  animation: guaca-picotea 6s var(--ease) infinite;
+  transition: rotate 0.3s var(--ease), scale 0.3s var(--ease);
+}
+.boton:hover .boton__guaca img {
+  animation: none;
+  rotate: -10deg;
+  scale: 1.12;
+}
+@keyframes guaca-picotea {
+  0%,
+  80%,
+  100% {
+    rotate: 0deg;
+  }
+  85% {
+    rotate: -14deg;
+  }
+  90% {
+    rotate: 9deg;
+  }
+  95% {
+    rotate: -4deg;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .boton__guaca img {
+    animation: none;
+  }
+}
 .enlace-flecha {
   display: inline-flex;
   align-items: center;

@@ -2,9 +2,11 @@ import type { APIRoute } from 'astro';
 import { SITE } from '../config';
 import { PAGINAS } from '../lib/paginas';
 import probs from '../data/probabilidades.json';
+import { guiasPublicadas, urlGuia } from '../lib/guias';
 
 // Resumen del sitio para asistentes y buscadores con IA (formato llms.txt).
-export const GET: APIRoute = () => {
+export const GET: APIRoute = async () => {
+  const guias = await guiasPublicadas();
   const ajiley = probs.distribucion.find((d) => d.puntos === 51)!;
   const cuerpo = `# ${SITE.name}
 
@@ -24,6 +26,10 @@ export const GET: APIRoute = () => {
 ## Páginas
 
 ${[{ href: '/', titulo: 'Qué es el ajiley', resumen: 'Portada de la guía.' }, ...PAGINAS].map((p) => `- [${p.titulo}](${SITE.url}${p.href}): ${p.resumen}`).join('\n')}
+
+## Guías
+
+${guias.map((g) => `- [${g.data.title}](${SITE.url}${urlGuia(g)}): ${g.data.description}`).join('\n')}
 `;
   return new Response(cuerpo, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 };

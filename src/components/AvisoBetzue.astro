@@ -1,0 +1,207 @@
+---
+// Invitación a Betzue que entra deslizándose a los 20 s. No tapa el contenido (Google penaliza
+// los intersticiales intrusivos en móvil), se cierra con un toque y no vuelve en 3 días.
+import { getImage } from 'astro:assets';
+import guaca from '../assets/marca/guaca.png';
+import { BETZUE } from '../config';
+
+const avatar = await getImage({ src: guaca, width: 180, format: 'webp' });
+const SIN_AVISO = ['/juego-responsable/', '/privacidad/'];
+const mostrar = !SIN_AVISO.includes(Astro.url.pathname);
+---
+{mostrar && (
+  <aside class="aviso" role="dialog" aria-labelledby="aviso-titulo" aria-modal="false" data-aviso hidden>
+    <button type="button" class="aviso__cerrar" aria-label="Cerrar" data-cerrar>
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path></svg>
+    </button>
+    <img class="aviso__guaca" src={avatar.src} alt="" width="90" height="90" loading="lazy" />
+    <div class="aviso__texto">
+      <p class="aviso__antes">{BETZUE.lema}</p>
+      <p class="aviso__titulo" id="aviso-titulo">¿Una mano de verdad?</p>
+      <p class="aviso__cuerpo">Juega ajiley en Betzue desde tu celular, con recargas por Pago Móvil.</p>
+      <div class="aviso__acciones">
+        <a class="boton boton--peque" href={BETZUE.ajiley('aviso-20s')} data-ir>Jugar en Betzue</a>
+        <button type="button" class="aviso__luego" data-cerrar>Ahora no</button>
+      </div>
+      <p class="aviso__legal">+18 · Juega con responsabilidad</p>
+    </div>
+  </aside>
+)}
+
+<script>
+  const aviso = document.querySelector<HTMLElement>('[data-aviso]');
+  const CLAVE = 'elajiley-aviso-betzue';
+  const TRES_DIAS = 3 * 24 * 60 * 60 * 1000;
+  const leer = () => {
+    try {
+      return Number(localStorage.getItem(CLAVE) || 0);
+    } catch {
+      return 0;
+    }
+  };
+  const guardar = () => {
+    try {
+      localStorage.setItem(CLAVE, String(Date.now()));
+    } catch {}
+  };
+
+  if (aviso && Date.now() - leer() > TRES_DIAS) {
+    const cerrar = () => {
+      guardar();
+      aviso.classList.remove('es-visible');
+      setTimeout(() => (aviso.hidden = true), 500);
+    };
+    setTimeout(() => {
+      // Si ya fue a Betzue en esta visita, no insistimos.
+      if (sessionStorage.getItem('elajiley-fue-betzue')) return;
+      aviso.hidden = false;
+      requestAnimationFrame(() => requestAnimationFrame(() => aviso.classList.add('es-visible')));
+    }, 20000);
+    aviso.querySelectorAll('[data-cerrar]').forEach((b) => b.addEventListener('click', cerrar));
+    aviso.querySelector('[data-ir]')?.addEventListener('click', guardar);
+    addEventListener('keydown', (e) => e.key === 'Escape' && !aviso.hidden && cerrar());
+  }
+  // Cualquier clic hacia Betzue cuenta como "ya fue".
+  document.addEventListener('click', (e) => {
+    const a = (e.target as HTMLElement).closest('a[href*="betzue.com"]');
+    if (a) {
+      try {
+        sessionStorage.setItem('elajiley-fue-betzue', '1');
+      } catch {}
+    }
+  });
+</script>
+
+<style>
+  .aviso {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 80;
+    width: min(380px, calc(100vw - 24px));
+    display: grid;
+    grid-template-columns: 84px 1fr;
+    gap: 14px;
+    align-items: start;
+    padding: 18px 18px 16px 12px;
+    border-radius: 24px;
+    color: #fff;
+    background:
+      radial-gradient(circle at 100% 0%, rgb(242 193 78 / 0.32), transparent 55%),
+      radial-gradient(circle at 0% 100%, rgb(228 0 43 / 0.32), transparent 55%),
+      linear-gradient(135deg, #1a6fd6, #0057b8 45%, #003f8a);
+    box-shadow:
+      inset 0 0 0 1px rgb(242 193 78 / 0.5),
+      0 30px 60px -20px rgb(0 0 0 / 0.75);
+    transform: translateY(calc(100% + 40px)) rotate(2deg);
+    opacity: 0;
+    transition:
+      transform 0.7s cubic-bezier(0.2, 1.3, 0.4, 1),
+      opacity 0.4s ease;
+  }
+  .aviso.es-visible {
+    transform: none;
+    opacity: 1;
+  }
+  .aviso__guaca {
+    width: 84px;
+    height: auto;
+    margin-top: -34px;
+    filter: drop-shadow(0 8px 10px rgb(0 0 0 / 0.4));
+    animation: saluda 2.4s ease-in-out infinite;
+    transform-origin: 50% 90%;
+  }
+  @keyframes saluda {
+    0%,
+    100% {
+      rotate: -4deg;
+    }
+    50% {
+      rotate: 5deg;
+    }
+  }
+  .aviso__antes {
+    margin: 0;
+    font-family: var(--f-mano);
+    font-weight: 700;
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+  .aviso__titulo {
+    margin: 2px 0 4px;
+    font-family: var(--f-titulo);
+    font-weight: 800;
+    font-size: 1.45rem;
+    line-height: 1.05;
+    color: var(--oro);
+  }
+  .aviso__cuerpo {
+    margin: 0 0 12px;
+    font-size: 0.92rem;
+    line-height: 1.45;
+    color: #e3eefb;
+  }
+  .aviso__acciones {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .aviso__luego {
+    background: none;
+    border: 0;
+    color: #cfe0f7;
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .aviso__legal {
+    margin: 10px 0 0;
+    font-size: 0.72rem;
+    opacity: 0.75;
+  }
+  .aviso__cerrar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.14);
+    color: #fff;
+    cursor: pointer;
+  }
+  .aviso__cerrar:hover {
+    background: rgb(255 255 255 / 0.25);
+  }
+  @media (max-width: 520px) {
+    .aviso {
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      width: auto;
+      grid-template-columns: 64px 1fr;
+      padding: 14px 14px 12px 10px;
+    }
+    .aviso__guaca {
+      width: 64px;
+      margin-top: -26px;
+    }
+    .aviso__titulo {
+      font-size: 1.2rem;
+    }
+    .aviso__cuerpo {
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+    }
+    .aviso__legal {
+      display: none;
+    }
+  }
+</style>

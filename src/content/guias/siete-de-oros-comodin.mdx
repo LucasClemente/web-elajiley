@@ -1,0 +1,82 @@
+---
+title: "El siete de oros comodín: qué cambia en el ajiley"
+seoTitle: "El siete de oros comodín en el ajiley"
+description: "Cuándo el siete de oros es comodín en el ajiley, cuánto vale, cómo se cuenta y cuánto cambia el juego: con comodín, los ajileys de 51 salen el doble de seguido."
+resumen: "Cuándo es comodín, cómo se cuenta y cuánto cambia el juego, con números exactos."
+lead: "Es la pregunta que hay que hacer antes de repartir: ¿se juega con comodín? Te contamos cuándo el siete de oros cambia de papel, cómo se cuenta y, con todas las manos calculadas, cuánto cambia el juego."
+miga: El siete de oros comodín
+categoria: En la mesa
+palo: oros
+mano: "7o 1b 12b 11b 3b"
+publicado: "2026-10-23"
+relacionados: ['/variantes/', '/reglas/']
+faq:
+  - q: ¿Cuándo es comodín el siete de oros en el ajiley?
+    a: En la regla más extendida, solo cuando juegan cinco personas. Hay mesas que lo usan siempre, así que conviene preguntarlo antes de empezar.
+  - q: ¿Cuánto vale el comodín en el ajiley?
+    a: Vale 10 puntos y se suma al palo que más le convenga a quien lo tenga. En la versión de los llanos vale 11, como un as, y la jugada máxima pasa a ser 52.
+  - q: ¿Cuánto cambia el juego con comodín?
+    a: Bastante. La mano media sube de 22,9 a 23,9 puntos y los ajileys de 51 pasan de 140 a 280 combinaciones, de uno de cada 4.700 repartos a uno de cada 2.350.
+---
+import Mano from '../../components/Mano.astro';
+import Consejo from '../../components/Consejo.astro';
+
+## Cuándo es comodín
+
+La regla más extendida en Venezuela es clara: **el siete de oros es comodín solo cuando juegan cinco personas**. Con dos, tres o cuatro jugadores es una carta normal que vale 7 puntos en oros.
+
+Tiene su lógica. Con cinco jugadores se reparten 25 de las 40 cartas, y entre el reparto y el descarte las cartas buenas escasean. El comodín le da vida a la mesa llena.
+
+Pero no es la única costumbre. **Hay mesas que juegan con comodín siempre**, sean los que sean, y en los llanos se juega una versión en la que el comodín **vale 11** en vez de 10. Las tres formas conviven, y por eso la pregunta "¿comodín sí o no, y cuánto vale?" ahorra más discusiones que ninguna otra. Repasamos todas las diferencias entre mesas en [variantes](/variantes/).
+
+## Cómo se cuenta
+
+Cuando es comodín, el siete de oros **vale 10 y se suma a cualquier palo**: al que más le convenga a quien lo tiene. Es como tener una carta de 10 del palo que tú elijas.
+
+<Mano titulo="Comodín con as, rey y caballo de copas" cartas="7o 1c 12c 11c 4b" apagar={[4]} resultado="11 + 10 + 10 + 10 (comodín) = 41" />
+
+<Mano titulo="Con el as, el comodín y tres de 10 también hay ajiley" cartas="7o 1b 12b 11b 3b" resultado="11 + 10 + 10 + 10 + 10 (comodín) = 51" />
+
+Dos dudas frecuentes:
+
+- **¿Puede contar como siete de oros normal?** Podría, pero nunca conviene: como comodín vale 10, y 10 siempre es más que 7.
+- **¿Y si tengo muchos oros?** Se suma igual a los oros, como una carta de 10 más. Con el seis de oros, el rey de oros y el comodín sumas 6 + 10 + 10 = 26.
+
+## Cuánto cambia el juego, en números
+
+Calculamos las 658.008 manos de cinco cartas que pueden salir de la baraja, con y sin comodín, antes de botar. Esto es lo que cambia:
+
+<div class="tabla">
+  <table>
+    <thead><tr><th></th><th>Sin comodín</th><th>Comodín de 10</th><th>Comodín llanero (11)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Mano media</strong></td><td>22,9</td><td>23,9</td><td>24,0</td></tr>
+      <tr><td><strong>Mano mediana</strong></td><td>21</td><td>21</td><td>21</td></tr>
+      <tr><td><strong>30 o más</strong></td><td>18,8 %</td><td>26,0 %</td><td>26,0 %</td></tr>
+      <tr><td><strong>36 o más</strong></td><td>3,5 %</td><td>5,1 %</td><td>5,1 %</td></tr>
+      <tr><td><strong>41 o más</strong></td><td>0,79 %</td><td>1,24 %</td><td>1,87 %</td></tr>
+      <tr><td><strong>Ajiley</strong></td><td>140 manos (1 de cada 4.700)</td><td>280 manos (1 de cada 2.350)</td><td>420 de 51 o 52 (1 de cada 1.567)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+La lectura es sencilla: **con comodín, las manos buenas abundan más**. Un 30, que sin comodín ya está entre el 20 % mejor, con comodín es algo bastante común (una de cada cuatro manos). Y el ajiley se vuelve el doble de frecuente. En la versión llanera, además, aparece el ajiley de 52 (as, comodín y tres cartas de 10 del mismo palo), que sale en 140 de las 658.008 manos.
+
+## Quien lo tiene, manda
+
+El comodín cae en una de cada ocho manos repartidas (el 12,5 %), y transforma la mano de quien lo recibe: **la mano media de quien tiene el comodín es de 29,8 puntos**, frente a los 22,9 de una mano cualquiera sin comodín. En una mesa de cinco, el comodín está repartido de entrada casi dos de cada tres veces (el 62,5 %).
+
+<Consejo>
+  <p>Nunca botes el comodín. Es, literalmente, una carta de 10 del palo que tú quieras. Si te llega con un as, ya tienes 21 con solo dos cartas, lo mismo que la mejor pareja posible sin comodín.</p>
+</Consejo>
+
+## Cómo jugar en una mesa con comodín
+
+- **Sube el listón.** Si en tu mesa hay comodín, una mano de 30 o 31 vale menos que en una mesa sin él. Sé un poco más prudente con las manos medianas.
+- **Desconfía más del que bota una.** Quien bota una sola carta puede tener cuatro del mismo palo o tres más el comodín. En los dos casos, una mano de entre 33 y 41.
+- **El comodín no se ve, pero se nota.** Nadie enseña el comodín hasta el final. Si un jugador que botó dos cartas apuesta como si tuviera cuatro, puede que el comodín sea la razón.
+- **Acuerden el valor.** No es lo mismo un comodín de 10 que uno de 11: con el de 11, el as y el comodín juntos ya suman 22 y el máximo es 52.
+
+## La regla de oro de la mesa
+
+Antes de repartir la primera mano, pregunta: **¿hay comodín, cuándo y cuánto vale?** Con eso claro, el siete de oros deja de ser motivo de discusión y pasa a ser lo que es: la carta más deseada de la mesa de cinco. Si quieres practicar con él, en nuestro [simulador](/practicar/) el comodín se activa al elegir cinco jugadores, y la [calculadora](/calculadora/) tiene una casilla para contarlo.

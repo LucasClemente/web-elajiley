@@ -1,0 +1,94 @@
+---
+title: Cómo contar los puntos del ajiley en dos segundos
+seoTitle: "Cómo contar los puntos del ajiley rápido"
+description: "El truco para contar una mano de ajiley sin sumar carta por carta: de diez en diez y corriges por el as, el siete y el seis. Con ejemplos."
+resumen: "Cuenta de diez en diez y corrige por el as, el siete y el seis. Nunca más te equivocas."
+lead: "En la mesa no hay tiempo para sumar con los dedos. Con este truco cuentas cualquier mano de un vistazo y, de paso, descubres que hay puntajes que el ajiley no permite."
+miga: Contar los puntos rápido
+categoria: Para empezar
+palo: oros
+mano: "1o 12o 5o 7o 3o"
+publicado: "2026-10-23"
+relacionados: ['/valor-de-las-cartas/', '/calculadora/']
+faq:
+  - q: ¿Cuál es la forma más rápida de contar una mano de ajiley?
+    a: Cuenta las cartas de tu mejor palo y multiplica por diez. Luego suma 1 si tienes el as, resta 3 si tienes el siete y resta 4 si tienes el seis.
+  - q: ¿Una mano de ajiley puede sumar 35?
+    a: No. Con los valores del ajiley hay puntajes imposibles, como 22, 25, 29, 32, 35, 39, 42, 45 o 49. Si alguien canta uno de esos, contó mal.
+  - q: ¿Qué gana, tres cartas del mismo palo o dos?
+    a: Siempre tres. Tres cartas del mismo palo suman como mínimo 23 y dos suman como máximo 21, así que más cartas del palo siempre ganan.
+---
+import Mano from '../../components/Mano.astro';
+import Consejo from '../../components/Consejo.astro';
+
+## El truco: de diez en diez
+
+Casi todas las cartas del ajiley valen 10. Solo tres se salen de la norma: **el as vale uno más (11), el siete vale tres menos (7) y el seis vale cuatro menos (6)**. Así que, en vez de sumar carta por carta, haz esto:
+
+1. **Busca tu palo más largo**, el que tenga más cartas.
+2. **Cuenta sus cartas y multiplica por diez.** Tres cartas, 30. Cuatro, 40.
+3. **Corrige:** suma 1 si está el as, resta 3 si está el siete y resta 4 si está el seis.
+
+Listo. Míralo en acción:
+
+<Mano titulo="Tres oros con el as: 30 + 1" cartas="1o 12o 5o 7c 3b" apagar={[3, 4]} resultado="3 cartas × 10 = 30, +1 por el as = 31" />
+
+<Mano titulo="Cuatro espadas con el siete y el seis: 40 − 3 − 4" cartas="12e 7e 6e 4e 1c" apagar={[4]} resultado="4 cartas × 10 = 40, −3 −4 = 33" />
+
+<Mano titulo="Cinco oros con el as y el siete: 50 + 1 − 3" cartas="1o 12o 5o 7o 3o" resultado="5 cartas × 10 = 50, +1 −3 = 48" />
+
+Con un poco de práctica ni siquiera piensas en el paso tres: ves "cuatro copas con el as" y ya sabes que son 41.
+
+## El número de cartas manda
+
+El truco funciona por una razón muy sencilla: **una mano con más cartas del mismo palo siempre le gana a una con menos**, tenga lo que tenga. Mira los rangos:
+
+<div class="tabla">
+  <table>
+    <thead><tr><th>Cartas del mejor palo</th><th>Mínimo</th><th>Máximo</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1</strong></td><td>6 (el seis)</td><td>11 (el as)</td></tr>
+      <tr><td><strong>2</strong></td><td>13 (siete y seis)</td><td>21 (as y una de 10)</td></tr>
+      <tr><td><strong>3</strong></td><td>23</td><td>31</td></tr>
+      <tr><td><strong>4</strong></td><td>33</td><td>41</td></tr>
+      <tr><td><strong>5</strong></td><td>43</td><td>51 (el ajiley)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+Los rangos nunca se tocan. Tres cartas malas (seis, siete y una de 10: 23) le ganan a las dos mejores cartas posibles (as y una de 10: 21). Por eso, para saber quién gana, **primero se comparan las cartas del palo y después las correcciones**.
+
+## Los puntajes que no existen
+
+Como solo hay tres correcciones posibles (+1, −3 y −4) y cada una se puede usar una sola vez, con cada número de cartas solo caben unos pocos totales. Con tres, cuatro o cinco cartas son siempre siete:
+
+<div class="tabla">
+  <table>
+    <thead><tr><th>Cartas del palo</th><th>Puntajes posibles</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1</strong></td><td>6, 7, 10, 11</td></tr>
+      <tr><td><strong>2</strong></td><td>13, 16, 17, 18, 20, 21</td></tr>
+      <tr><td><strong>3</strong></td><td>23, 24, 26, 27, 28, 30, 31</td></tr>
+      <tr><td><strong>4</strong></td><td>33, 34, 36, 37, 38, 40, 41</td></tr>
+      <tr><td><strong>5</strong></td><td>43, 44, 46, 47, 48, 50, 51</td></tr>
+    </tbody>
+  </table>
+</div>
+
+O sea, en una mesa de ajiley **nunca vas a ver 12, 14, 15, 19, 22, 25, 29, 32, 35, 39, 42, 45 ni 49**. Si alguien enseña sus cartas y canta "¡35!", algo contó mal. Es una forma rápida de revisar cuentas sin volver a sumar.
+
+<Consejo>
+  <p>Ojo con las mesas llaneras, donde el comodín vale 11: el as y el comodín juntos suman dos de más, y ahí sí aparecen el 22, el 32, el 42 y hasta el 52. Con el comodín de 10, en cambio, la tabla no cambia: cuenta como una carta de 10 más.</p>
+</Consejo>
+
+## Cuando dos palos tienen las mismas cartas
+
+A veces tienes dos cartas de un palo y dos de otro. Ahí el número de cartas empata y deciden las correcciones: **haz la cuenta de cada palo y quédate con la más alta**. Recuerda que el as suma, pero el siete y el seis restan más de lo que el as aporta.
+
+<Mano titulo="Dos oros contra dos copas" cartas="12o 5o 1c 7c 4b" apagar={[2, 3, 4]} resultado="Oros: 20 · Copas: 11 + 7 = 18 · Cuentan los oros: 20" />
+
+Aquí el as de copas tienta, pero va acompañado del siete: 20 + 1 − 3 = 18. Los oros, sin correcciones, suman 20. Es justo el tipo de mano en la que conviene saber qué botar después: el [asesor de la calculadora](/calculadora/) te lo dice en un segundo.
+
+## Ponte a prueba
+
+La mejor forma de interiorizar el truco es jugar a adivinar. En [valor de las cartas](/valor-de-las-cartas/#ponte-a-prueba-quién-gana) tienes un juego de "¿quién gana?" con dos manos y una pregunta: a la décima ronda ya cuentas sin pensar. Y si quieres practicar con manos completas, [siéntate contra Guaca](/practicar/).
