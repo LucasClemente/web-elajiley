@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { SITE, BETZUE, INDEXAR } from '../config';
+import { SITE, BETZUE, INDEXAR, GA_ID } from '../config';
 import Cabecera from '../components/Cabecera.astro';
 import Pie from '../components/Pie.astro';
 import SpritePalos from '../components/SpritePalos.astro';
@@ -133,6 +133,27 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
         }, 4000);
       })();
     </script>
+    {INDEXAR && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+        <script is:inline define:vars={{ GA_ID }}>
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = function () { dataLayer.push(arguments); };
+          gtag('js', new Date());
+          gtag('config', GA_ID);
+          // Cada clic hacia Betzue como evento propio, con el utm_campaign del enlace
+          // (cabecera, pie, aviso-20s…) para saber qué ubicación lleva más jugadores.
+          document.addEventListener('click', function (e) {
+            var a = e.target.closest && e.target.closest('a[href*="betzue.com"]');
+            if (!a) return;
+            gtag('event', 'clic_betzue', {
+              ubicacion: new URL(a.href).searchParams.get('utm_campaign') || 'sin-campana',
+              link_url: a.href,
+            });
+          });
+        </script>
+      </>
+    )}
     <slot name="head" />
   </head>
   <body>

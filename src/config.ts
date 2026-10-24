@@ -16,6 +16,10 @@ export const SITE = {
 // Para lanzar: PUBLIC_INDEXAR=true npm run build
 export const INDEXAR = import.meta.env.PUBLIC_INDEXAR === 'true';
 
+// Google Analytics 4. Solo se carga en la compilación de lanzamiento (INDEXAR),
+// así las visitas en local o en la versión en construcción no ensucian los datos.
+export const GA_ID = 'G-GG91G0JVVX';
+
 const utm = (campaign: string) =>
   `utm_source=elajiley&utm_medium=referral&utm_campaign=${encodeURIComponent(campaign)}`;
 
